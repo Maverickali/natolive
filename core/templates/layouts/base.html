@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+	<title>
+       {% block title %}{% endblock %} | Nation Wide Finance
+    </title>
+
+	<meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
+	<link rel="icon" href="/static/assets/img/icon.ico" type="image/x-icon"/>
+
+	{% include 'includes/headers.html' %}
+
+    <!-- Specific Page CSS goes HERE  -->
+    {% block stylesheets %}{% endblock stylesheets %}
+
+</head>
+<body > <!--  data-background-color="dark" -->
+	<div class="wrapper">
+
+        {% include 'includes/navigation.html' %}
+
+        {% include 'includes/sidebar.html' %}
+
+		<div class="main-panel">
+			
+			{% block content %}{% endblock content %}
+
+			{% include 'includes/footer.html' %}
+
+		</div>
+		
+
+		
+	</div>
+
+
+	{% include 'includes/scripts.html' %}
+    <!-- Specific Page JS goes HERE  -->
+	{% block javascripts %}{% endblock javascripts %}
+		
+
+</body>
+</html>

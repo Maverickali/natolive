@@ -1,0 +1,71 @@
+<!-- Fonts and icons -->
+<script src="/static/assets/js/plugin/webfont/webfont.min.js"></script>
+<script>
+    WebFont.load({
+        google: {"families":["Lato:300,400,700,900"]},
+        custom: {"families":["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands", "simple-line-icons"], urls: ['/static/assets/css/fonts.min.css']},
+        active: function() {
+            sessionStorage.fonts = true;
+        }
+    });
+</script>
+
+<!-- CSS Files -->
+<link rel="stylesheet" href="/static/assets/css/bootstrap.min.css">
+<link rel="stylesheet" href="/static/assets/css/atlantis.min.css">
+<!-- CSS Just for demo purpose, don't include it in your project -->
+<link rel="stylesheet" href="/static/assets/css/demo.css">
+<style>
+              .mainbox {
+            background-color: #95c2de;
+            margin: auto;
+            height: 100%;
+            width: 100%;
+            position: relative;
+          }
+
+            .err {
+              color: #ffffff;
+              font-family: 'Nunito Sans', sans-serif;
+              font-size: 11rem;
+              position:absolute;
+              left: 20%;
+              top: 8%;
+            }
+
+          .far {
+            position: absolute;
+            font-size: 8.5rem;
+            left: 42%;
+            top: 15%;
+            color: #ffffff;
+          }
+
+          .err2 {
+              color: #ffffff;
+              font-family: 'Nunito Sans', sans-serif;
+              font-size: 11rem;
+              position:absolute;
+              left: 68%;
+              top: 8%;
+            }
+
+          .msg {
+              text-align: center;
+              font-family: 'Nunito Sans', sans-serif;
+              font-size: 1.6rem;
+              position:absolute;
+              left: 16%;
+              top: 45%;
+              width: 75%;
+            }
+
+          a {
+            text-decoration: none;
+            color: white;
+          }
+
+          a:hover {
+            text-decoration: underline;
+          }
+  </style>
