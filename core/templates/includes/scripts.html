@@ -25,7 +25,9 @@
 	<script src="/static/assets/js/setting-demo2.js"></script>
 	<script>
 		
-		 
+		 $(function () {
+			$('[data-toggle="tooltip"]').tooltip()
+		});
 
 		$('#datetime').datetimepicker({
 			format: 'MM/DD/YYYY H:mm',

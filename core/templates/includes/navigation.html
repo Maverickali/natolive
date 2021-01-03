@@ -28,7 +28,7 @@
 				<div class="container-fluid">
 					<div class="collapse" id="search-nav">
 						<form class="navbar-left navbar-form nav-search mr-md-3">
-							<h2 class="text-color"> Welcome to Nato Live</h2>
+							<h2 class="text-white"> Welcome to Nato Live</h2>
 							<div class="input-group">
 						
 								{% comment %} <div class="input-group-prepend">
@@ -230,14 +230,14 @@
 						<li class="nav-item dropdown hidden-caret">
 							<a class="dropdown-toggle profile-pic" data-toggle="dropdown" href="#" aria-expanded="false">
 								<div class="avatar-sm">
-									<img src="/static/assets/img/profile.jpg" alt="..." class="avatar-img rounded-circle">
+									{% comment %} <img src="/static/assets/img/profile.jpg" alt="..." class="avatar-img rounded-circle"> {% endcomment %}
 								</div>
 							</a>
 							<ul class="dropdown-menu dropdown-user animated fadeIn">
 								<div class="dropdown-user-scroll scrollbar-outer">
 									<li>
 										<div class="user-box">
-											<div class="avatar-lg"><img src="/static/assets/img/profile.jpg" alt="image profile" class="avatar-img rounded"></div>
+											{% comment %} <div class="avatar-lg"><img src="/static/assets/img/profile.jpg" alt="image profile" class="avatar-img rounded"></div> {% endcomment %}
 											<div class="u-text">
 												<h4>
 													{{ request.user.username }}

@@ -3,6 +3,7 @@ from .models import Injections
 import datetime
 from app.models import Branch
 
+
 TITLE_CHOICES = [
     ('MR', 'Mr.'),
     ('MRS', 'Mrs.'),
@@ -14,6 +15,7 @@ class SearchForm(forms.Form):
         initial=datetime.date.today,
         label='From Date', 
         widget=forms.SelectDateWidget(
+
             attrs={"class":"form-control form-control-sm"}
             )
         )
@@ -48,7 +50,7 @@ class SearchForm(forms.Form):
     )
     branch_name = forms.CharField(        
         label='Select Branch', 
-          required=False,
+        required=False,
         max_length=50,
         widget=forms.Select(
             attrs={"class": "form-control form-control-sm", "id": "branchSelector"}, 
@@ -57,20 +59,6 @@ class SearchForm(forms.Form):
     )
     
 # (b.branch_name) for b in Branch.objects.select_related().get(record_id = id)
-class AuthorizationForm(forms.Form):
-
-    injection_auth = forms.BooleanField(
-        required=False,
-        widget=forms.CheckboxInput(
-           attrs={
-               "class": "form-check-input", 
-               "value": True
-          }
-        )
-    )
-
-
-
 class TreasuryForm(forms.ModelForm):
     branch_name = forms.CharField(        
         label='Select Branch', 

@@ -121,9 +121,23 @@
                                   <td>{{ T.repeat_customer_amount }}</td>
                                   <td>{{ T.new_customer_amount }}</td>
                                   <td>{{ T.cash_reserve_need }}</td>                              
-                                  <td>{{ T.injection_status }}</td>
+                                  <td>
+                                  {%if T.injection_status == True %}
+                                    <span class="badge badge-info">Pending Request</span>
+                                  {%else%}
+                                    <span class="badge badge-secondary">No Request</span>
+                                  {%endif%}                                    
+                                  </td>
                                   <td>{{ T.injection_amount }}</td>    
-                                  <td>{{ T.injection_authorization }}</td>                           
+                                  <td>
+                                  {%if T.injection_authorization == 'APPROVED' %}
+                                    <span data-toggle="tooltip" data-placement="top" title="Tooltip on top" class="badge badge-success">Injection AUTHORIZED</span>
+                                  {% elif  T.injection_authorization == 'REJECTED' %}
+                                    <span class="badge badge-danger">Injection REJECTED</span>
+                                  {%else%}
+                                    <span class="badge badge-warning">PENDING</span>
+                                  {%endif%}
+                                  </td>                           
                                   <td>{{ T.repeat_customer_numbers }}</td>
                                   <td>{{ T.new_customer_numbers }}</td>   
                                   <td>{{ T.created_by }}</td>

@@ -3,7 +3,7 @@
 Copyright (c) 
 """
 
-from django.contrib.auth.decorators import login_required, permission_required, group_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template import loader
 from django.http import HttpResponse
@@ -12,12 +12,11 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views import generic 
 from .forms import TreasuryForm, SearchForm
+from .functions import branch_disable
 from app.models import Injections, Branch
-from app.forms import AuthorizationForm
 import datetime
 from datetime import date, timedelta
-
-
+import re
 
 
 @login_required(login_url="/login/")
@@ -46,9 +45,10 @@ def treasury_create(request):
             msg='FORM IS INVALID'
     else:
         form = TreasuryForm()
-
+    user_name = request.user.username
+    form = branch_disable(user_name,'treasury')
     context = {
-        'form': TreasuryForm, 
+        'form': form, 
         "msg" : msg, 
         "success" : success, 
         "currentGroup": current_user_groups}
@@ -92,13 +92,12 @@ def treasury_report(request):
     else:
         search_form = SearchForm()
         treasury_list = Injections.objects.filter(injection_status=True,date=datetime.datetime.today()).order_by('-date')
-   
+  
     branch_name = Branch.objects.all()
-    search_form = SearchForm()
-    authform = AuthorizationForm()
+    user_name = request.user.username    
+    search_form = branch_disable(user_name,'search')
     context = { 
             'treasuryList': treasury_list, 
-            'authform': authform,
             'searchform': search_form,
             'Branch': branch_name, 'updated': updated, 'msg': msg}
 
@@ -107,12 +106,14 @@ def treasury_report(request):
 def approved_injection(request, id):
 
     treasury_list = None
+    treasury_list = Injections.objects.filter(injection_status=True,date=datetime.datetime.today()).order_by('-date') 
     updating = None
     msg = None
     if request.user.has_perm('app.can_approve_reject_injection'):     
-        Injections.objects.all()   
+        # Injections.objects.all()   
         updated = Injections.objects.select_related().get(record_id=id)
-        updated.injection_authorization = True
+        # treasury_list = updated
+        updated.injection_authorization = 'APPROVED'
         updated.injection_status = False
         updated.updated_by = request.user.id
         updated.save()
@@ -120,19 +121,42 @@ def approved_injection(request, id):
         msg = 'Injection Approved Successfully'
     else:
         return render(request, 'includes/noauthorization.html')
-
+    search_form = SearchForm()
     context = { 
         'treasuryList' : treasury_list, 
+        'searchform': search_form,
         'updated': updated, 
         'msg': msg}
     return render(request, 'treasury/view.html', context)
+
 def rejected_injection(request, id):
+    treasury_list = None
     try:
         msg = None
         success = None
+        if request.user.has_perm('app.can_approve_reject_injection'):     
+            treasury_list = Injections.objects.filter(injection_status=True,date=datetime.datetime.today()).order_by('-date')
+            updated = Injections.objects.select_related().get(record_id=id)
+            updated.injection_authorization = 'REJECTED'
+            updated.injection_status = False
+            updated.updated_by = request.user.id
+            updated.save()
+            updated = True  
+            msg = 'Injection Rejected Successfully'
+        else:
+            return render(request, 'includes/noauthorization.html')
+
     except:
         success = "danger"
         msg = "Something Went Wrong DB LEVEL"
+    search_form = SearchForm()
+    context = { 
+        'treasuryList' : treasury_list, 
+        'searchform': search_form,
+        'updated': updated, 
+        'msg': msg}
+    return render(request, 'treasury/view.html', context)
+    
 
 # @login_required(login_url="/login/")
 # def pages(request):

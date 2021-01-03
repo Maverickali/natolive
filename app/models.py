@@ -19,7 +19,7 @@ class Injections(models.Model):
     cash_reserve_need = models.FloatField(default=0.0) 
     injection_amount = models.FloatField(default=0.0, null=True)
     injection_status = models.BooleanField(default=False)
-    injection_authorization = models.BooleanField(default=False)
+    injection_authorization = models.CharField(max_length=10,default='False')
     creation_date = models.DateTimeField(auto_now_add=True)
     created_by = models.CharField(max_length=50)
     update_date = models.DateTimeField(auto_now=True, null=True)
@@ -30,3 +30,9 @@ class Branch(models.Model):
     branch_name = models.CharField(max_length=50, unique=True)
     creation_date = models.DateTimeField(auto_now_add=True)
     created_by = models.CharField(max_length=50)
+
+# class Profile(models.Model):
+#     user = models.OneToOneField(User, on_delete=models.CASCADE)
+#     branch_id = models.CharField(default=False, max_length=100)
+#     location = models.CharField(default=False, max_length=100)
+#     creationdate = models.DateField(default=False)
