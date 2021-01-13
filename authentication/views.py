@@ -1,7 +1,4 @@
 # -*- encoding: utf-8 -*-
-"""
-Copyright (c) 2019 - present AppSeed.us
-"""
 
 from django.shortcuts import render
 
@@ -26,7 +23,7 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect("dashboard/")
+                return redirect("/")
             else:    
                 msg = 'Invalid credentials'    
         else:

@@ -11,6 +11,7 @@ from django import template
 from django.urls import reverse
 from django.utils import timezone
 from django.views import generic 
+from django.db.models import Sum
 from .forms import TreasuryForm, SearchForm
 from .functions import branch_disable
 from app.models import Injections, Branch
@@ -21,7 +22,9 @@ import re
 
 @login_required(login_url="/login/")
 def index(request):    
-    context = {}
+    cash_forward = Injections.objects.aggregate(Sum('cash_forward'))
+    
+    context = { 'cash_forward': cash_forward['cash_forward__sum']}
     context['segment'] = 'index'
     html_template = loader.get_template( 'index.html' )
     return HttpResponse(html_template.render(context, request))
@@ -92,7 +95,7 @@ def treasury_report(request):
     else:
         search_form = SearchForm()
         treasury_list = Injections.objects.filter(injection_status=True,date=datetime.datetime.today()).order_by('-date')
-  
+    msg = Injections.objects.aggregate(Sum('cash_forward'))
     branch_name = Branch.objects.all()
     user_name = request.user.username    
     search_form = branch_disable(user_name,'search')
