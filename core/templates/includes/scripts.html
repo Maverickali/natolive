@@ -39,7 +39,20 @@
 			format: 'h:mm A', 
 		});
 
-		
+		function digitsep(input)
+		{
+			var nStr = input.value + '';
+			nStr = nStr.replace( /\,/g, "");
+			var x = nStr.split( '.' );
+			var x1 = x[0];
+			var x2 = x.length > 1 ? '.' + x[1] : '';
+			var rgx = /(\d+)(\d{3})/;
+			while ( rgx.test(x1) ) {
+				x1 = x1.replace( rgx, '$1' + ',' + '$2' );
+			}
+			input.value = x1 + x2;				
+		}
+
 		function format(input)
 		{
 			var subTotalDisbursed = document.getElementById("subTotalDisbursed");
@@ -69,6 +82,11 @@
 			subTotal.innerHTML = 0;
 			subTotal.innerHTML = parseInt(newCustomer.val()) + parseInt(repeatCustomer.val());
 			
+		}
+
+		function empty()
+		{
+			document.getElementById("amount_collected").value = ''
 		}
 		
 		function enableInjectionAmount()

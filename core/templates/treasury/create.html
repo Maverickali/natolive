@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 
-{% block title %} UI Treasury {% endblock %} 
+{% block title %} Create Treasury {% endblock %} 
 
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}
@@ -83,7 +83,7 @@
 												</div>
 											</div>
 										</div>
-										<span class="text-danger">{{ form.injection_status.errors }}</span>									
+										<span class="text-danger">{{ form.date.errors }}</span>									
 										<div class="form-group">
 											<label>{{form.repeat_customer_amount.label }}</label>
 											{{ form.repeat_customer_amount }}  

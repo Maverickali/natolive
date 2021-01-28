@@ -1,0 +1,199 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} UI Set Targets {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<link rel="stylesheet" href="/static/assets/css/atlantis2.css">
+
+{% endblock stylesheets %}
+
+{% block content %}
+	{% if 'Branch-Managers' or 'Supervisor' in currentGroup %}
+		<div class="content">
+		<div class="page-inner">
+			<div class="page-header" >
+				<h4 class="page-title">Set Targets {{ msg }}</h4>
+				<ul class="breadcrumbs">
+					<li class="nav-home">
+						<a href="index.html">
+							<i class="flaticon-home"></i>
+						</a>
+					</li>
+					<li class="separator">
+						<i class="flaticon-right-arrow"></i>
+					</li>
+					<li class="nav-item">
+						<a href="/manager/set_targets.html">Set Targets</a>
+					</li>											
+				
+				</ul>
+			</div>
+			<div class="row">
+				<div class="col-md-12">					
+                    <div class="row mt--2">
+                        <div class="col-md-6">
+                            <div class="card full-height">
+                                <div class="card-body">
+                                    <div class="card-title">Set Customer Targets</div>
+                                    <form method="post" id="frmcollections">  {% csrf_token %} 
+                                    <input hidden name="frmcollections" id="frmcollections" value="form1" type="text">
+                                    <div class="row py-3">                                    
+                                        <div class="col-md-6 d-flex flex-column justify-content-around">                                            
+                                                <div class="form-group ">
+                                                    <label>{{form.rm_id.label}}   </label>                                                                                                 
+                                                    <select name="rm_id" required class="form-control form-control-sm" id="rm2" maxlength="50">
+                                                        <option selected value=""> --SELECT RM--</option>
+                                                        {% for u in user %}
+                                                            {% for p in profile %}
+                                                            {%if u.id == p.user_id %}
+                                                                <option value="{{u.id}}">{{u.username}} </option>                                                      
+                                                            {% endif   %}
+                                                        {%endfor %}
+                                                        {%endfor %}
+                                                    </select>
+
+                                                </div>
+                                                <span class="text-danger">{{ form.rm_id.errors }}</span>     
+                                                <div class="form-group">
+                                                    <label>{{form.from_date.label}}</label>
+                                                    <div class="input-group">
+                                                        {{ form.from_date }}	
+                                                    </div>
+                                               </div>
+                                               <span class="text-danger">{{ form.from_date.errors }}</span>     
+                                               <div class="form-group">
+                                                    <label>{{form.to_date.label}}</label>
+                                                    <div class="input-group">
+                                                        {{ form.to_date }}	
+                                                    </div>
+                                                </div> 
+                                                <span class="text-danger">{{ form.to_date.errors }}</span>     
+                                                <div class="form-group">
+                                                    <label>{{form.new_customers.label}}</label>  
+                                                    {{form.new_customers}}                                   
+                                                </div>
+                                                <span class="text-danger">{{ form.new_customers.errors }}</span>                                                
+                                                                   
+                                        </div>
+                                        <div class="col-md-6 d-flex flex-column justify-content-around">
+                                            <div class="form-group ">
+                                                <label>{{form.collections.label}}</label>  
+                                                {{form.collections}}                                   
+                                            </div>
+                                            <span class="text-danger">{{ form.collections.errors }}</span>     
+                                            <div class="form-group">
+                                                <label>{{form.disbursements.label}}</label>  
+                                                {{form.disbursements}}                                   
+                                            </div>
+                                            <span class="text-danger">{{ form.disbursements.errors }}</span>              
+                                            <div class="form-group ">
+                                                <label>{{form.active_portfoilo.label}} </label>  
+                                                {{form.active_portfoilo}}                                   
+                                            </div>
+                                            <span class="text-danger">{{ form.active_portfoilo.errors }}</span>     
+                                            <div class="form-group ">
+                                                <label>{{form.bad_portfoilo.label}}</label>  
+                                                {{form.bad_portfoilo}}                                   
+                                            </div>
+                                            <span class="text-danger">{{ form.bad_portfoilo.errors }}</span>
+                                        </div>
+
+                                        
+                                    </div> 
+                                    <div class="card-action">
+                                            <button class="btn btn-success" type="submit">Submit</button>
+                                            <button class="btn btn-danger" >Cancel</button>
+                                        </div>
+                                    </form>                               
+                                </div>                               
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card full-height">
+                                <div class="card-body">
+                                    <div class="card-title">Set Customer Targets</div>
+                                    <div class="row py-3">
+                                    <form method="post" id="frmCustomers" > 	
+                                     {% csrf_token %}  
+                                     <input hidden name="frmcollections" id="frmcollections" value="form2" type="text">
+                                        <div class="col-md-9 d-flex flex-column justify-content-around">
+                                        <div class="form-group ">
+                                                    <h6 class="fw-bold text-uppercase text-primary op-8">{{form.rm_id.label}}   </h6>                                                                                                 
+                                                    <select name="rm_id" required class="form-control form-control-sm" id="rm2" maxlength="50">
+                                                        <option selected value=""> --SELECT RM--</option>
+                                                        {% for u in user %}
+                                                            {% for p in profile %}
+                                                            {%if u.id == p.user_id %}
+                                                                <option value="{{u.id}}">{{u.username}} </option>                                                      
+                                                            {% endif   %}
+                                                        {%endfor %}
+                                                        {%endfor %}
+                                                    </select>
+
+                                                </div>
+                                                <span class="text-danger">{{ form.rm_id.errors }}</span>                                            
+                                            <div class="form-group">
+                                                <h6 class="fw-bold text-uppercase text-primary op-8">{{form.from_date.label}}</h6>
+                                                <div class="input-group">
+                                                    {{ form.from_date }}	
+                                                </div>
+                                               </div><span class="text-danger">{{ form.to_date.errors }}</span>                                                 
+                                             <div class="form-group">
+                                                <h6 class="fw-bold text-uppercase text-primary op-8">{{form.from_date.label}}</h6>
+                                                <div class="input-group">
+                                                    {{ form.to_date }}	
+                                                </div>
+                                            </div><span class="text-danger">{{ form.to_date.errors }}</span>                                               
+                                                                                        
+                                            <div class="form-group">
+                                                <h6 class="fw-bold text-uppercase text-primary op-8">{{frmportfoilo.day_category.label}}</h6>
+                                                <h3 class="fw-bold"> {{ frmportfoilo.day_category }}</h3>
+                                            </div>
+                                            <div class="form-group">
+                                                <h6 class="fw-bold text-uppercase text-primary op-8">No of Customers in selected category above</h6>
+                                                <h3 class="fw-bold"> {{form.new_customers }} </h3>
+                                            </div>                                             
+                                        </div>
+                                        <div class="card-action">
+                                                    <button class="btn btn-success" type="submit">Submit</button>
+                                                    <button class="btn btn-danger" >Cancel</button>
+                                                </div>
+                                    </form> 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+			</div>
+		</div>
+	</div>
+
+	{% else %}
+			{% include 'includes/noauthorization.html' %}
+	{% endif %} 
+
+
+	
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+<script>		
+		$('#frmcollections').on('submit', function() {
+            var collections = $('#collections');
+            var disbursements = $('#disbursements');
+            var active_portfoilo = $('#active_portfoilo');
+            var bad_portfoilo = $('#bad_portfoilo');
+            collections.val(collections.val().replace(/,/g, ''));
+            disbursements.val(disbursements.val().replace(/,/g, ''));        
+            active_portfoilo.val(active_portfoilo.val().replace(/,/g, ''));
+            bad_portfoilo.val(bad_portfoilo.val().replace(/,/g, ''));
+			
+		}); 
+
+	</script>
+
+	<!-- Atlantis DEMO methods, don't include it in your project! -->
+	<script src="/static/assets/js/setting-demo2.js"></script>
+
+{% endblock javascripts %}	

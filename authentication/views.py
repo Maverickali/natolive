@@ -21,9 +21,10 @@ def login_view(request):
             username = form.cleaned_data.get("username")
             password = form.cleaned_data.get("password")
             user = authenticate(username=username, password=password)
+            current_user_groups = request.user.groups.values_list("name", flat=True)
             if user is not None:
                 login(request, user)
-                return redirect("/")
+                return render(request, "index.html", {"currentGroup": current_user_groups})#redirect("/")
             else:    
                 msg = 'Invalid credentials'    
         else:
