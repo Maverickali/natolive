@@ -1,6 +1,6 @@
 @echo off
 
-set "VIRTUAL_ENV=D:\PythonCode\altanis\django-dashboard-atlantis-dark\env"
+set "VIRTUAL_ENV=D:\PythonCode\nato\env"
 
 if defined _OLD_VIRTUAL_PROMPT (
     set "PROMPT=%_OLD_VIRTUAL_PROMPT%"

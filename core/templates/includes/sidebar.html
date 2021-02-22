@@ -67,16 +67,16 @@
 								<div class="collapse" id="treasury">
 									<ul class="nav nav-collapse">
 										<li>
-											<a href="/rm/create_daily_activity.html">
-												<span class="sub-item">Add Daily Activity</span>
+											<a href="/rm/c_collection_sheet.html">
+												<span class="sub-item">Collection Sheet</span>
 											</a>
 										</li>
 										<li>
-											<a href="/rm/view_daily_activity.html">
-												<span class="sub-item">View Daily Report</span>
+											<a href="{% url 'potentialCustomer' %}">
+												<span class="sub-item">Potential Customer</span>
 											</a>
 										</li>
-										<li>
+										{% comment %} <li>
 											<a href="/rm/create_weekly_assessments.html">
 												<span class="sub-item">Create Weekly Assessment </span>
 											</a>
@@ -85,7 +85,7 @@
 											<a href="/rm/view_weekly_assessments.html">
 												<span class="sub-item">View Weekly Assessment</span>
 											</a>
-										</li>
+										</li> {% endcomment %}
 									</ul>
 								</div>
 							</li>
@@ -98,6 +98,26 @@
 								<div class="collapse" id="manager">
 									<ul class="nav nav-collapse">
 										<li>
+											<a href="/manager/rm_collections.html">
+												<span class="sub-item">Rm Collections</span>
+											</a>
+										</li>
+										<li>
+											<a href="/manager/view_disbursement.html">
+												<span class="sub-item">View Disbursement</span>
+											</a>
+										</li>
+										<li>
+											<a href="{% url 'addDisbursement' %}">
+												<span class="sub-item">Add Disbursement</span>
+											</a>
+										</li>
+										<li>
+											<a href="{% url 'addDailyReport' %}">
+												<span class="sub-item">Daily Report</span>
+											</a>
+										</li>
+										{% comment %} <li>
 											<a href="/manager/set_targets.html">
 												<span class="sub-item">Set Targets</span>
 											</a>
@@ -106,7 +126,7 @@
 											<a href="/manager/view_set_targets.html">
 												<span class="sub-item">View Set Targets</span>
 											</a>
-										</li>
+										</li> {% endcomment %}
 									</ul>
 								</div>
 							</li>

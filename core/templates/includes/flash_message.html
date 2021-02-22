@@ -1,0 +1,38 @@
+{% if msg_status %} 
+<div class="alert alert-success alert-block">
+	<button type="button" class="close" data-dismiss="alert">×</button>	
+        <strong>{{ msg }}</strong>
+</div>
+{% endif %}
+
+
+{% if msg_status == False %} 
+<div class="alert alert-danger alert-block">
+	<button type="button" class="close" data-dismiss="alert">×</button>	
+        <strong>{{ msg }}</strong>
+</div>
+{% endif %}
+
+
+{% comment %} {% if %} 
+<div class="alert alert-warning alert-block">
+	<button type="button" class="close" data-dismiss="alert">×</button>	
+	<strong>{{ msg }}</strong>
+</div>
+{% endif %}
+
+
+{% if %} 
+<div class="alert alert-info alert-block">
+	<button type="button" class="close" data-dismiss="alert">×</button>	
+	<strong>{{ msg }}</strong>
+</div>
+{% endif %}
+
+
+{% if %} 
+<div class="alert alert-danger">
+	<button type="button" class="close" data-dismiss="alert">×</button>	
+	Please check the form below for errors
+</div>
+{% endif %} {% endcomment %}

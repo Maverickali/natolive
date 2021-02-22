@@ -28,7 +28,7 @@ def _deactivate(args):
 _deactivate(["nondestructive"])
 aliases["deactivate"] = _deactivate
 
-$VIRTUAL_ENV = r"D:\PythonCode\altanis\django-dashboard-atlantis-dark\env"
+$VIRTUAL_ENV = r"D:\PythonCode\nato\env"
 
 $_OLD_VIRTUAL_PATH = $PATH
 $PATH = $PATH[:]

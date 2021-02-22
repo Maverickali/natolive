@@ -1,4 +1,4 @@
-#!D:\PythonCode\altanis\django-dashboard-atlantis-dark\env\Scripts\python.exe
+#!D:\PythonCode\nato\env\Scripts\python.exe
 from django.core import management
 
 if __name__ == "__main__":

@@ -2,6 +2,8 @@ from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import authenticate
 from app.forms import SearchForm, TreasuryForm
 import re
+import datetime
+from app.models import Profile
 
 
 
@@ -32,3 +34,17 @@ def branch_disable(user_name, form):
 
 def get_date(request):
     pass
+
+def clean_form(form):
+    return form.full_clean()
+
+def get_date(request):
+    year = int(request.POST['collection_date_year'])
+    month = int(request.POST['collection_date_month'])
+    day = int(request.POST['collection_date_day'])
+    return datetime.date(year,month,day)
+    
+def get_branch_id(request):
+    profile = Profile.objects.get(user_id=request.user.id)
+    return profile.branch_id_id 
+    

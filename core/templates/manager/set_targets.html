@@ -9,7 +9,7 @@
 {% endblock stylesheets %}
 
 {% block content %}
-	{% if 'Branch-Managers' or 'Supervisor' in currentGroup %}
+	{% if 'Branch-Managers' or 'RM' in currentGroup %}
 		<div class="content">
 		<div class="page-inner">
 			<div class="page-header" >
@@ -41,17 +41,21 @@
                                     <div class="row py-3">                                    
                                         <div class="col-md-6 d-flex flex-column justify-content-around">                                            
                                                 <div class="form-group ">
-                                                    <label>{{form.rm_id.label}}   </label>                                                                                                 
-                                                    <select name="rm_id" required class="form-control form-control-sm" id="rm2" maxlength="50">
+                                                    <label>{{form.rm_id.label}}   </label>                                                   
+                                                    {{ form.rm_id }}                                                                                            
+                                                  {% comment %} <select name="rm_id" required class="form-control form-control-sm" id="rm2" maxlength="50">
                                                         <option selected value=""> --SELECT RM--</option>
                                                         {% for u in user %}
                                                             {% for p in profile %}
                                                             {%if u.id == p.user_id %}
-                                                                <option value="{{u.id}}">{{u.username}} </option>                                                      
+                                                                <option value="{{u.id}}">{{u.username}} </option>
                                                             {% endif   %}
+                                                            {{ break }}
                                                         {%endfor %}
+                                                        
                                                         {%endfor %}
-                                                    </select>
+                                                    </select>  {% endcomment %}
+                                                    
 
                                                 </div>
                                                 <span class="text-danger">{{ form.rm_id.errors }}</span>     

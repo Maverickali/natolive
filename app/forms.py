@@ -1,9 +1,10 @@
 from django import forms
 from .models import Injections
 import datetime
-from app.models import Branch, Profile, RM_Daily_Activity, RM_Weekly_Customers, RM_Weekly_Customers_Portfolio, Targets_Collections_Disbursement, Targets_Portfoilo
+from app.models import Branch, Profile, RM_Daily_Activity, RM_Weekly_Customers, RM_Weekly_Customers_Portfolio, Targets_Collections_Disbursement, Targets_Portfoilo,  Potential_Customers, RM_Collection_Sheets
 from django.forms.widgets import DateInput
 from django.contrib.auth.models import User
+from datetime import date, timedelta
 
 
 
@@ -28,15 +29,8 @@ CUSTOMER_CATEGORIES = [
     ('60+', 'Above 60'),
 ] 
 
-customer_category =  forms.CharField(        
-        label='Select Customer Category',       
-        required=False,
-        max_length=50,
-        widget=forms.Select(
-            attrs={"class": "form-control form-control-sm" }, 
-            choices=CUSTOMER_CATEGORIES
-            ),
-    ) 
+current_date = datetime.date.today() 
+past_7_days = datetime.date.today() + timedelta(days=-7)
 
 class ProfileForm(forms.ModelForm):
     class Meta:
@@ -254,7 +248,7 @@ class RmDailyActivityForm(forms.ModelForm):
                 "onkeyup": "digitsep(this)",
                 "id": "amount_disbursed",
                "min" : "0","onclick":"empty(this)" ,
-                "value": 0.0
+                "value": 0.0 
             })
         )
     activitydate = forms.DateField(
@@ -284,7 +278,7 @@ class RMWeeklyCustomersPortfolioForm(forms.ModelForm):
         )
     to_date = forms.DateField(
         label='To Date', 
-        initial=datetime.date.today,
+        initial=past_7_days,
         widget=forms.SelectDateWidget(
             attrs={"class": "form-control form-control-sm"}
             )
@@ -432,8 +426,56 @@ class TargetsPortfoiloForm(forms.ModelForm):
         model = Targets_Portfoilo
         fields = [  'rm_id','day_category','number_cilents','from_date','to_date']
 
+class DatesRangeWeekly(forms.Form):
+    from_date = forms.DateField(
+        initial=datetime.date.today,
+        label='From Date', 
+        widget=forms.SelectDateWidget(
 
+            attrs={"class":"form-control form-control-sm"}
+            )
+        )
+    to_date = forms.DateField(
+        label='To Date', 
+        initial=current_date,
+        widget=forms.SelectDateWidget(
+            attrs={"class": "form-control form-control-sm"}
+            )
+        )
+    to_date_past = forms.DateField(
+        label='To Date', 
+        initial=past_7_days,
+        widget=forms.SelectDateWidget(
+            attrs={"class": "form-control form-control-sm"}
+            )
+        )
+    # customer_category =  forms.CharField(        
+    #     label='Select Customer Category',       
+    #     required=False,
+    #     max_length=50,
+    #     widget=forms.Select(
+    #         attrs={"class": "form-control form-control-sm" }, 
+    #         choices=CUSTOMER_CATEGORIES
+    #         ),
+    #     )
+    # number_customers = forms.IntegerField(
+    #     label='Number Of Customers',    
+    #     widget=forms.NumberInput(attrs={
+    #             "placeholder": "Enter Number Of Customers",                
+    #             "class": "form-control form-control-sm",              
+    #             "value": 0,
+    #             "id":"number_customer",
+    #            "min" : "0","onclick":"empty(this)"                 
+    #         }))
+    
 
+# class MessageFormBase(forms.ModelForm):
+#     class Meta:
+#         model = RM_Weekly_Customers
+#         fields =  [  'number_customers','customer_category','from_date','to_date']
+
+# class RMWeeklyCustomersForm(MessageFormBase, SetPasswordMixin):
+#     pass
 class RMWeeklyCustomersForm(forms.ModelForm):
 
     customer_category =  forms.CharField(        
@@ -459,3 +501,142 @@ class RMWeeklyCustomersForm(forms.ModelForm):
         fields =  [  'number_customers','customer_category','from_date','to_date']
 
 
+# RM FORMS
+
+
+class Collection_Sheet_Form(forms.ModelForm):
+    collection_date = forms.DateField(
+        required=True,
+        initial=datetime.date.today,
+        widget=forms.SelectDateWidget(
+            attrs={"class":"form-control form-control-sm"}
+            )
+        )
+    customer_name = forms.CharField(
+            required=True,
+            widget=forms.TextInput(attrs={
+                    "placeholder": "Enter Customer Name",                
+                    "class": "form-control form-control-sm"
+                
+                })
+        )
+    amount_collected = forms.DecimalField(
+        required=True,
+        label='Amounted For By Customer',         
+        widget=forms.TextInput(attrs={
+                "placeholder": "Enter Amounted For By Customer",                
+                "class": "form-control form-control-sm",
+                "oninput": "digitsep(this)",
+                "id": "amount_collected",
+               "min" : "0"
+              
+            })
+        )
+    receipt_number = forms.IntegerField(
+        required=True,
+        label='Receipt Number',    
+        widget=forms.NumberInput(attrs={
+                "placeholder": "Enter Receipt Number",                
+                "class": "form-control form-control-sm",              
+                "min" : "0",
+                "id":"receipt_no"             
+            }))
+    created_by = forms.CharField( required=False,
+        widget=forms.HiddenInput(attrs={
+                "placeholder": "Created by",                
+                "class": "form-control"               
+            })
+    )
+    class Meta:
+        model = RM_Collection_Sheets
+        fields = (
+            'customer_name', 
+            'amount_collected', 
+            'receipt_number',
+            'collection_date',
+            'created_by'
+            )
+
+
+class Potential_Customers_Form(forms.ModelForm):
+
+    first_name = forms.CharField( required=True,
+     label='First Name', 
+            widget=forms.TextInput(attrs={
+                    "placeholder": "Enter First Name",                
+                    "class": "form-control form-control-sm"
+                
+                })
+        )
+    last_name = forms.CharField( required=True,
+     label='Last Name', 
+            widget=forms.TextInput(attrs={
+                    "placeholder": "Enter Last Name",                
+                    "class": "form-control form-control-sm"
+                
+                })
+        )
+    contact = forms.CharField( required=True,
+     label='Customer Contact', 
+            widget=forms.TextInput(attrs={
+                    "placeholder": "Enter Customer Contact Number",                
+                    "class": "form-control form-control-sm",
+                    "max": "10"
+                
+                })
+        )
+    business_type = forms.CharField( required=True,
+     label='Business Type', 
+            widget=forms.TextInput(attrs={
+                    "placeholder": "Enter Business Type",                
+                    "class": "form-control form-control-sm"
+                
+                })
+        )
+    business_location = forms.CharField( required=True,
+     label='Business Location', 
+            widget=forms.TextInput(attrs={
+                    "placeholder": "Enter Business Location",                
+                    "class": "form-control form-control-sm"                
+                })
+        )
+    desired_date = forms.DateField(
+         label='Date', 
+        required=True,
+        initial=datetime.date.today,
+        widget=forms.SelectDateWidget(
+            attrs={"class":"form-control form-control-sm"}
+            )
+        )
+    desired_amount = forms.DecimalField(
+        required=True,
+        label='Amounted Desired',         
+        widget=forms.TextInput(attrs={
+                "placeholder": "Enter Amount Wanted By Customer",                
+                "class": "form-control form-control-sm",
+                "oninput": "digitsep(this)",
+                "id": "desired_amount",
+                "min" : "0"
+              
+            })
+        )
+    created_by = forms.CharField( required=False,
+        widget=forms.HiddenInput(attrs={
+                "placeholder": "Created by",                
+                "class": "form-control"               
+            })
+    )
+    class Meta:
+        model = Potential_Customers
+        fields = (
+            'first_name',
+            'last_name',
+            'desired_amount',
+            'contact',
+            'business_type',
+            'business_location',
+            'desired_date',
+            'created_by'
+        )
+
+# END OF RM FORMS
