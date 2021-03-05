@@ -60,9 +60,9 @@
 										</div>
 										<span class="text-danger">{{ form.collection_date.errors }}</span>	
 										 <div class="form-group">
-											<label>{{form.customer_name.label }}</label>
-											{{ form.customer_name }}  
-										</div><span class="text-danger">{{ form.customer_name.errors }}</span> 
+											<label>{{form.first_name.label }}</label>
+											{{ form.first_name }}  
+										</div><span class="text-danger">{{ form.first_name.errors }}</span> 
 																			
 									</div>
 									<!-- column 2 -->
@@ -71,7 +71,10 @@
 											<label>{{form.amount_collected.label}}   </label>  
 											{{form.amount_collected}}                                   
 										</div><span class="text-danger">{{ form.amount_collected.errors }}</span> 			
-																	
+										 <div class="form-group">
+											<label>{{form.last_name.label }}</label>
+											{{ form.last_name }}  
+										</div><span class="text-danger">{{ form.last_name.errors }}</span>							
 										                               									
 										
 									</div>
@@ -99,7 +102,8 @@
                             <thead>
                             <tr>
                               <th>Collection Date</th>
-                              <th>Customer Name</th>
+                              <th>First Name</th>
+							   <th>Last Name</th>
                               <th>Amount Collected</th>                            
                               <th>Receipt Number</th>
                               <th>Manager Authorization</th>                                   
@@ -110,10 +114,11 @@
                             {% for T in activity_data %}
                                 <tr>
                                   <td>{{ T.collection_date }}</td>
-                                  <td>{{ T.customer_name}} </td>
+                                  <td>{{ T.first_name}} </td>
+								  <td>{{ T.last_name}} </td>
                                   <td>{{ T.amount_collected}}</td>								                        
                                   <td>{{  T.receipt_number  }}</td>                                  								                        
-                                  <td>{{  T.before_authorization  }}</td>
+                                  <td>{{  T.authorization_status  }}</td>
                                 </tr>
                             {% endfor %} 
                           

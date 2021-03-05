@@ -1,3 +1,5 @@
+
+
 # -*- encoding: utf-8 -*-
 """
 Copyright (c) 2019 - present AppSeed.us
@@ -8,7 +10,7 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 class Injections(models.Model):
-    record_id = models.AutoField(primary_key=True)
+    record_id = models.BigAutoField(primary_key=True)
     branch_name = models.CharField(max_length=50)
     date = models.DateField()
     cash_forward = models.FloatField(default=0.0)
@@ -26,7 +28,7 @@ class Injections(models.Model):
     updated_by = models.IntegerField(default=False, null=True)
 
 class Branch(models.Model):
-    id = models.AutoField(primary_key=True)
+    id = models.BigAutoField(primary_key=True)
     branch_name = models.CharField(max_length=50, unique=True)
     creation_date = models.DateTimeField(auto_now_add=True)
     created_by = models.CharField(max_length=50)
@@ -35,7 +37,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     branch_id = models.ForeignKey(Branch, on_delete=models.CASCADE)
     location = models.CharField(default=False, max_length=100)
-    created_on = models.DateField(default=False)
+    created_on =  models.DateField(default=False)
     created_by = models.IntegerField(default=False)
     update_on = models.DateTimeField(auto_now=True, null=True)
     updated_by = models.IntegerField(default=False, null=True)
@@ -122,6 +124,7 @@ class RM_Collection_Sheets(models.Model):
     amount_collected = models.FloatField(default=0.0)
     receipt_number = models.IntegerField(default=False)
     collection_date = models.DateField(default=False)
+    branch_id = models.IntegerField(default=0)
     authorization_status = models.CharField(default='PENDING', max_length=100, null=True)
     authorization_note = models.CharField(default='Not Authorized By Branch Manager', max_length=100, null=True)
     created_on = models.DateTimeField(auto_now_add=True)
@@ -132,7 +135,7 @@ class RM_Collection_Sheets(models.Model):
 class Daily_Report(models.Model):
     id = models.BigAutoField(primary_key=True)
     opening_bal = models.FloatField(default=0.0)  
-    total_collections = models.FloatField(default=0.0)
+    total_collections = models.FloatField(default=0.0, null=True)
     total_processing_fees = models.FloatField(default=0.0)
     total_disbursed = models.FloatField(default=0.0)
     injection_in = models.FloatField(default=0.0)  
@@ -143,6 +146,7 @@ class Daily_Report(models.Model):
     previous_closing_portfolio = models.FloatField(default=0.0)
     total_clients_disbursed = models.IntegerField(default=False)
     activity_date = models.DateField(default=False)
+    branch_id = models.IntegerField(default=False)#models.ForeignKey(Branch,  on_delete=models.CASCADE,default=False)
     created_on = models.DateTimeField(auto_now_add=True)
     created_by = models.IntegerField(default=False)
     update_on = models.DateTimeField(auto_now=True, null=True)
@@ -155,7 +159,7 @@ class Potential_Customers(models.Model):
     contact = models.CharField(default=False, max_length=100)
     amount_desired = models.FloatField(default=False)
     client_type = models.CharField(default=False, max_length=100)
-    branch_id = models.ForeignKey(Branch,  on_delete=models.CASCADE)
+    branch_id = models.IntegerField(default=False)
     desire_date = models.DateField(default=False)
     turn_over = models.CharField(default='potential_cilent', max_length=100, null=True)
     business_type = models.CharField(default=False, max_length=100)
@@ -168,7 +172,7 @@ class Potential_Customers(models.Model):
 class Disbursements(models.Model):
     id = models.BigAutoField(primary_key=True)
     amount_disbursed = models.FloatField(default=0.0) 
-    branch_id = models.ForeignKey(Branch,  on_delete=models.CASCADE)
+    branch_id = models.IntegerField(default=False)
     disbursed_date = models.DateField(default=False)
     id_number = models.IntegerField(default=0.0)
     customer_id = models.OneToOneField(Potential_Customers,  on_delete=models.CASCADE)

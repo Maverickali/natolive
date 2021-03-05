@@ -512,10 +512,18 @@ class Collection_Sheet_Form(forms.ModelForm):
             attrs={"class":"form-control form-control-sm"}
             )
         )
-    customer_name = forms.CharField(
-            required=True,
+    first_name = forms.CharField( required=True,
+        label='First Name', 
             widget=forms.TextInput(attrs={
-                    "placeholder": "Enter Customer Name",                
+                    "placeholder": "Enter First Name",                
+                    "class": "form-control form-control-sm"
+                
+                })
+        )
+    last_name = forms.CharField( required=True,
+        label='Last Name', 
+            widget=forms.TextInput(attrs={
+                    "placeholder": "Enter Last Name",                
                     "class": "form-control form-control-sm"
                 
                 })
@@ -550,7 +558,8 @@ class Collection_Sheet_Form(forms.ModelForm):
     class Meta:
         model = RM_Collection_Sheets
         fields = (
-            'customer_name', 
+            'first_name',
+            'last_name', 
             'amount_collected', 
             'receipt_number',
             'collection_date',

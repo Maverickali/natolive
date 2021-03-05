@@ -3,7 +3,7 @@
 # from datetime import date, timedelta
 # from app.models import RM_Collection_sheet, Potential_Customers
 
-    
+
 # class Collection_Sheet_Form(forms.ModelForm):
 #     collection_date = forms.DateField(
 #         required=True,
@@ -60,22 +60,22 @@
 
 # class Potential_Customers_Form(forms.ModelForm):
 
-#     first_name = forms.CharField( required=True,
-#      label='First Name', 
-#             widget=forms.TextInput(attrs={
-#                     "placeholder": "Enter First Name",                
-#                     "class": "form-control form-control-sm"
+    # first_name = forms.CharField( required=True,
+    #  label='First Name', 
+    #         widget=forms.TextInput(attrs={
+    #                 "placeholder": "Enter First Name",                
+    #                 "class": "form-control form-control-sm"
                 
-#                 })
-#         )
-#     last_name = forms.CharField( required=True,
-#      label='Last Name', 
-#             widget=forms.TextInput(attrs={
-#                     "placeholder": "Enter Last Name",                
-#                     "class": "form-control form-control-sm"
+    #             })
+    #     )
+    # last_name = forms.CharField( required=True,
+    #  label='Last Name', 
+    #         widget=forms.TextInput(attrs={
+    #                 "placeholder": "Enter Last Name",                
+    #                 "class": "form-control form-control-sm"
                 
-#                 })
-#         )
+    #             })
+    #     )
 #     contact = forms.CharField( required=True,
 #      label='Customer Contact', 
 #             widget=forms.TextInput(attrs={

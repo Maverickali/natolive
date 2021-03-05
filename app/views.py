@@ -2,7 +2,7 @@
 """
 Copyright (c) 
 """
-
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template import loader
@@ -12,17 +12,21 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views import generic 
 from django.db.models import Sum
+from django.contrib.auth.models import Group, User
 from app.forms import Collection_Sheet_Form, Potential_Customers_Form, RMWeeklyCustomersForm, RMWeeklyCustomersPortfolioForm, RmDailyActivityForm, SearchForm, SetTargetsForm, TargetsPortfoiloForm, TreasuryForm
-# from app.rm_forms import Collection_Sheet_Form
-from .functions import branch_disable
+# from app.rm_forms import Collection_Sheet_Form from .forms import LoginForm, 
+
+from .functions import branch_disable, get_date
 from app.models import Branch, Disbursements, Injections, Potential_Customers, Profile, RM_Collection_Sheets, RM_Daily_Activity
 import datetime
 from datetime import date, timedelta
 import re
+from django.db import DatabaseError
 from django.contrib.auth.models import User
 # from app.manager_forms import RM_Search_Collections_Form
-from app.functions import get_branch_id
+from app.functions import get_branch_id, get_user_group
 from app.manager_forms import Daily_Report_Form, Disbursement_Form, Disbursement_Search_Form, RM_Search_Collections_Form
+from authentication.forms import SignUpForm
 
 
 
@@ -31,9 +35,13 @@ def index(request):
     cash_forward = Injections.objects.aggregate(Sum('cash_forward'))
     
     context = { 'cash_forward': cash_forward['cash_forward__sum']}
-    context['segment'] = 'index'
-    html_template = loader.get_template( 'index.html' )
-    return HttpResponse(html_template.render(context, request))
+    # context['segment'] = 'index'
+    # html_template = loader.get_template( 'index.html' )
+    # return HttpResponse(html_template.render(context, request))
+    context = {'active': 'home',
+         "currentGroup": get_user_group(request)}
+
+    return render(request, 'index.html', context)
 
 @login_required(login_url="/login/")
 def treasury_create(request):
@@ -58,14 +66,15 @@ def treasury_create(request):
         form = TreasuryForm()
     user_name = request.user.username
     form = branch_disable(user_name,'treasury')
+    active = 'treasury'
     context = {
         'form': form, 
         "msg": msg, 
         "success": success, 
-        "currentGroup": current_user_groups}
+        "currentGroup": get_user_group(request), 'active':active}
 
     return render(request, 'treasury/create.html', context)
-    
+
 def treasury_report(request):
 
     treasury_list = None
@@ -108,10 +117,13 @@ def treasury_report(request):
     branch_name = Branch.objects.all()
     user_name = request.user.username    
     search_form = branch_disable(user_name,'search')
+    active = 'treasury'
     context = { 
             'treasuryList': treasury_list, 
             'searchform': search_form,
-            'Branch': branch_name, 'updated': updated, 'msg': msg}
+            'Branch': branch_name, 'updated': updated, 'msg': msg, 
+            "currentGroup": get_user_group(request),
+            'active':active}
 
     return render(request, 'treasury/view.html', context)
 
@@ -138,7 +150,7 @@ def approved_injection(request, id):
         'treasuryList' : treasury_list, 
         'searchform': search_form,
         'updated': updated, 
-        'msg': msg}
+        'msg': msg, "currentGroup": get_user_group(request)}
     return render(request, 'treasury/view.html', context)
 
 def rejected_injection(request, id):
@@ -221,7 +233,7 @@ def rm_daily_create(request):
     return render(request, 'rm/create_daily_activity.html', context)
 
 def rm_daily_view(request):
-    context = {}
+    context = { "currentGroup": get_user_group(request)}
     return render(request, 'rm/view_daily_activity.html', context)
 
 def rm_weekly_assessments_create(request):
@@ -263,7 +275,7 @@ def rm_weekly_assessments_create(request):
         'frm': frm, 
         "msg": msg, 
         "success": success,
-        "currentGroup": current_user_groups}
+         "currentGroup": get_user_group(request)}
 
     return render(request, 'rm/create_weekly_assessments.html', context)
 
@@ -348,7 +360,7 @@ def rm_collection_sheet(request):
             
             try:
                 # Go to db
-                checker = RM_Collection_Sheets.objects.get(receipt_number=receipt_no)
+                checker = RM_Collection_Sheets.objects.filter(receipt_number=receipt_no)
                 if not checker :
                     
                     obj = form.save(commit=False)
@@ -378,7 +390,8 @@ def rm_collection_sheet(request):
         'form': form,
         'msg_status': msg_status,
         'activity_data': activity_data,
-        'msg': msg
+        'msg': msg,
+        "currentGroup": get_user_group(request)
     }
 
     return render(request, 'rm/c_collection_sheet.html', context)
@@ -414,7 +427,8 @@ def potential_customer(request):
         'msg_status': msg_status,
         'activity_data': activity_data,
         'msg': msg,
-        'msg-status': msg_status
+        'msg-status': msg_status,
+        "currentGroup": get_user_group(request)
     }
 
     return render(request, 'rm/potential_customer.html', context)
@@ -425,7 +439,10 @@ def potential_customer(request):
 
  
 def get_branch_rms(request):
-    return Profile.objects.select_related('user').filter(branch_id=get_branch_id(request), user__groups__in=[5,4])
+    try:
+        return Profile.objects.select_related('user').filter(branch_id=get_branch_id(request), user__groups__in=[5,4])
+    except:
+        return None 
 
 
 def rm_collections(request):    
@@ -456,14 +473,15 @@ def rm_collections(request):
         total_collections = ''
         total_collections_amount = ''  
        
-  
+    active = 'collections'
     context = {
         'form': form,
         'activity_data': activity_data,
         'msg': msg, 'msg_status': msg_status, 
         'total_collections': total_collections,
         'total_collections_amount': total_collections_amount,
-        'rmddl': rms}
+        'rmddl': rms, 'active': active,
+        "currentGroup": get_user_group(request)}
     return render(request, 'manager/rm_collections.html', context)
 
 def add_disbursement(request):
@@ -503,7 +521,7 @@ def add_disbursement(request):
     context = {
         'form': form, 'activity_data': activity_data,
         'msg': msg,   'msg_status': msg_status,
-        'customerddl': customers }
+        'customerddl': customers,  "currentGroup": get_user_group(request) }
     return render(request, 'manager/add_disbursement.html', context)
 
 def view_disbursement(request):
@@ -512,7 +530,9 @@ def view_disbursement(request):
     msg = None
     msg_status = None
     customers = None
-    creator = None       
+    creator = None
+    current_user_groups = request.user.groups.values_list("name", flat=True)
+           
     if request.method == 'POST':
         form = Disbursement_Search_Form(request.POST)
         if form.is_valid():
@@ -524,7 +544,9 @@ def view_disbursement(request):
     context = {
         'form': form, 
         'activity_data': activity_data,
-        'msg': msg, 'msg_status': msg_status
+        'msg': msg, 'msg_status': msg_status,
+        'active': 'view_disbuse' ,"currentGroup": get_user_group(request)
+        
         }
     return render(request, 'manager/view_disbursement.html', context)
 
@@ -556,7 +578,7 @@ def post_authorization(request):
         'form': form, 
         'rmddl': rms,
         'msg': msg,
-        'idlist': id_list}
+        'idlist': id_list,  "currentGroup": get_user_group(request)}
     return render(request, 'manager/rm_collections.html', context)
 
 def add_daily_report(request):
@@ -566,13 +588,67 @@ def add_daily_report(request):
     msg_status = None
     form = Daily_Report_Form()   
     
-    
+    active = 'daily_report'
     context = {
         'form': form, 
         'activity_data': activity_data,
-        'msg': msg, 'msg_status': msg_status
+        'msg': msg, 
+        'msg_status': msg_status,
+        "active":active,
+        "currentGroup": get_user_group(request)
         }
     return render(request, 'manager/add_daily_report.html', context)
+
+def manage_rm(request):
+    active = 'manage_rm'
+    msg = None
+    msg_status = None
+    form = None
+    activity_data = None
+    branch_id=get_branch_id(request)
+    # activity_data =  Profile.objects.filter() #, user__groups__in=5
+    activity_data = Profile.objects.select_related('user').filter(branch_id=branch_id, user__groups__in=[5])
+    # Profile.objects.select_related('user').filter(branch_id=get_branch_id(request), user__groups__in=5) .select_related('user')
+    
+    form = SignUpForm(request.POST)
+    
+    if request.method == 'POST':        
+        # call the group model and insert the created user but first get the 
+        # user_id of the last inserted user
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get("username")
+            raw_password = form.cleaned_data.get("password1")
+            user = authenticate(username=username, password=raw_password)
+            my_group = Group.objects.get(name='RM') 
+            my_group.user_set.add(user)
+            mrg_profile = Profile.objects.get(user_id=request.user.id)
+            mrg_branch = Branch.objects.get(id=mrg_profile.branch_id_id)
+            my_profile = Profile.objects.create(
+                user=user,
+                location=mrg_profile.location,
+                branch_id=mrg_branch,
+                created_by= int(request.user.id),
+                created_on = date.today()
+                )           
+            msg     = str(user) + ' created '
+            success = True
+            
+            #return redirect("/login/")
+
+        else:
+            msg = 'Form is not valid' 
+    
+            
+    context = {
+        'form': form, 
+        'activity_data': activity_data,
+        'msg': msg, 
+        'msg_status': msg_status,
+        "active":active,
+        "currentGroup": get_user_group(request)
+        }
+    return render(request, 'manager/manage_rm.html', context)
 # END Manager Views
-# 
 

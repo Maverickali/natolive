@@ -47,4 +47,7 @@ def get_date(request):
 def get_branch_id(request):
     profile = Profile.objects.get(user_id=request.user.id)
     return profile.branch_id_id 
+
+def get_user_group(request):
+    return request.user.groups.values_list("name", flat=True)
     

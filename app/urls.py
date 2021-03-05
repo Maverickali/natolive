@@ -5,8 +5,8 @@ from app import views, rm_views, manager_views
 urlpatterns = [
     # The home page
     path('', views.index, name='home'),
-    # path('treasury/create.html', views.treasury_create, name='treasuryCreate'),
-    # path('treasury/view.html', views.treasury_report, name='treasuryReport'),
+    path('treasury/create.html', views.treasury_create, name='add_treasury'),
+    path('treasury/view.html', views.treasury_report, name='view_treasury'),
     # path('treasury/view/approved/<int:id>', views.approved_injection, name='approved_injection'),
     # path('treasury/view/rejected/<int:id>', views.rejected_injection, name='rejected_injection'),
     # Rm Views
@@ -22,9 +22,11 @@ urlpatterns = [
     # path('manager/set_targets.html', views.set_targets, name='setTargets'),
     # path('manager/view_set_targets.html', views.set_targets_view, name='setTargetsView'),
     path('manager/rm_collections.html', views.rm_collections, name='rm_collections'),    
-    path('manager/add_disbursement.html', views.add_disbursement, name='addDisbursement'),    
+    path('manager/add_disbursement.html', views.add_disbursement, name='add_disbursement'),    
     path('manager/view_disbursement.html', views.view_disbursement, name='view_disbursement'),    
-    path('manager/add_daily_report.html', views.add_daily_report, name='addDailyReport')
+    path('manager/add_daily_report.html', views.add_daily_report, name='addDailyReport'),
+    path('manager/manage_rm.html', views.manage_rm, name='manage_rm')
+    
 
     # Matches any html file
     # re_path(r'^.*\.*', views.pages, name='pages'),

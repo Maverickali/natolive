@@ -5,21 +5,17 @@
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}{% endblock stylesheets %}
 
-{% block content %}
-
+{% block content %}	
 	{% if 'Branch-Managers'  in currentGroup %}
-
-		{% include 'managers/dashboard_manager.html' %}	
-
-	{% elif 'RM'  in currentGroup %}
-
-		{% include 'managers/dashboard_rm.html' %}	
-
-	{% else %}
-
-		{% include 'includes/dashboard.html' %}
-
+		{% include 'manager/dashboard_manager.html' %}	
 	{% endif %}
+	{% if 'RM'  in currentGroup %}
+		{% include 'rm/dashboard_rm.html' %}
+	{% endif %}
+
+		{% comment %} {% include 'includes/dashboard.html' %}
+
+	{% endif %} {% endcomment %}
 	
 {% endblock content %}
 

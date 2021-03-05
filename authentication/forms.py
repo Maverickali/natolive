@@ -31,28 +31,28 @@ class SignUpForm(UserCreationForm):
         widget=forms.TextInput(
             attrs={
                 "placeholder" : "Username",                
-                "class": "form-control"
+                "class": "form-control form-control-sm"
             }
         ))
     email = forms.EmailField(
         widget=forms.EmailInput(
             attrs={
                 "placeholder" : "Email",                
-                "class": "form-control"
+                "class": "form-control form-control-sm"
             }
         ))
     password1 = forms.CharField(
         widget=forms.PasswordInput(
             attrs={
                 "placeholder" : "Password",                
-                "class": "form-control"
+                "class": "form-control form-control-sm"
             }
         ))
     password2 = forms.CharField(
         widget=forms.PasswordInput(
             attrs={
                 "placeholder" : "Password check",                
-                "class": "form-control"
+                "class": "form-control form-control-sm"
             }
         ))
 
