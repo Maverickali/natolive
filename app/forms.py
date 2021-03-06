@@ -91,11 +91,12 @@ class SearchForm(forms.Form):
     
 # (b.branch_name) for b in Branch.objects.select_related().get(record_id = id)
 class TreasuryForm(forms.ModelForm):
-    branch_name = forms.CharField(        
-        label='Select Branch', 
-        max_length=50,
-        widget=forms.Select(attrs={"class": "form-control"}, choices=[(b.id, b.branch_name) for b in Branch.objects.all()]),
-    )    
+    
+    # branch_name = forms.CharField(        
+    #     label='Select Branch', 
+    #     max_length=50,
+    #     widget=forms.Select(attrs={"class": "form-control"}, choices=[(b.id, b.branch_name) for b in Branch.objects.all()]),
+    # )    
     new_customer_numbers = forms.IntegerField(
         label='# New Customer(s)',         
         widget=forms.NumberInput(attrs={
@@ -194,7 +195,6 @@ class TreasuryForm(forms.ModelForm):
     class Meta:
         model = Injections
         fields = (
-            'branch_name', 
             'new_customer_numbers', 
             'repeat_customer_numbers', 
             'new_customer_amount',
@@ -540,15 +540,17 @@ class Collection_Sheet_Form(forms.ModelForm):
               
             })
         )
-    receipt_number = forms.IntegerField(
-        required=True,
-        label='Receipt Number',    
-        widget=forms.NumberInput(attrs={
-                "placeholder": "Enter Receipt Number",                
-                "class": "form-control form-control-sm",              
-                "min" : "0",
-                "id":"receipt_no"             
-            }))
+    # receipt_number = forms.IntegerField(
+    #     required=True,
+    #     label='Receipt Number',    
+    #     widget=forms.NumberInput(attrs={
+    #             "placeholder": "Enter Receipt Number",                
+    #             "class": "form-control form-control-sm",              
+    #             "min" : "0", 
+    #             # value here is temporay
+    #             "value" : "0",
+    #             "id":"receipt_no"             
+    #         }))
     created_by = forms.CharField( required=False,
         widget=forms.HiddenInput(attrs={
                 "placeholder": "Created by",                
@@ -561,7 +563,7 @@ class Collection_Sheet_Form(forms.ModelForm):
             'first_name',
             'last_name', 
             'amount_collected', 
-            'receipt_number',
+            # 'receipt_number',
             'collection_date',
             'created_by'
             )

@@ -9,11 +9,16 @@
 	{% if 'Branch-Managers'  in currentGroup %}
 		{% include 'manager/dashboard_manager.html' %}	
 	{% endif %}
+
 	{% if 'RM'  in currentGroup %}
 		{% include 'rm/dashboard_rm.html' %}
 	{% endif %}
 
-		{% comment %} {% include 'includes/dashboard.html' %}
+	{% if 'Accountant' in currentGroup %}
+		{% include 'includes/dashboard.html' %}
+	{% endif %}
+
+	{% comment %} ('Directors', 'Supervisor')  {% include 'includes/dashboard.html' %}
 
 	{% endif %} {% endcomment %}
 	

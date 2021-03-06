@@ -1,9 +1,10 @@
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import authenticate
+from django.db.models import Sum
 from app.forms import SearchForm, TreasuryForm
 import re
 import datetime
-from app.models import Profile
+from app.models import Disbursements, Potential_Customers, Profile, RM_Collection_Sheets
 
 
 
@@ -43,6 +44,12 @@ def get_date(request):
     month = int(request.POST['collection_date_month'])
     day = int(request.POST['collection_date_day'])
     return datetime.date(year,month,day)
+
+def get_desire_date(request):
+    year = int(request.POST['desired_date_year'])
+    month = int(request.POST['desired_date_month'])
+    day = int(request.POST['desired_date_day'])
+    return datetime.date(year,month,day)
     
 def get_branch_id(request):
     profile = Profile.objects.get(user_id=request.user.id)
@@ -50,4 +57,15 @@ def get_branch_id(request):
 
 def get_user_group(request):
     return request.user.groups.values_list("name", flat=True)
-    
+
+def getTotalClientsDisbursed(request):
+    clients = Disbursements.objects.filter(branch_id=get_branch_id(request)).count()
+    return clients
+
+def getTotalCollections(request):
+    collections = RM_Collection_Sheets.objects.filter(authorization_status='APPROVED').aggregate(Sum('amount_collected'))
+    return collections["amount_collected__sum"]
+
+def getTotalDisbursement(request):
+    disbursement = Disbursements.objects.filter(branch_id=get_branch_id(request)).aggregate(Sum('amount_disbursed'))
+    return disbursement["amount_disbursed__sum"]

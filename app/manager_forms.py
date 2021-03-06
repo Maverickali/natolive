@@ -95,7 +95,7 @@ class Daily_Report_Form(forms.ModelForm):
                 "placeholder": "Enter Openning Balance Amount",                
                 "class": "form-control form-control-sm",
                 "oninput": "digitsep(this)",
-                "id": "desired_amount",
+                "id": "openBal",
                 "min" : "0"
               
             })
@@ -107,47 +107,47 @@ class Daily_Report_Form(forms.ModelForm):
                 "placeholder": "Enter Closing Balance Amount ",                
                 "class": "form-control form-control-sm",
                 "oninput": "digitsep(this)",
-                "id": "desired_amount",
+                "id": "closeBal",
                 "min" : "0"
               
             })
         )  
-    total_collections = forms.DecimalField(
-        required=True,
-        label='Collections',         
-        widget=forms.HiddenInput(attrs={
-                "placeholder": "Enter collections",                
-                "class": "form-control form-control-sm",
-                "oninput": "digitsep(this)",
-                "id": "desired_amount",
-                "min" : "0"
+    # total_collections = forms.DecimalField(
+    #     required=True,
+    #     label='Collections',         
+    #     widget=forms.HiddenInput(attrs={
+    #             "placeholder": "Enter collections",                
+    #             "class": "form-control form-control-sm",
+    #             "oninput": "digitsep(this)",
+    #             "id": "collections",
+    #             "min" : "0"
               
-            })
-        )  
-    total_processing_fees =forms.DecimalField(
+    #         })
+    #     )  
+    total_processing_fees = forms.DecimalField(
         required=True,
         label='Processing Fees ',         
         widget=forms.TextInput(attrs={
                 "placeholder": "Enter Processing Amount",                
                 "class": "form-control form-control-sm",
                 "oninput": "digitsep(this)",
-                "id": "desired_amount",
+                "id": "processFees",
                 "min" : "0"
               
             })
         )  
-    total_disbursed = forms.DecimalField(
-        required=True,
-        label='Disburement',         
-        widget=forms.HiddenInput(attrs={
-                "placeholder": "Enter ",                
-                "class": "form-control form-control-sm",
-                "oninput": "digitsep(this)",
-                "id": "desired_amount",
-                "min" : "0"
+    # total_disbursed = forms.DecimalField(
+    #     required=True,
+    #     label='Disburement',         
+    #     widget=forms.HiddenInput(attrs={
+    #             "placeholder": "Enter ",                
+    #             "class": "form-control form-control-sm",
+    #             "oninput": "digitsep(this)",
+    #             "id": "disbursed",
+    #             "min" : "0"
               
-            })
-        )  
+    #         })
+    #     )  
     injection_in = forms.DecimalField(
         required=True,
         label='Injection In',         
@@ -155,7 +155,7 @@ class Daily_Report_Form(forms.ModelForm):
                 "placeholder": "Enter Injection In Amount",                
                 "class": "form-control form-control-sm",
                 "oninput": "digitsep(this)",
-                "id": "desired_amount",
+                "id": "injectionIn",
                 "value": 0,
                 "min" : "0"
               
@@ -168,7 +168,7 @@ class Daily_Report_Form(forms.ModelForm):
                 "placeholder": "Enter Injection Out Amount",                
                 "class": "form-control form-control-sm",
                 "oninput": "digitsep(this)",
-                "id": "desired_amount",
+                "id": "injectionOut",
                 "value": 0,
                 "min" : "0"
               
@@ -181,7 +181,7 @@ class Daily_Report_Form(forms.ModelForm):
                 "placeholder": "Enter Banked Amount",                
                 "class": "form-control form-control-sm",
                 "oninput": "digitsep(this)",
-                "id": "desired_amount",
+                "id": "banked",
                 "min" : "0"
               
             })
@@ -193,7 +193,7 @@ class Daily_Report_Form(forms.ModelForm):
                 "placeholder": "Enter Expenses Amount",                
                 "class": "form-control form-control-sm",
                 "oninput": "digitsep(this)",
-                "id": "desired_amount",
+                "id": "expenses",
                 "min" : "0"
               
             })
@@ -205,36 +205,32 @@ class Daily_Report_Form(forms.ModelForm):
                 "placeholder": "Enter Closing Portfolio Amount",                
                 "class": "form-control form-control-sm",
                 "oninput": "digitsep(this)",
-                "id": "desired_amount",
+                "id": "closePortfolio",
                 "min" : "0"
               
             })
         )  
-    total_clients_disbursed =  forms.IntegerField(
-        label='Clients Disbursed',    
-        widget=forms.NumberInput(attrs={
-                "placeholder": "Enter Total Number of Cilents",                
-                "class": "form-control form-control-sm",              
-                "id":"new_cilents",
-                "min" : "0"            
-            }))
+    # total_clients_disbursed =  forms.IntegerField(
+    #     label='Clients Disbursed',    
+    #     widget=forms.NumberInput(attrs={
+    #             "placeholder": "Enter Total Number of Cilents",                
+    #             "class": "form-control form-control-sm",              
+    #             "id":"clientsDisbursed",
+    #             "min" : "0"            
+    #         }))
     
     
     class Meta:
         model = Daily_Report
         fields = (
              'opening_bal'
-            ,'total_collections'
             ,'total_processing_fees'
-            ,'total_disbursed'
             ,'injection_in'
             ,'injection_out'
             ,'total_banked'
             ,'total_expenses_daily'
             ,'closing_bal'
             ,'previous_closing_portfolio'
-            ,'total_clients_disbursed'
-            ,'branch_id'
             ,'activity_date'
         )
         widgets = {

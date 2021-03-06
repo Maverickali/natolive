@@ -101,7 +101,8 @@
                             <thead>
                             <tr>
                               <th>Disbured Date</th>      
-                              <th>Customer Names</th>
+                              <th>First Names</th>
+							  <th>Last Names</th>
                               <th>Amount</th>
                               <th>NIM Number</th>                                                              
                             </tr>
@@ -110,8 +111,9 @@
                             
                             {% for T in activity_data %}
                                 <tr>
-                                  <td>{{ T.disbursed_date}} </td>
-                                  <td>{{ T.first_name }} {{ T.last_name }} </td>                                  
+                                  <td>{{ T.disbursed_date}} </td>								  
+                                  <td>{{ T.customer_id.first_name }}</td>
+								  <td>{{ T.customer_id.last_name }} </td>                                  
                                   <td>{{ T.amount_disbursed}}</td>								                        
                                   <td>{{  T.id_number  }}</td>        
                                 </tr>

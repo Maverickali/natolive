@@ -117,5 +117,30 @@
 			injectionAmount.val(injectionAmount.val().replace(/,/g, ''));
 			
 		}); 
+		$('#frmDailyReport').on('submit', function() {
+
+			var openBal = $('#openBal');			
+			var closeBal = $('#closeBal');			
+			
+			closeBal.val(parseFloat(closeBal.val().replace(/,/g, ''))); 
+			openBal.val(parseFloat(openBal.val().replace(/,/g, '')));
+			var banked = $('#banked');
+			banked.val(parseFloat(banked.val().replace(/,/g, ''))); 
+			var expenses = $('#expenses');
+			expenses.val(parseFloat(expenses.val().replace(/,/g, ''))); 
+			var closePortfolio = $('#closePortfolio');
+			closePortfolio.val(parseFloat(closePortfolio.val().replace(/,/g, ''))); 
+        	var injectionIn = $('#injectionIn');
+			injectionIn.val(parseFloat(injectionIn.val().replace(/,/g, '')));
+			var injectionOut = $('#injectionOut');
+			injectionOut.val(parseFloat(injectionOut.val().replace(/,/g, ''))); 
+			
+			var processingFees = $('#processFees'); 
+			processingFees.val(parseFloat(processingFees.val().replace(/,/g, ''))); 
+			
+				
+			
+			
+		}); 
 		
 	</script>

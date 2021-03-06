@@ -13,26 +13,26 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.CreateModel(
-            name='Branch',
-            fields=[
-                ('id', models.BigAutoField(primary_key=True, serialize=False)),
-                ('branch_name', models.CharField(max_length=50, unique=True)),
-                ('creation_date', models.DateTimeField(auto_now_add=True)),
-                ('created_by', models.CharField(max_length=50)),
-            ],
-        ),
-        migrations.CreateModel(
-            name='Profile',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('location', models.CharField(default=False, max_length=100)),
-                ('created_on', models.DateField(default=False)),
-                ('created_by', models.IntegerField(default=False)),
-                ('update_on', models.DateTimeField(auto_now=True, null=True)),
-                ('updated_by', models.IntegerField(default=False, null=True)),
-                ('branch_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='app.Branch')),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-            ],
-        ),
+        # migrations.CreateModel(
+        #     name='Branch',
+        #     fields=[
+        #         ('id', models.BigAutoField(primary_key=True, serialize=False)),
+        #         ('branch_name', models.CharField(max_length=50, unique=True)),
+        #         ('creation_date', models.DateTimeField(auto_now_add=True)),
+        #         ('created_by', models.CharField(max_length=50)),
+        #     ],
+        # ),
+        # migrations.CreateModel(
+        #     name='Profile',
+        #     fields=[
+        #         ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+        #         ('location', models.CharField(default=False, max_length=100)),
+        #         ('created_on', models.DateField(default=False)),
+        #         ('created_by', models.IntegerField(default=False)),
+        #         ('update_on', models.DateTimeField(auto_now=True, null=True)),
+        #         ('updated_by', models.IntegerField(default=False, null=True)),
+        #         ('branch_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='app.Branch')),
+        #         ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+        #     ],
+        # ),
     ]

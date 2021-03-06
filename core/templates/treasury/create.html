@@ -13,7 +13,7 @@
 		<div class="content">
 		<div class="page-inner">
 			<div class="page-header" >
-				<h4 class="page-title">Treasury</h4>
+				<h4 class="page-title">Treasury {{ branch }} </h4>
 				<ul class="breadcrumbs">
 					<li class="nav-home">
 						<a href="index.html">
@@ -50,10 +50,11 @@
 						<div class="card-body">
 							<div class="row">								
 									<div class="col-md-6 col-lg-4">
-										<div class="form-group">
+										{% comment %} <div class="form-group">
 											<label>{{form.branch_name.label}}   </label>  
 											{{form.branch_name}}                                   
 										</div><span class="text-danger">{{ form.branch_name.errors }}</span>     
+										 {% endcomment %}
 										<div class="form-group">
 											<label for="repeat_customer_numbers">{{form.repeat_customer_numbers.label }}</label>											
 											{{ form.repeat_customer_numbers}}
@@ -68,7 +69,10 @@
 												<span class="form-check-sign">Tick If ONLY You Need An Injection</span>
 											</label>
 										</div><span class="text-danger">{{ form.injection_status.errors }}</span>					
-										
+										<div class="form-group">
+											<label>{{ form.injection_amount.label }}</label> 
+											{{ form.injection_amount }} 
+										</div><span class="text-danger">{{ form.injection_amount.errors }}</span>
 									</div>
 									<!-- column 2 -->
 									<div class="col-md-6 col-lg-4">				
@@ -92,10 +96,7 @@
 											<label>{{form.new_customer_amount.label }}</label>
 											{{ form.new_customer_amount }}  
 											</div><span class="text-danger">{{ form.new_customer_amount.errors }}</span> 
-										<div class="form-group">
-											<label>{{ form.injection_amount.label }}</label> 
-											{{ form.injection_amount }} 
-										</div><span class="text-danger">{{ form.injection_amount.errors }}</span>
+										
 									</div>
 									<!-- End of Column 2 -->
 									<!-- Column 3 -->

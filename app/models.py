@@ -174,7 +174,7 @@ class Disbursements(models.Model):
     amount_disbursed = models.FloatField(default=0.0) 
     branch_id = models.IntegerField(default=False)
     disbursed_date = models.DateField(default=False)
-    id_number = models.IntegerField(default=0.0)
+    id_number = models.CharField(max_length=100, null=True)#models.IntegerField(default=0.0)
     customer_id = models.OneToOneField(Potential_Customers,  on_delete=models.CASCADE)
     created_on = models.DateTimeField(auto_now_add=True)
     created_by = models.IntegerField(default=False)

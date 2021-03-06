@@ -16,15 +16,15 @@ from django.contrib.auth.models import Group, User
 from app.forms import Collection_Sheet_Form, Potential_Customers_Form, RMWeeklyCustomersForm, RMWeeklyCustomersPortfolioForm, RmDailyActivityForm, SearchForm, SetTargetsForm, TargetsPortfoiloForm, TreasuryForm
 # from app.rm_forms import Collection_Sheet_Form from .forms import LoginForm, 
 
-from .functions import branch_disable, get_date
-from app.models import Branch, Disbursements, Injections, Potential_Customers, Profile, RM_Collection_Sheets, RM_Daily_Activity
+from .functions import branch_disable, get_date, getTotalClientsDisbursed, getTotalCollections, getTotalDisbursement
+from app.models import Branch, Daily_Report, Disbursements, Injections, Potential_Customers, Profile, RM_Collection_Sheets, RM_Daily_Activity
 import datetime
 from datetime import date, timedelta
 import re
 from django.db import DatabaseError
 from django.contrib.auth.models import User
 # from app.manager_forms import RM_Search_Collections_Form
-from app.functions import get_branch_id, get_user_group
+from app.functions import get_branch_id, get_desire_date, get_user_group
 from app.manager_forms import Daily_Report_Form, Disbursement_Form, Disbursement_Search_Form, RM_Search_Collections_Form
 from authentication.forms import SignUpForm
 
@@ -32,10 +32,9 @@ from authentication.forms import SignUpForm
 
 @login_required(login_url="/login/")
 def index(request):    
-    cash_forward = Injections.objects.aggregate(Sum('cash_forward'))
-    
+    cash_forward = Injections.objects.aggregate(Sum('cash_forward'))    
     context = { 'cash_forward': cash_forward['cash_forward__sum']}
-    # context['segment'] = 'index'
+    # context[ 'segment'] = 'index'
     # html_template = loader.get_template( 'index.html' )
     # return HttpResponse(html_template.render(context, request))
     context = {'active': 'home',
@@ -45,45 +44,48 @@ def index(request):
 
 @login_required(login_url="/login/")
 def treasury_create(request):
-
     msg     = None
+    branch = None
     success = False
-    current_user_groups = request.user.groups.values_list("name", flat=True)
-    
+    current_user_groups = request.user.groups.values_list("name", flat=True)    
     if request.method == 'POST' and request.POST:
-        form = TreasuryForm(request.POST)
-        print(form)
-        if form.is_valid():            
+        branch_name = get_branch_id(request)      
+        form = TreasuryForm(request.POST)    
+        if form.is_valid(): 
             obj = form.save(commit=False)
+            obj.branch_name = branch_name
             obj.created_by = request.user.id
             obj.cash_reserve_need = float(request.POST['cash_forward']) - (float(request.POST['new_customer_amount']) + float(request.POST['repeat_customer_amount']))
             obj.save()
             success = True 
             msg = 'Treasury Report Successfully Saved'
+            msg_status = True
         else:
             msg = form.errors # msg= 'FORM IS INVALID'
+            msg_status = False
     else:
+        msg = 'No'
         form = TreasuryForm()
-    user_name = request.user.username
-    form = branch_disable(user_name,'treasury')
+    # user_name = request.user.username                
+    # form = branch_disable(user_name,'treasury')
     active = 'treasury'
     context = {
         'form': form, 
+        'branch':branch,
         "msg": msg, 
         "success": success, 
-        "currentGroup": get_user_group(request), 'active':active}
+        "currentGroup": get_user_group(request), 
+        'active':active}
 
     return render(request, 'treasury/create.html', context)
 
 def treasury_report(request):
-
     treasury_list = None
     msg = ''
     updated = None
     if request.method == 'POST' and request.POST:
         search_form = SearchForm(request.POST)       
-        if search_form.is_valid():
-            
+        if search_form.is_valid():            
             branch_id = request.POST.get('branch_name', False)
             inj_status = request.POST.get('inj_status', False)
             all_branchs = request.POST.get('all_branchs', False)
@@ -95,40 +97,88 @@ def treasury_report(request):
             from_d_day = int(request.POST['from_date_day'])
             to_date = datetime.date(to_d_year, to_d_month, to_d_day)
             from_date = datetime.date(from_d_year, from_d_month, from_d_day)
-
+            
+            Total_expenses = ""
+            Total_collections = getTotalCollections(request)
+            Drawer_limit = ""
+            Assessment = ""
+            
+           
             if inj_status == 'on':
                 inj_status = True
             else:
                 inj_status = False
 
             if all_branchs == 'on':
-                treasury_list = Injections.objects.filter(injection_status=inj_status, date__range=(from_date, to_date)).order_by('-date')               
+                treasury_list = Injections.objects.filter(
+                    injection_status=inj_status, 
+                    date__range=(from_date, to_date)).order_by('-date')  
+                             
             else:
                 all_branchs = False           
-                treasury_list = Injections.objects.filter(injection_status=inj_status, date__range=(from_date, to_date), branch_name=branch_id).order_by('-date')
+                treasury_list = Injections.objects.filter(
+                    injection_status=inj_status, 
+                    date__range=(from_date, to_date), 
+                    branch_name=branch_id).order_by('-date')
+              
+                
             search_form = SearchForm().full_clean()
         else:
             updated = False
             msg = "VALIDATION FAILED"
     else:
         search_form = SearchForm()
-        treasury_list = Injections.objects.filter(injection_status=True,date=datetime.datetime.today()).order_by('-date')
+        treasury_list = Injections.objects.filter(
+            injection_status=True,
+            date=datetime.datetime.today()).order_by('-date')
+ 
     msg = Injections.objects.aggregate(Sum('cash_forward'))
     branch_name = Branch.objects.all()
     user_name = request.user.username    
     search_form = branch_disable(user_name,'search')
+    
     active = 'treasury'
     context = { 
-            'treasuryList': treasury_list, 
-            'searchform': search_form,
-            'Branch': branch_name, 'updated': updated, 'msg': msg, 
-            "currentGroup": get_user_group(request),
+            'treasuryList': treasury_list, 'searchform': search_form,
+            'Branch': branch_name, 'updated': updated, 
+            'msg': msg, "currentGroup": get_user_group(request),
             'active':active}
 
     return render(request, 'treasury/view.html', context)
 
+def view_assessment(request,id,cash):
+    treasury_list = None
+    treasury_list = Injections.objects.filter(injection_status=True,date=datetime.datetime.today()).order_by('-date') 
+    updating = None
+    msg = None
+    collections = RM_Collection_Sheets.objects.filter(authorization_status='APPROVED', branch_id=id).aggregate(Sum('amount_collected'))
+    Total_expenses = Daily_Report.objects.filter(branch_id=id).aggregate(Sum('total_expenses_daily'))
+    Drawer_limit = 0.6  * int(Total_expenses['total_expenses_daily__sum'])  
+    disbursement = Disbursements.objects.filter(branch_id=id).aggregate(Sum('amount_disbursed'))
+    cash_forward =  Injections.objects.get(record_id=id)#filter(record_id=cash).order_by('-date')
+    Assessment = ""
+    # injectionin  = (total_disbursement + expenses) > (total collections+cash_forward)
+    # injectionout = (total_disbursement + expenses) < (total collections+cash_forward)
+    # banker = injectionout 
+    if (int(disbursement['amount_disbursed__sum']) + int(Total_expenses['total_expenses_daily__sum'])) > (int(collections['amount_collected__sum']) + int(cash_forward.cash_forward)):
+       Assessment = "injection In" 
+    elif (int(disbursement['amount_disbursed__sum']) + int(Total_expenses['total_expenses_daily__sum'])) < (int(collections['amount_collected__sum']) + int(cash_forward.cash_forward)):
+        Assessment = "injection Out" 
+    else:
+        Assessment = "Bank"
+    context = { 
+        'collections' : collections['amount_collected__sum'], 
+        'expenses': Total_expenses['total_expenses_daily__sum'],
+        'disbursement': disbursement['amount_disbursed__sum'], 
+        'drawer' : Drawer_limit,
+        'id': cash_forward.cash_forward,
+        'record_id' : cash,
+        'action': Assessment,
+        'msg': msg, "currentGroup": get_user_group(request)}
+    return render(request, 'accountant/view_assessment.html', context)
+    
+    
 def approved_injection(request, id):
-
     treasury_list = None
     treasury_list = Injections.objects.filter(injection_status=True,date=datetime.datetime.today()).order_by('-date') 
     updating = None
@@ -169,7 +219,6 @@ def rejected_injection(request, id):
             msg = 'Injection Rejected Successfully'
         else:
             return render(request, 'includes/noauthorization.html')
-
     except:
         success = "danger"
         msg = "Something Went Wrong DB LEVEL"
@@ -178,7 +227,7 @@ def rejected_injection(request, id):
         'treasuryList' : treasury_list, 
         'searchform': search_form,
         'updated': updated, 
-        'msg': msg}
+        'msg': msg  }
     return render(request, 'treasury/view.html', context)
 
 
@@ -218,8 +267,7 @@ def rm_daily_create(request):
         else:
             msg=form.errors
     else:
-        form = RmDailyActivityForm()
-    
+        form = RmDailyActivityForm()    
     current_date = datetime.date.today() 
     past_7_days = datetime.date.today() + timedelta(days=-7)
     activity = RM_Daily_Activity.objects.filter(activitydate__range=(past_7_days, current_date),created_by=request.user.id).order_by('-activitydate')
@@ -348,30 +396,37 @@ def rm_collection_sheet(request):
     msg = None
     msg_status = None
     success = None
+    receipt_no = None
     # Post 
+    last_id = RM_Collection_Sheets.objects.latest('id')
+    receipt_no = str(request.user.id) + str(get_branch_id(request)) + str(last_id.id)
+           
     
     if request.method == 'POST' and request.POST:
         form = Collection_Sheet_Form(request.POST)        
         if form.is_valid():
             collection_date = get_date(request)
-            receipt_no = request.POST['receipt_number']
+            # receipt_no = request.POST['receipt_number']
             creator = request.user.id
             checker = None
-            
             try:
                 # Go to db
                 checker = RM_Collection_Sheets.objects.filter(receipt_number=receipt_no)
                 if not checker :
                     
                     obj = form.save(commit=False)
+                    obj.receipt_number = receipt_no
                     obj.created_by = creator
-                    # obj.collection_date = collection_date
+                    obj.branch_id = get_branch_id(request)
                     obj.before_authorization = "PENDING"
                     obj.save()
                     msg_status = True
                     msg = 'SUCCESSFULLY SAVED'
                     form = Collection_Sheet_Form().full_clean()
                     form = Collection_Sheet_Form()
+                    last_id = RM_Collection_Sheets.objects.latest('id')
+                    receipt_no = str(request.user.id) + str(get_branch_id(request)) + str(last_id.id)
+      
                     
                 else:
                     msg = "You have Already Used this Receipt number CAN'T SAVE THIS COLLECTION"
@@ -390,6 +445,7 @@ def rm_collection_sheet(request):
         'form': form,
         'msg_status': msg_status,
         'activity_data': activity_data,
+        'receipt_no' : receipt_no,
         'msg': msg,
         "currentGroup": get_user_group(request)
     }
@@ -406,16 +462,18 @@ def potential_customer(request):
     activity_data = Potential_Customers.objects.filter(created_by=creator)    
     if request.method == 'POST' and request.POST:
         form = Potential_Customers_Form(request.POST)
+        desire_date = get_desire_date(request)
         if form.is_valid():
             # ADD VALIDATION OF PHONE NUMBER 
-            user_branch_id = get_branch_id(request)
-            msg = Profile.objects.get(user_id=request.user.id).branch_id_id
+            user_branch_id = get_branch_id(request)           
             obj = form.save(commit=False)
+            obj.desire_date = desire_date
             obj.created_by = creator
             obj.branch_id = user_branch_id
             obj.save()
             msg_status = True
             msg = 'CUSTOMER SUCCESSFULLY SAVED'
+            msg_status = True 
             form = Potential_Customers_Form()
         else:
             msg = form.errors
@@ -456,18 +514,29 @@ def rm_collections(request):
     # select rm
     form = RM_Search_Collections_Form()
     if request.method == 'POST':
-        collection_date = get_date(request)
-        rm_id = request.POST.get('rm', False)
-        activity_data = RM_Collection_Sheets.objects.filter(created_by=rm_id, collection_date=collection_date)      
-        if not activity_data :
-            msg = 'No Collections Captured by selected RM Yet'
-            msg_status = False
-        else:     
-            total_collections = activity_data.count() 
-            total_collections_amount = activity_data.aggregate(Sum('amount_collected'))          
-            rms = get_branch_rms(request)
-            msg = 'Rm Collection\'s ' + 'Total Collections = ' + str(total_collections)+' AND ' + 'Total Amount Collected = ' + str(total_collections_amount)
+        table = request.POST.get('table_form', False) 
+        if table:
+            id_list = request.POST.getlist('id[]')
+            # msg = id_list
+            # update to default first
+            c_sheet = RM_Collection_Sheets.objects.filter(id__in=id_list).update(authorization_status="PENDING", authorization_note="Not Authorized By Branch Manager" , updated_by=request.user.id)
+            c_sheet = RM_Collection_Sheets.objects.filter(id__in=id_list).update(authorization_status="APPROVED", authorization_note="Collection Accepted" , updated_by=request.user.id)
+            # activity_data = RM_Collection_Sheets.objects.filter(created_by=rm_id, collection_date=collection_date) 
+            msg = 'SUCCESSFULLY APPROVED'  
             msg_status = True
+        else:
+            collection_date = get_date(request)
+            rm_id = request.POST.get('rm', False)
+            activity_data = RM_Collection_Sheets.objects.filter(created_by=rm_id, collection_date=collection_date)      
+            if not activity_data :
+                msg = 'No Collections Captured by selected RM Yet'
+                msg_status = False
+            else:     
+                total_collections = activity_data.count() 
+                total_collections_amount = activity_data.aggregate(Sum('amount_collected'))          
+                rms = get_branch_rms(request)
+                msg = 'Rm Collection\'s ' + 'Total Collections = ' + str(total_collections)+' AND ' + 'Total Amount Collected = ' + str(total_collections_amount)
+                msg_status = True
     else:
         msg = '' 
         total_collections = ''
@@ -553,23 +622,18 @@ def view_disbursement(request):
 
 def post_authorization(request):
 
-    rms = Profile.objects.select_related('user').filter(branch_id=get_branch_id(request), user__groups__in=5)
+    rms = Profile.objects.select_related('user').filter(branch_id=get_branch_id(request), user__groups__in=[5])
     msg = None 
     form = None
     id_list = None
-
-    if request.method == 'POST' and request.POST:
-        # if form.is_valid:                
-        # form = RM_Collection_Sheets(request.POST) 
+    if request.method == 'POST' and request.POST:       
         id_list = request.POST.getlist('id[]')
         msg = id_list
         collection_date = get_date(request)
         # update to default first
-        c_sheet = RM_Collection_Sheets.objects.update(before_authorization="PENDING", authorization_note="Not Authorized By Branch Manager" , updated_by=request.user.id)
-        c_sheet = RM_Collection_Sheets.objects.filter(id__in=id_list).update(before_authorization="APPROVED", authorization_note="Collection Accepted" , updated_by=request.user.id)
-        msg = 'SUCCESSFULLY SAVED'
-        # else:
-        #     msg = form.errors
+        c_sheet = RM_Collection_Sheets.objects.update(authorization_status="PENDING", authorization_note="Not Authorized By Branch Manager" , updated_by=request.user.id)
+        c_sheet = RM_Collection_Sheets.objects.filter(id__in=id_list).update(authorization_status="APPROVED", authorization_note="Collection Accepted" , updated_by=request.user.id)
+        msg = 'SUCCESSFULLY APPROVED'     
        
     else:
         msg = "no post"
@@ -579,14 +643,32 @@ def post_authorization(request):
         'rmddl': rms,
         'msg': msg,
         'idlist': id_list,  "currentGroup": get_user_group(request)}
-    return render(request, 'manager/rm_collections.html', context)
+    return  render(request, 'manager/rm_collections.html', context)
 
 def add_daily_report(request):
     form = None
     activity_data = None
     msg = None
     msg_status = None
-    form = Daily_Report_Form()   
+    form = Daily_Report_Form()
+    collections = getTotalCollections(request)
+    disbursements = getTotalDisbursement(request)
+    clients_Disbursed = getTotalClientsDisbursed(request)
+    if request.POST:
+        form = Daily_Report_Form(request.POST)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.branch_id = get_branch_id(request)
+            obj.created_by = request.user.id
+            obj.total_collections = collections
+            obj.total_disbursed = disbursements
+            obj.total_clients_disbursed = clients_Disbursed
+            obj.save()
+            msg = "Daily Report Successfully Saved"
+            msg_status = True
+        else:
+            msg = form.errors
+            msg_status = False   
     
     active = 'daily_report'
     context = {
@@ -595,7 +677,10 @@ def add_daily_report(request):
         'msg': msg, 
         'msg_status': msg_status,
         "active":active,
-        "currentGroup": get_user_group(request)
+        "currentGroup": get_user_group(request),
+        "collections" : collections,
+        "disbursement": disbursements,
+        "cilentsDis": clients_Disbursed
         }
     return render(request, 'manager/add_daily_report.html', context)
 
@@ -650,5 +735,5 @@ def manage_rm(request):
         "currentGroup": get_user_group(request)
         }
     return render(request, 'manager/manage_rm.html', context)
-# END Manager Views
+# END Manager Views table
 

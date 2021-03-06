@@ -107,7 +107,6 @@
                               <th>Authorized Injections</th>                              
                               <th>#Repeat Customers</th>
                               <th>#New Customers</th> 
-                               <th>Created By</th>
                               <th>Actions</th>
                             </tr>
                             </thead>
@@ -130,18 +129,21 @@
                                   </td>
                                   <td>{{ T.injection_amount }}</td>    
                                   <td>
-                                  {%if T.injection_authorization == 'APPROVED' %}
+                                  {% if T.injection_authorization == 'APPROVED' %}
                                     <span data-toggle="tooltip" data-placement="top" title="Tooltip on top" class="badge badge-success">Injection AUTHORIZED</span>
                                   {% elif  T.injection_authorization == 'REJECTED' %}
                                     <span class="badge badge-danger">Injection REJECTED</span>
-                                  {%else%}
+                                  {% else %}
                                     <span class="badge badge-warning">PENDING</span>
-                                  {%endif%}
+                                  {% endif %}
                                   </td>                           
                                   <td>{{ T.repeat_customer_numbers }}</td>
                                   <td>{{ T.new_customer_numbers }}</td>   
-                                  <td>{{ T.created_by }}</td>
+                                
                                   <td> 	
+                                   <a href="/treasury/view/view_assessment/{{ T.branch_name }}/{{ T.record_id }}">
+                                    <span class="btn btn-outline-primary btn-sm">View </span>
+                                    </a> 
                                   <a href="/treasury/view/approved/{{ T.record_id }}">
                                     <span class="btn btn-outline-success btn-sm">Approve </span>
                                     </a> 
@@ -177,7 +179,8 @@
         </button>
       </div>
       <div class="modal-body">
-               ARE YOU SURE YOU WANT TO APPROVE THIS INJECTION ?
+               View Assessment
+
       </div>
       <div class="modal-footer">
       <form method="POST" >

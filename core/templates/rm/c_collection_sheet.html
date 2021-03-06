@@ -82,8 +82,10 @@
 									<!-- Column 3 -->
 									<div class="col-md-6 col-lg-4">
                                         <div class="form-group">
-											<label>{{form.receipt_number.label }}</label>
-											{{ form.receipt_number}}                                     
+											<label>{{form.receipt_number.label }} Receipt number</label>
+											{% comment %} {{ form.receipt_number}}  {% endcomment %}
+											<br/>
+											{{ receipt_no }}
 										</div><span class="text-danger">{{ form.receipt_number.errors }}</span> 
 										                              									
 										
@@ -113,7 +115,7 @@
                             
                             {% for T in activity_data %}
                                 <tr>
-                                  <td>{{ T.collection_date }}</td>
+                                  <td>{{ T.created_on }}</td>
                                   <td>{{ T.first_name}} </td>
 								  <td>{{ T.last_name}} </td>
                                   <td>{{ T.amount_collected}}</td>								                        

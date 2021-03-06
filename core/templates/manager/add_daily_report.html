@@ -12,8 +12,8 @@
 		<div class="content">
 		<div class="page-inner">
 			<div class="page-header" >
-				<h4 class="page-title">DAILY REPORT
-                  
+				<h4 class="page-title">DAILY REPORT <br/>
+                 
                 </h4>
 				<ul class="breadcrumbs">
 					<li class="nav-home">
@@ -45,7 +45,7 @@
                             </span>
                             {% endif %} </div>
 						</div>
-						<form id="frmRMDaily" method="POST"   >
+						<form id="frmDailyReport" method="POST"   >
 
 						{% csrf_token %} 
 
@@ -53,8 +53,8 @@
 							<div class="row">								
 								<div class="col-md-6 col-lg-4">
 									<div class="form-group">
-										<label>{{ form.branch_id.label }} </label>                                                              
-										{{ form.branch_id }}
+										<label>{{ form.activity_date.label }} </label>                                                              
+										{{ form.activity_date }}
 									</div>
 									<span class="text-danger">{{ form.branch_id.errors }}</span>
                      				<div class="form-group">
@@ -67,7 +67,13 @@
 											{{ form.closing_bal }}  
 									</div>
 									<span class="text-danger">{{ form.closing_bal.errors }}</span>
-                      						
+									<div class="form-group">
+										<label>Total Collections</label>
+										<h3>{{ collections }}</h3> 
+									</div>
+									
+								
+
 									</div>
 									<!-- column 2 -->
 									<div class="col-md-6 col-lg-4">	
@@ -86,7 +92,11 @@
 											{{form.injection_out}}                                   
 										</div>
 										<span class="text-danger">{{ form.injection_out.errors }}</span> 
-										
+										<div class="form-group">
+										<label>Total Disbursements</label>
+										<h3>{{ disbursement }} </h3>
+									</div>
+									
                     
 									</div> 
 									<!-- End of Column 2 --> 
@@ -107,7 +117,10 @@
 											{{ form.previous_closing_portfolio}}                                     
 										</div>
 										<span class="text-danger">{{ form.previous_closing_portfolio.errors }}</span> 
-										 
+										 <div class="form-group">
+										<label>Cilents Disbursed</label>
+											<h3>{{ cilentsDis }}</h3> 
+										</div>
 									</div> 
 									<!-- End of Column 3 -->
 							</div>
@@ -179,35 +192,25 @@
 <script src="/static/assets/js/plugin/datatables-buttons/js/buttons.print.min.js"></script>
 <script src="/static/assets/js/plugin/datatables-buttons/js/buttons.colVis.min.js"></script>
 	<!-- Atlantis DEMO methods, don't include it in your project! -->
-	<script src="/static/assets/js/setting-demo2.js"></script>
-	<script>
-		
-		$('#frmRMDaily').on('submit', function() {
-		var desired_amount = $('#desired_amount');
-		desired_amount.val(parseFloat(desired_amount.val().replace(/,/g, '')));
-			
-		}); 
+<script src="/static/assets/js/setting-demo2.js"></script>
 
-	</script>
     
 <script>
     $(function () {
-    $("#example1").DataTable({
-        "responsive": true, "lengthChange": false, "autoWidth": false,
-        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+		$("#example1").DataTable({
+			"responsive": true, "lengthChange": false, "autoWidth": false,
+			"buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+		}).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
 
-    $('#example').DataTable({
-        "paging": true,
-        "lengthChange": false,
-        "searching": false,
-        "ordering": true,
-        "info": true,
-        "autoWidth": false,
-        "responsive": true,
+		$('#example').DataTable({
+			"paging": true,
+			"lengthChange": false,
+			"searching": false,
+			"ordering": true,
+			"info": true,
+			"autoWidth": false,
+			"responsive": true,
+		});
     });
-    });
-
-
 </script>
 {% endblock javascripts %}	
