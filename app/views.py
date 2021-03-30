@@ -397,6 +397,7 @@ def rm_collection_sheet(request):
     msg_status = None
     success = None
     receipt_no = None
+    active = None
     # Post 
     last_id = RM_Collection_Sheets.objects.latest('id')
     receipt_no = str(request.user.id) + str(get_branch_id(request)) + str(last_id.id)
@@ -440,13 +441,15 @@ def rm_collection_sheet(request):
             msg_status = False
     else:
         form = Collection_Sheet_Form()
-
+        
+    active = 'collections_sheet'
     context = {
         'form': form,
         'msg_status': msg_status,
         'activity_data': activity_data,
         'receipt_no' : receipt_no,
         'msg': msg,
+        'active': active,
         "currentGroup": get_user_group(request)
     }
 
@@ -454,6 +457,7 @@ def rm_collection_sheet(request):
 
 def potential_customer(request):
     activity_data = None
+    active = None
     msg = None
     form = None 
     msg_status = None
@@ -479,13 +483,13 @@ def potential_customer(request):
             msg = form.errors
             msg_status = False   
 
-
+    active = 'potential_customer'
     context = {
         'form': form,
         'msg_status': msg_status,
         'activity_data': activity_data,
         'msg': msg,
-        'msg-status': msg_status,
+        'msg-status': msg_status, 'active' : active,
         "currentGroup": get_user_group(request)
     }
 

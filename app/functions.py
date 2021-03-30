@@ -24,10 +24,10 @@ def group_required(request, *group_names):
 def branch_disable(user_name, form):
     res = re.split('\d*\D+',user_name)
     if form == 'search':
-        form = SearchForm(initial={'branch_name': str(res[1])}, auto_id=False)
-        
+        form = SearchForm(initial={'branch_name': str(res[1])}, auto_id=False)        
     else:
         form = TreasuryForm(initial={'branch_name': str(res[1])}, auto_id=False)
+        
     if len(str(res[1])) != 0:
         form.fields['branch_name'].disabled = True
         # _form.fields['branch_name'].disabled = True

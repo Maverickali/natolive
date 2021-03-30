@@ -5,6 +5,7 @@ from app.models import Daily_Report, Disbursements, Branch, Profile, RM_Collecti
 from datetime import date, timedelta
 from app.functions import get_branch_id
 from django.forms.widgets import DateInput
+from id_manager.models import Ids
 
 
 class RM_Search_Collections_Form(forms.Form):
@@ -24,7 +25,7 @@ class RM_Search_Collections_Form(forms.Form):
 class Disbursement_Form(forms.ModelForm):
 
     amount_disbursed = forms.DecimalField(
-        required=True,
+        required=False,
         label='Amounted For By Customer',         
         widget=forms.TextInput(attrs={
                 "placeholder": "Enter Amount Wanted By Customer",                
@@ -48,13 +49,34 @@ class Disbursement_Form(forms.ModelForm):
         fields = (
             'amount_disbursed',
             'disbursed_date',
-            'id_number', 'customer_id'               
+            'id_number', 
+            'customer_id'               
         )
         widgets = {
             'disbursed_date': DateInput(attrs={'type': 'date','class': 'form-control form-control-sm'}),          
            
         }
-        
+
+class Add_ID_Form(forms.ModelForm):   
+   
+    id_number = forms.CharField( 
+        required=True,
+        label='NIM Number', 
+        widget=forms.TextInput(attrs={
+                "placeholder": "Enter Customer's NIM Number",                
+                "class": "form-control form-control-sm",
+                "id": "id_number",
+                "MIN": "14"              
+            })
+        )
+    class Meta:
+        model = Ids
+        fields = (
+            'id_number', 
+            'customer_id'               
+        )
+      
+    
         
 class Disbursement_Search_Form(forms.ModelForm):
     branch_id = forms.CharField(        

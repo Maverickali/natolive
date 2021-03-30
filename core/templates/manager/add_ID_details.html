@@ -1,10 +1,10 @@
 {% extends "layouts/base.html" %}
 
-{% block title %} POTENTIAL CUSTOMER {% endblock %} 
+{% block title %} ADD IDS {% endblock %} 
 
 <!-- Spe cific Page CSS goes HERE  -->
 {% block stylesheets %}
-
+   <link rel="stylesheet" type="text/css" href="/static/assets/css/select2.min.css">
 {% endblock stylesheets %}
 
 {% block content %}
@@ -12,7 +12,7 @@
 		<div class="content">
 		<div class="page-inner">
 			<div class="page-header" >
-				<h4 class="page-title">POTENTIAL CUSTOMER
+				<h4 class="page-title">ID Registeration
                   
                 </h4>
 				<ul class="breadcrumbs">
@@ -25,7 +25,7 @@
 						<i class="flaticon-right-arrow"></i>
 					</li>
 					<li class="nav-item">
-						<a href="{% url 'potentialCustomer' %}">Potential Customer</a>
+						<a href="{% url 'add_id' %}"> Add ID </a>
 					</li>										
 				
 				</ul>
@@ -37,66 +37,49 @@
 						<div class="card-header">							
 						<div class="card-title">	 
 						    {% if msg %}
-                               <div class="card-title">Save Potential Customer </div> </br> 
+                               <div class="card-title">Add ID </div> </br> 
 							   {% comment %} <span class="{% if success %}{{ "text-success" }}{% else %}{{"text-danger"}}{%endif%}">{{ msg | safe }}</span> {% endcomment %}
                             {% else %}
                             <span>
-                               <div class="card-title">Save Potential Customer </div>
+                               <div class="card-title">Add ID </div>
                             </span>
                             {% endif %} </div>
 						</div>
 						<form id="frmRMDaily" method="POST"   >
 
-						{% csrf_token %}  
-				
+						{% csrf_token %} 
+
 						<div class="card-body">
 							<div class="row">								
-									<div class="col-md-6 col-lg-4">
+							<div class="col-md-6 col-lg-4">
 									<div class="form-group">
-											<label>{{ form.desired_date.label }}</label>
-											<div class="input-group">
-                                            	{{ form.desired_date }}
-											</div>
+											<label>Select Potential Customer </label>                                                              
+                        <select name="customer_id" id="customer_id" class="select-search form-control form-control-sm">
+                            {% for u in customerddl %}                                   
+                            <option value={{ u.id }}> {{ u.first_name }} {{ u.last_name }} </option>                                   
+                            {% endfor %}
+                        </select> 
 										</div>
-										<span class="text-danger">{{ form.desired_date.errors }}</span>	
-										 <div class="form-group">
-											<label>{{form.first_name.label }}</label>
-											{{ form.first_name }}  
-										</div><span class="text-danger">{{ form.first_name.errors }}</span>
-                                         <div class="form-group">
-											<label>{{form.last_name.label }}</label>
-											{{ form.last_name }}  
-										</div><span class="text-danger">{{ form.last_name.errors }}</span>  
-																			
+										 <span class="text-danger">{{ form.customer_id.errors }}</span>	
+										 
+                     
+                      
 									</div>
 									<!-- column 2 -->
 									<div class="col-md-6 col-lg-4">	
-									<div class="form-group">
-											<label>{{form.contact.label}}   </label>  
-											{{form.contact}}                                   
-										</div><span class="text-danger">{{ form.contact.errors }}</span> 
-                                    <div class="form-group">
-											<label>{{form.business_type.label}}   </label>  
-											{{form.business_type}}                                   
-										</div><span class="text-danger">{{ form.business_type.errors }}</span> 
-                                   						
-										                               									
-										
-									</div>
-									<!-- End of Column 2 -->
+     <div class="form-group">
+											<label>{{form.id_number.label }}</label>
+											{{ form.id_number}}                                     
+										</div><span class="text-danger">{{ form.id_number.errors }}</span> 
+										 
+                    
+									</div> 
+									<!-- End of Column 2 --> 
 									<!-- Column 3 -->
 									<div class="col-md-6 col-lg-4">
-                                        <div class="form-group">
-											<label>{{form.desired_amount.label }}</label>
-											{{ form.desired_amount}}                                     
-										</div><span class="text-danger">{{ form.desired_amount.errors }}</span> 
-										 <div class="form-group">
-											<label>{{form.business_location.label}}   </label>  
-											{{form.business_location}}                                   
-										</div><span class="text-danger">{{ form.business_location.errors }}</span> 			
-											                              									
-										
-									</div>
+                                    
+
+									</div> 
 									<!-- End of Column 3 -->
 							</div>
 						</div>
@@ -110,22 +93,20 @@
 						  <table id="example1" class="table table-bordered table-striped">
                             <thead>
                             <tr>
-                              <th>Date</th>      
-                              <th>Customer Names</th>
-                              <th>Contact</th>
-                              <th>Business Type</th>                            
-                              <th>Business Location</th>                                                         
+                              <th>NIN Number</th>      
+                              <th>First Names</th>
+							  <th>Last Names</th>
+                              <th>Id Status</th>                                                            
                             </tr>
                             </thead>
                             <tbody>
                             
                             {% for T in activity_data %}
                                 <tr>
-                                  <td>{{ T.desire_date}} </td>
-                                  <td>{{ T.first_name }} {{ T.last_name }} </td>                                  
-                                  <td>{{ T.contact}}</td>								                        
-                                  <td>{{  T.business_type  }}</td>                                  								                        
-                                  <td>{{  T.business_location  }}</td>
+                                   <td>{{ T.id_number}} </td>								  
+                                  <td>{{ T.customer_id.first_name }}</td>
+								  <td>{{ T.customer_id.last_name }} </td>                                  
+                                  <td>{{ T.id_status }}</td>       
                                 </tr>
                             {% endfor %} 
                           
@@ -169,18 +150,27 @@
 <script src="/static/assets/js/plugin/datatables-buttons/js/buttons.print.min.js"></script>
 <script src="/static/assets/js/plugin/datatables-buttons/js/buttons.colVis.min.js"></script>
 	<!-- Atlantis DEMO methods, don't include it in your project! -->
-	<script src="/static/assets/js/setting-demo2.js"></script>
 	<script>
 		
 		$('#frmRMDaily').on('submit', function() {
-		var desired_amount = $('#desired_amount');
-		desired_amount.val(parseFloat(desired_amount.val().replace(/,/g, '')));
-			
-		}); 
+	
+		 var value = document.getElementById('id_number').value;
+			if (value.length != 14) {
+				alert('Invalid NIM Number Entered');
+				return false;
+			}
+		});
+		
 
 	</script>
-    
+    <script type="text/javascript" src="/static/assets/js/interactions.min.js"></script>
+	<script type="text/javascript" src="/static/assets/js/select2.min.js"></script>
+
+	<script type="text/javascript" src="/static/assets/js/app.js"></script>
+	<script type="text/javascript" src="/static/assets/js/form_select2.js"></script>
+
 <script>
+    
     $(function () {
     $("#example1").DataTable({
         "responsive": true, "lengthChange": false, "autoWidth": false,
@@ -200,4 +190,7 @@
 
 
 </script>
+<script src="/static/assets/js/select2.full.min.js"></script>
+<script src="/static/assets/js/select2.min.js"></script>
+<script src="/static/assets/js/select2.init.js"></script>
 {% endblock javascripts %}	

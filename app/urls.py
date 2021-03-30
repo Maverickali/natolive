@@ -27,7 +27,8 @@ urlpatterns = [
     path('manager/rm_collections.html', views.post_authorization, name='post_authorization'),
       
     path('manager/add_disbursement.html', views.add_disbursement, name='add_disbursement'),    
-    path('manager/view_disbursement.html', views.view_disbursement, name='view_disbursement'),    
+    path('manager/view_disbursement.html', views.view_disbursement, name='view_disbursement'),   
+    
     path('manager/add_daily_report.html', views.add_daily_report, name='addDailyReport'),
     path('manager/manage_rm.html', views.manage_rm, name='manage_rm')
     
