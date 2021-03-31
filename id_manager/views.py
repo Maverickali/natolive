@@ -43,7 +43,7 @@ def add_id(request):
                 obj.resubmission_date = date.today()        
                 obj.save()
                 # update potential cilent to Active cilent
-                # Potential_Customers.objects.filter(id=customer_id).update(turn_over='active_cilent')
+                Potential_Customers.objects.filter(id=customer_id).update(turn_over='active_cilent')
                 msg = 'CUSTOMER ID SUCCESSFULLY SAVED'
                 msg_status = True
             else:
@@ -162,7 +162,7 @@ def over_ride_reason(request):
         id_ = request.POST.get('id', False)
         reason = request.POST.get('reason', False)
         over_ride_status = 'yes'
-        Ids.objects.filter(id=id_).update(id_override_status=over_ride_status, id_override_reason=reason)
+        Ids.objects.filter(id=id_).update(id_status='Return_To_Customer', id_override_status=over_ride_status, id_override_reason=reason)
         msg='Over Ride Reason Successfully update'
         msg_status=True   
         

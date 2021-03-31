@@ -81,6 +81,7 @@
                                                     <div class="modal-body">
                                                         <form class="pl-3 pr-3" method="POST" action="{% url 'over_ride_reason' %}">
                                                             {% csrf_token %} 
+                                                            <input hidden name="id" value="{{ T.id }}" />
                                                             <div class="form-group">
                                                                 <label for="username">Reason To OverRide</label>
                                                                 <textarea name="reason" class="form-control" required aria-label="With textarea" rows="5"></textarea>

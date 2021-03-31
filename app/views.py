@@ -32,13 +32,25 @@ from authentication.forms import SignUpForm
 
 @login_required(login_url="/login/")
 def index(request):    
-    cash_forward = Injections.objects.aggregate(Sum('cash_forward'))    
-    context = { 'cash_forward': cash_forward['cash_forward__sum']}
-    # context[ 'segment'] = 'index'
-    # html_template = loader.get_template( 'index.html' )
-    # return HttpResponse(html_template.render(context, request))
-    context = {'active': 'home',
-         "currentGroup": get_user_group(request)}
+    
+    cash_forward = Injections.objects.aggregate(Sum('cash_forward'))  
+    injection_amount = Injections.objects.aggregate(Sum('injection_amount'))  
+    repeat_cust =  Injections.objects.aggregate(Sum('repeat_customer_numbers'))
+    new_cust = Injections.objects.aggregate(Sum('new_customer_numbers'))
+    potential_customers = Potential_Customers.objects.filter(turn_over='active_cilent').count()#.aggregate(sum('id'))
+    active_customers = Potential_Customers.objects.filter(turn_over='potential_cilent').count()
+    Injection_requests = Injections.objects.filter(injection_status=1).count()
+    context = {
+        'active': 'home',
+        'cash_forward': cash_forward['cash_forward__sum'],
+        'repeat_cust': repeat_cust['repeat_customer_numbers__sum'],
+        'new_cust': new_cust['new_customer_numbers__sum'],
+        'injection_amount': injection_amount['injection_amount__sum'],
+        'Injection_requests': Injection_requests,
+        'active_customers': active_customers,
+        'potential_customers': potential_customers,
+        "currentGroup": get_user_group(request)
+        }
 
     return render(request, 'index.html', context)
 
@@ -83,6 +95,7 @@ def treasury_report(request):
     treasury_list = None
     msg = ''
     updated = None
+    inj_status = None
     if request.method == 'POST' and request.POST:
         search_form = SearchForm(request.POST)       
         if search_form.is_valid():            
@@ -105,15 +118,18 @@ def treasury_report(request):
             
            
             if inj_status == 'on':
-                inj_status = True
+                inj_status = 1
             else:
-                inj_status = False
+                inj_status = 0
 
             if all_branchs == 'on':
                 treasury_list = Injections.objects.filter(
-                    injection_status=inj_status, 
+                    #injection_status=inj_status, 
                     date__range=(from_date, to_date)).order_by('-date')  
-                             
+            elif all_branchs == 'on' and  inj_status == 'on':
+                treasury_list = Injections.objects.filter(
+                    injection_status=inj_status, 
+                    date__range=(from_date, to_date)).order_by('-date')             
             else:
                 all_branchs = False           
                 treasury_list = Injections.objects.filter(
@@ -132,7 +148,7 @@ def treasury_report(request):
             injection_status=True,
             date=datetime.datetime.today()).order_by('-date')
  
-    msg = Injections.objects.aggregate(Sum('cash_forward'))
+    # msg = inj_status#Injections.objects.aggregate(Sum('cash_forward'))
     branch_name = Branch.objects.all()
     user_name = request.user.username    
     search_form = branch_disable(user_name,'search')

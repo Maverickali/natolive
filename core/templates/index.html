@@ -17,6 +17,9 @@
 	{% if 'Accountant' in currentGroup %}
 		{% include 'includes/dashboard.html' %}
 	{% endif %}
+	{% if 'Directors' in currentGroup %}
+		{% include 'includes/dashboard.html' %}
+	{% endif %}
 
 	{% comment %} ('Directors', 'Supervisor')  {% include 'includes/dashboard.html' %}
 

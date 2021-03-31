@@ -158,18 +158,18 @@ class Daily_Report_Form(forms.ModelForm):
               
             })
         )  
-    # total_disbursed = forms.DecimalField(
-    #     required=True,
-    #     label='Disburement',         
-    #     widget=forms.HiddenInput(attrs={
-    #             "placeholder": "Enter ",                
-    #             "class": "form-control form-control-sm",
-    #             "oninput": "digitsep(this)",
-    #             "id": "disbursed",
-    #             "min" : "0"
+    total_disbursed = forms.DecimalField(
+        required=True,
+        label='Disburement',         
+        widget=forms.HiddenInput(attrs={
+                "placeholder": "Enter Total Disbursement",                
+                "class": "form-control form-control-sm",
+                "oninput": "digitsep(this)",
+                "id": "disbursed",
+                "min" : "0"
               
-    #         })
-    #     )  
+            })
+        )  
     injection_in = forms.DecimalField(
         required=True,
         label='Injection In',         
@@ -183,7 +183,7 @@ class Daily_Report_Form(forms.ModelForm):
               
             })
         )  
-    injection_out =forms.DecimalField(
+    injection_out = forms.DecimalField(
         required=True,
         label='Injection Out',         
         widget=forms.TextInput(attrs={
@@ -220,7 +220,7 @@ class Daily_Report_Form(forms.ModelForm):
               
             })
         )  
-    previous_closing_portfolio =forms.DecimalField(
+    previous_closing_portfolio = forms.DecimalField(
         required=True,
         label='Closing Portfolio',         
         widget=forms.TextInput(attrs={
@@ -232,14 +232,14 @@ class Daily_Report_Form(forms.ModelForm):
               
             })
         )  
-    # total_clients_disbursed =  forms.IntegerField(
-    #     label='Clients Disbursed',    
-    #     widget=forms.NumberInput(attrs={
-    #             "placeholder": "Enter Total Number of Cilents",                
-    #             "class": "form-control form-control-sm",              
-    #             "id":"clientsDisbursed",
-    #             "min" : "0"            
-    #         }))
+    total_clients_disbursed =  forms.IntegerField(
+        label='Clients Disbursed',    
+        widget=forms.NumberInput(attrs={
+                "placeholder": "Enter Total Number of Cilents",                
+                "class": "form-control form-control-sm",              
+                "id":"clientsDisbursed",
+                "min" : "0"            
+            }))
     
     
     class Meta:

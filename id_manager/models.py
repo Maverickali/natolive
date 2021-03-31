@@ -17,3 +17,6 @@ class Ids(models.Model):
     created_by = models.IntegerField(default=False)
     update_on = models.DateTimeField(auto_now=True, null=True)
     updated_by = models.IntegerField(default=False, null=True)
+    
+
+        
