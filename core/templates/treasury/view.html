@@ -140,16 +140,62 @@
                                   <td>{{ T.repeat_customer_numbers }}</td>
                                   <td>{{ T.new_customer_numbers }}</td>   
                                 
+                                        <div id="approve-Injection" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-body">
+                                                        <form class="pl-3 pr-3" method="POST" action="{% url 'approve_or_reject_injection' %}">
+                                                            {% csrf_token %} 
+                                                            <input hidden name="id" value="{{ T.record_id }}" />
+                                                            <input hidden name="approve" value="yes" />
+                                                            <div class="form-group">
+                                                                <label for="username">Reason To Approve</label>
+                                                                <textarea name="comment" class="form-control" required 
+                                                                aria-label="With textarea" rows="5"></textarea>
+                                                            </div>
+                                                            <div class="form-group text-center">
+                                                                <button class="btn btn-primary" type="submit">
+                                                                Save Reason
+                                                                </button>
+                                                            </div>                                           
+                                                        </form>
+                                                    </div>
+                                                </div><!-- /.modal-content -->
+                                            </div><!-- /.modal-dialog -->
+                                        </div><!-- /.modal --> 
+                                        <div id="reject" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-body">
+                                                        <form class="pl-3 pr-3" method="POST" action="{% url 'approve_or_reject_injection' %}">
+                                                            {% csrf_token %} 
+                                                            <input hidden name="id" value="{{ T.record_id }}" />
+                                                            <input hidden name="reject" value="yes" />
+                                                            <div class="form-group">
+                                                                <label for="username">Reason To Reject</label>
+                                                                <textarea name="comment" class="form-control" required 
+                                                                aria-label="With textarea" rows="5"></textarea>
+                                                            </div>
+                                                            <div class="form-group text-center">
+                                                                <button class="btn btn-primary" type="submit">
+                                                                Save Reason
+                                                                </button>
+                                                            </div>                                           
+                                                        </form>
+                                                    </div>
+                                                </div><!-- /.modal-content -->
+                                            </div><!-- /.modal-dialog -->
+                                        </div><!-- /.modal -->
                                   <td> 	
                                    <a href="/treasury/view/view_assessment/{{ T.branch_name }}/{{ T.record_id }}">
                                     <span class="btn btn-outline-primary btn-sm">View </span>
-                                    </a> 
-                                  <a href="/treasury/view/approved/{{ T.record_id }}">
-                                    <span class="btn btn-outline-success btn-sm">Approve </span>
-                                    </a> 
-                                    <a href="/treasury/view/rejected/{{ T.record_id }}">
-                                      <span class="btn btn-outline-danger btn-sm">Reject </span>
-                                    </a> 
+                                    </a>                                 
+                                    <a data-toggle="modal" data-target="#approve-Injection" >
+                                            <span class="btn btn-outline-success btn-sm">Approve </span>
+                                        </a>
+                                      <a data-toggle="modal" data-target="#reject" >
+                                        <span class="btn btn-outline-danger btn-sm">Reject </span>
+                                    </a>
                                   </td>                                                      
                               
                                 </tr>

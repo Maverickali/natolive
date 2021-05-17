@@ -61,9 +61,9 @@ class Add_ID_Form(forms.ModelForm):
    
     id_number = forms.CharField( 
         required=True,
-        label='NIM Number', 
+        label='NIN Number', 
         widget=forms.TextInput(attrs={
-                "placeholder": "Enter Customer's NIM Number",                
+                "placeholder": "Enter Customer's NIN Number",                
                 "class": "form-control form-control-sm",
                 "id": "id_number",
                 "MIN": "14"              
@@ -150,7 +150,7 @@ class Daily_Report_Form(forms.ModelForm):
         required=True,
         label='Processing Fees ',         
         widget=forms.TextInput(attrs={
-                "placeholder": "Enter Processing Amount",                
+                "placeholder": "Enter Total Processing Amount",                
                 "class": "form-control form-control-sm",
                 "oninput": "digitsep(this)",
                 "id": "processFees",
@@ -161,7 +161,7 @@ class Daily_Report_Form(forms.ModelForm):
     total_disbursed = forms.DecimalField(
         required=True,
         label='Disburement',         
-        widget=forms.HiddenInput(attrs={
+        widget=forms.TextInput(attrs={
                 "placeholder": "Enter Total Disbursement",                
                 "class": "form-control form-control-sm",
                 "oninput": "digitsep(this)",
@@ -200,7 +200,7 @@ class Daily_Report_Form(forms.ModelForm):
         required=True,
         label='Banked',         
         widget=forms.TextInput(attrs={
-                "placeholder": "Enter Banked Amount",                
+                "placeholder": "Enter Total Banked Amount",                
                 "class": "form-control form-control-sm",
                 "oninput": "digitsep(this)",
                 "id": "banked",
@@ -212,7 +212,7 @@ class Daily_Report_Form(forms.ModelForm):
         required=True,
         label='Expenses',         
         widget=forms.TextInput(attrs={
-                "placeholder": "Enter Expenses Amount",                
+                "placeholder": "Enter Total Expenses Amount",                
                 "class": "form-control form-control-sm",
                 "oninput": "digitsep(this)",
                 "id": "expenses",
@@ -253,9 +253,6 @@ class Daily_Report_Form(forms.ModelForm):
             ,'total_expenses_daily'
             ,'closing_bal'
             ,'previous_closing_portfolio'
-            ,'activity_date'
         )
-        widgets = {
-            'activity_date': DateInput(attrs={'type': 'date','class': 'form-control form-control-sm'}),
-        }
+      
     

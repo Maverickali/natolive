@@ -1,0 +1,216 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} View Daily Report Arch {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+  <!-- DataTables -->
+  <link rel="stylesheet" type="text/css" href="/static/assets/js/plugin/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" type="text/css" href="/static/assets/js/plugin/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" type="text/css" href="/static/assets/js/plugin/datatables-buttons/css/buttons.bootstrap4.min.css">
+  
+{% endblock stylesheets %}
+
+{% block content %}
+
+	<div class="content">
+		<div class="page-inner">
+			<div class="page-header">
+				<h4 class="page-title">View Daily Report </h4>
+				<ul class="breadcrumbs">
+					<li class="nav-home">
+						<a href="#">
+							<i class="flaticon-home"></i>
+						</a>
+					</li>
+				
+				</ul>
+			</div>
+			<div class="row">
+					<div class="col-md-12">
+           {% include 'includes/flash_message.html' %}  
+                    <div class="card">
+                        <div class="card-header">
+                          <h3 class="card-title">Daily Report </h3>
+                                                  
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                        
+                        <form method='POST' id="searchfrm2" >
+                        {% csrf_token %}                        
+                          <div class="row">
+                              <div class="col-md-2 col-lg-2">
+                                <div class="form-group">
+                                    <label>{{form.branch.label}} </label> 
+                                  </div>
+                                  <div class="input-group"> 
+                                      {{form.branch}}   
+                                  </div> 
+                                  
+                               </div>
+                              <div class="col-md-3 col-lg-3">  
+                                  <div class="form-group">
+                                      <label>{{form.from_date.label}}</label>
+                                  </div>
+                                  <div class="input-group">
+                                      {{ form.from_date }}
+                                  </div>                                
+                              </div>
+                              <div class="col-md-3 col-lg-3">
+                                  <div class="form-group">
+                                      <label>{{form.to_date.label}}</label>
+                                  </div>
+                                  <div class="input-group">
+                                      {{ form.to_date }}
+                                  </div>                                  
+                              </div>
+                               <div class="col-md-2 col-lg-2">
+                                  <div class="form-group">
+                                      <label></label>
+                                  </div>
+                                  <div class="input-group">
+                                     
+                                  </div>
+                              </div>
+                              <div class="col-md-2 col-lg-2">
+                                  <div class="form-group">
+                                      <label></label>
+                                  </div>
+                                  <div class="input-group">
+                                    
+                                  </div>                   
+                                  
+                              </div>
+                            </div>   
+                             <div class="row">
+                          <div class="col-md-6 col-lg-4"></div>
+                          <div class="col-md-4 col-lg-2">
+                              <div class="form-group">                                  
+                                <button class="btn btn-success" onclick="onSubmit()" type="submit">Search</button>                                  
+                              </div>
+                          </div>
+                        </div>                         
+                          </form>
+                          <br/>
+                          <br/>
+                          <table id="example1" class="table table-bordered table-striped">
+                            <thead>
+                            <tr>
+                              <th>Branch</th>
+                              <th>Activity Date</th>
+                              <th>Opening Balance</th>
+                              <th>Total Collections</th>
+                              <th>Total Processing Fees</th>
+                              <th>Total Disbursed </th>
+                              <th>Injections In</th>                              
+                              <th>Injections Out</th>
+                              <th>Total Banked</th> 
+                              <th>Total Expenses</th>
+                              <th>Closing Balance</th>                              
+                              <th>Previous Day Closing Portfolio</th>
+                              <th>Total Clients Disbursed</th>                              
+                            </tr>
+                            </thead>
+                            <tbody>
+                            
+                            {% for T in activity_data %}
+                                <tr>
+                                  <td>Nato {{ T.branch_id }}</td>
+                                  <td>{{ T.activity_date}} </td>
+                                  <td>{{ T.opening_bal}}</td>                           
+                                  <td>{{ T.total_collections }}  </td>
+                                  <td>{{ T.total_processing_fees }}</td>
+                                  <td>{{ T.total_disbursed }}</td>  
+                                  <td>{{ T.injection_in}}</td>                           
+                                  <td>{{ T.injection_out }}</td>
+                                  <td>{{ T.total_banked }}</td>
+                                  <td>{{ T.total_expenses_daily }}</td>    
+                                   <td>{{ T.closing_bal }}</td>    
+                                   <td>{{ T.previous_closing_portfolio }}</td>     
+                                   <td>{{ T.total_clients_disbursed }}</td>     
+                                
+                                </tr>
+                            {% endfor %} 
+                          
+                            </tbody>
+                            
+                          </table> 
+                        </div>
+                        <!-- /.card-body -->
+                      </div>
+				</div>
+
+			
+			</div>
+		</div>
+    </div>
+   
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script src="/static/assets/js/plugin/datatables/jquery.dataTables.min.js" type="text/javascript"></script>
+<!-- Bootstrap 4 -->
+<script src="/static/assets/js/plugin/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Atlantis DEMO methods, don't include it in your project! -->
+<script src="/static/assets/js/setting-demo2.js"></script>
+<script src="/static/assets/js/plugin/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/static/assets/js/plugin/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/static/assets/js/plugin/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="/static/assets/js/plugin/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/static/assets/js/plugin/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="/static/assets/js/plugin/jszip/jszip.min.js"></script>
+<script src="/static/assets/js/plugin/pdfmake/pdfmake.min.js"></script>
+<script src="/static/assets/js/plugin/pdfmake/vfs_fonts.js"></script>
+<script src="/static/assets/js/plugin/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="/static/assets/js/plugin/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="/static/assets/js/plugin/datatables-buttons/js/buttons.colVis.min.js"></script>
+{% comment %} on click js effect {% endcomment %}
+<script>
+ $(function () {
+      var checkbox = document.querySelector("input[name=all_branchs]");
+
+      checkbox.addEventListener('change', function() {
+        if (this.checked) {
+          document.getElementById("branchSelector").disabled = true;
+          console.log("Checkbox is checked..");
+        } else {
+          document.getElementById("branchSelector").disabled = false;
+          console.log("Checkbox is not checked..");
+        }
+      });
+ });
+</script>
+<script>
+    $(function () {
+    $("#example1").DataTable({
+        "responsive": true, "lengthChange": false, "autoWidth": false,
+        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    $('#example2').DataTable({
+        "paging": true,
+        "lengthChange": false,
+        "searching": false,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+    });
+    });
+
+
+</script>
+
+<script>
+  function onSubmit()
+  {
+    document.getElementById("searchfrm").reset();
+  }
+</script>
+
+
+{% endblock javascripts %}

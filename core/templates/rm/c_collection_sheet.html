@@ -5,6 +5,11 @@
 <!-- Spe cific Page CSS goes HERE  -->
 {% block stylesheets %}
 
+  <link rel="stylesheet"  href="/static/assets/css/select2.min.css">
+  <link rel="stylesheet" type="text/css" href="/static/assets/js/plugin/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" type="text/css" href="/static/assets/js/plugin/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" type="text/css" href="/static/assets/js/plugin/datatables-buttons/css/buttons.bootstrap4.min.css">
+  
 {% endblock stylesheets %}
 
 {% block content %}
@@ -44,6 +49,7 @@
                                <div class="card-title">RM Collection Sheet </div>
                             </span>
                             {% endif %} </div>
+							
 						</div>
 						<form id="frmRMDaily" method="POST"   >
 
@@ -51,44 +57,34 @@
 				
 						<div class="card-body">
 							<div class="row">								
-									<div class="col-md-6 col-lg-4">
-									<div class="form-group">
-											<label>{{form.collection_date.label}}</label>
-											<div class="input-group">
-                                            	{{ form.collection_date }}
-											</div>
+									<div class="col-md-6 col-lg-4">									
+										<div class="form-group">
+											<label>Select Active Customer </label>                 
+											<select name="customer_id" id="customer_id"
+											class="select2 form-control form-control-sm"
+											style="{height: 36px; width: 100%;}" >
+												{% for u in customerddl %}                                   
+													<option value={{ u.id }}> {{ u.first_name }} {{ u.last_name }} </option>                                   
+												{% endfor %}
+											</select> 
 										</div>
-										<span class="text-danger">{{ form.collection_date.errors }}</span>	
-										 <div class="form-group">
-											<label>{{form.first_name.label }}</label>
-											{{ form.first_name }}  
-										</div><span class="text-danger">{{ form.first_name.errors }}</span> 
-																			
+								    	<span class="text-danger">{{ form.customer_id.errors }}</span>																		
 									</div>
 									<!-- column 2 -->
 									<div class="col-md-6 col-lg-4">	
-									<div class="form-group">
-											<label>{{form.amount_collected.label}}   </label>  
-											{{form.amount_collected}}                                   
-										</div><span class="text-danger">{{ form.amount_collected.errors }}</span> 			
-										 <div class="form-group">
-											<label>{{form.last_name.label }}</label>
-											{{ form.last_name }}  
-										</div><span class="text-danger">{{ form.last_name.errors }}</span>							
-										                               									
-										
+										<div class="form-group">
+												<label>{{form.amount_collected.label}}   </label>  
+												{{form.amount_collected}}                                   
+										</div>
+										<span class="text-danger">{{ form.amount_collected.errors }}</span> 	
+									
 									</div>
 									<!-- End of Column 2 -->
 									<!-- Column 3 -->
 									<div class="col-md-6 col-lg-4">
-                                        <div class="form-group">
-											<label>{{form.receipt_number.label }} Receipt number</label>
-											{% comment %} {{ form.receipt_number}}  {% endcomment %}
-											<br/>
-											{{ receipt_no }}
-										</div><span class="text-danger">{{ form.receipt_number.errors }}</span> 
-										                              									
-										
+
+					
+                                       
 									</div>
 									<!-- End of Column 3 -->
 							</div>
@@ -99,34 +95,35 @@
 						</div>
 						</form>
 						<div class="card-action">
-
+ 						  <div class="table-responsive">
 						  <table id="example1" class="table table-bordered table-striped">
                             <thead>
                             <tr>
-                              <th>Collection Date</th>
-                              <th>First Name</th>
-							   <th>Last Name</th>
-                              <th>Amount Collected</th>                            
-                              <th>Receipt Number</th>
-                              <th>Manager Authorization</th>                                   
+							  <th>Posting Date: </th>
+							  <th>Receipt Number:</th>
+                              <th>First Name: </th>
+							  <th>Last Name: </th>
+                              <th>Amount Collected: </th>
+                              <th>Manager Authorization: </th>                                   
                             </tr>
                             </thead>
                             <tbody>
                             
                             {% for T in activity_data %}
-                                <tr>
-                                  <td>{{ T.created_on }}</td>
-                                  <td>{{ T.first_name}} </td>
-								  <td>{{ T.last_name}} </td>
-                                  <td>{{ T.amount_collected}}</td>								                        
-                                  <td>{{  T.receipt_number  }}</td>                                  								                        
-                                  <td>{{  T.authorization_status  }}</td>
+                                <tr>								  
+                                  <td>{{ T.created_on }}</td>								  								                        
+                                  <td>{{ T.receipt_number  }}</td>  
+                                  <td>{{ T.customer.first_name}} </td>
+								  <td>{{ T.customer.last_name}} </td>
+                                  <td>{{ T.amount_collected}}</td>                                								                        
+                                  <td>{{ T.authorization_status  }}</td>
                                 </tr>
                             {% endfor %} 
                           
                             </tbody>
                             
                           </table>
+						  </div>
 						</div>
 				
 
@@ -223,5 +220,7 @@
   
 });
 </script>
-
+<script src="/static/assets/js/select2.full.min.js"></script>
+<script src="/static/assets/js/select2.min.js"></script>
+<script src="/static/assets/js/select2.init.js"></script>
 {% endblock javascripts %}	

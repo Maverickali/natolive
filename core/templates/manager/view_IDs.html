@@ -2,14 +2,17 @@
 
 {% block title %} VIEW IDS {% endblock %} 
 
-<!-- Spe cific Page CSS goes HERE  -->
 {% block stylesheets %}
-   <link rel="stylesheet" type="text/css" href="/static/assets/css/select2.min.css">
+  <!-- DataTables -->
+  <link rel="stylesheet" type="text/css" href="/static/assets/js/plugin/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" type="text/css" href="/static/assets/js/plugin/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" type="text/css" href="/static/assets/js/plugin/datatables-buttons/css/buttons.bootstrap4.min.css">
+  
 {% endblock stylesheets %}
 
 {% block content %}
-{% if 'Branch-Managers' or 'RM' in currentGroup %}
-		<div class="content">
+{% if 'Branch-Managers' or 'ID-Manager' in currentGroup %}
+	<div class="content">
 		<div class="page-inner">
 			<div class="page-header" >
 				<h4 class="page-title">View IDs Stored
@@ -35,82 +38,99 @@
 				 {% include 'includes/flash_message.html' %}
 					<div class="card">
 						<div class="card-header">							
-						<div class="card-title">	 
-						    {% if msg %}
-                               <div class="card-title">View IDs </div> </br> 
-							   {% comment %} <span class="{% if success %}{{ "text-success" }}{% else %}{{"text-danger"}}{%endif%}">{{ msg | safe }}</span> {% endcomment %}
-                            {% else %}
-                            <span>
-                               <div class="card-title">View IDs </div>
-                            </span>
-                            {% endif %} </div>
+                            <div class="card-title">	 
+                                <span>
+                                    <div class="card-title">View IDs </div>
+                                </span>
+                            </div>
 						</div>						
 						<div class="card-action">
-
-						  <table id="example1" class="table table-bordered table-striped">
+                            <table id="example1" class="table table-bordered table-striped">
                             <thead>
-                            <tr>
-                              <th>NIN Number</th>      
-                              <th>First Names</th>
-							  <th>Last Names</th>
-                              <th>Id Status</th>
-                              <th>Action</th>                                                              
-                            </tr>
-                            </thead>
-                            <tbody>
-                            
-                            {% for T in activity_data %}
                                 <tr>
-                                  <td>{{ T.id_number}} </td>								  
+                            
+                                {% if  'ID-Manager' in currentGroup %}
+                                <th>Branch</th>
+                                {% endif %}
+                                <th>NIN Number</th>  
+                                   
+                                <th>First Names</th>
+                                <th>Last Names</th>
+                                <th>Id Status</th>
+                                <th>Actions</th>   
+                                <th>Account Number</th>
+                                <th>Id Taken Date</th>  
+                                <th>Received Date</th>                                                      
+                                </tr>
+                            </thead>
+                            <tbody>                            
+                            {% for T in activity_data %}
+                            <tr>
+                                  {% if  'ID-Manager' in currentGroup %}
+                                    <td> Nato {{ T.branch_id_id}} </td>
+                                  {% endif %}
+                                  <td>{{ T.id_number}} </td>	                                							  
                                   <td>{{ T.customer_id.first_name }}</td>
 								  <td>{{ T.customer_id.last_name }} </td>                                  
-                                  <td>{{ T.id_status }}</td>								                        
+                                  <td>{{ T.id_status }}</td>
                                   <td>
-                                        <a href="/manager/id_request/{{ T.id }}">
-                                            <span class="btn btn-outline-primary btn-sm">Request</span>
-                                        </a> 
-                                        <a href="/manager/id_receviced/{{ T.id }}">
-                                            <span class="btn btn-outline-success btn-sm"> Receviced </span>
-                                        </a> 
-                                        <a data-toggle="modal" data-target="#over-ride" >
-                                            <span class="btn btn-outline-info btn-sm">Override </span>
-                                        </a>
-                                        <div id="over-ride" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-body">
-                                                        <form class="pl-3 pr-3" method="POST" action="{% url 'over_ride_reason' %}">
-                                                            {% csrf_token %} 
-                                                            <input hidden name="id" value="{{ T.id }}" />
-                                                            <div class="form-group">
-                                                                <label for="username">Reason To OverRide</label>
-                                                                <textarea name="reason" class="form-control" required aria-label="With textarea" rows="5"></textarea>
-                                                            </div>
-                                                            <div class="form-group text-center">
-                                                                <button class="btn btn-primary" type="submit">
-                                                                Save OverRide Reason
-                                                                </button>
-                                                            </div>                                           
-                                                        </form>
-                                                    </div>
-                                                </div><!-- /.modal-content -->
-                                            </div><!-- /.modal-dialog -->
-                                        </div><!-- /.modal --> 
-                                  </td>       
-                                </tr>
-                            {% endfor %} 
-                          
+                                    {% if  'ID-Manager' in currentGroup %}                                  
+                                        <a href="/id_manager/withdrawn/{{ T.id }}" >
+                                            <span class="btn btn-outline-primary btn-sm ">Withdrawn</span></a> 
+                                        <a href="/id_manager/receviced/{{ T.id }}" >
+                                            <span class="btn btn-outline-success btn-sm "> Receviced </span>
+                                        </a>                                   
+                                    {% endif %}
+                                    {% if  'Branch-Managers' in currentGroup %}					                        
+                                  
+                                    <a href="/manager/id_request/{{ T.id }}">
+                                        <span class="btn btn-outline-primary btn-sm">Request</span>
+                                    </a> 
+                                    <a href="/manager/id_receviced/{{ T.id }}">
+                                        <span class="btn btn-outline-success btn-sm"> Receviced </span>
+                                    </a> 
+                                    <a data-toggle="modal" data-target="#over-ride" >
+                                        <span class="btn btn-outline-info btn-sm">Override </span>
+                                    </a>
+                                    <div id="over-ride" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-body">
+                                                    <form class="pl-3 pr-3" method="POST" action="{% url 'over_ride_reason' %}">
+                                                        {% csrf_token %} 
+                                                        <input hidden name="id" value="{{ T.id }}" />
+                                                        <div class="form-group">
+                                                            <label for="username">Reason To OverRide</label>
+                                                            <textarea name="reason" class="form-control" required aria-label="With textarea" rows="5"></textarea>
+                                                        </div>
+                                                        <div class="form-group text-center">
+                                                            <button class="btn btn-primary" type="submit">
+                                                            Save OverRide Reason
+                                                            </button>
+                                                        </div>                                           
+                                                    </form>
+                                                </div>
+                                            </div><!-- /.modal-content -->
+                                        </div><!-- /.modal-dialog -->
+                                    </div><!-- /.modal --> 
+                                  
+                                  {% endif %}                           
+                                  </td>
+                                  
+                                  <td>{{ T.account_number}} </td>  
+                                  <td>{{ T.taken_date }} </td>
+                                  <td>{{ T.received_date }} </td>
+                            </tr>
+                            {% endfor %}
                             </tbody>
-                            
-                          </table>
-						</div>
-				
+                            </table>
 
+						
+						</div>
 					</div>
 				</div>
-				<div class="col-md-12">
-				</div>
 			</div>
+
 		</div>
 	</div>
     
@@ -154,11 +174,6 @@
 		
 
 	</script>
-    <script type="text/javascript" src="/static/assets/js/interactions.min.js"></script>
-	<script type="text/javascript" src="/static/assets/js/select2.min.js"></script>
-
-	<script type="text/javascript" src="/static/assets/js/app.js"></script>
-	<script type="text/javascript" src="/static/assets/js/form_select2.js"></script>
 
 <script>
     
@@ -181,7 +196,5 @@
 
 
 </script>
-<script src="/static/assets/js/select2.full.min.js"></script>
-<script src="/static/assets/js/select2.min.js"></script>
-<script src="/static/assets/js/select2.init.js"></script>
+
 {% endblock javascripts %}	

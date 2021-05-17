@@ -1,6 +1,3 @@
-
-
-
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -18,6 +15,7 @@ class Injections(models.Model):
     injection_amount = models.FloatField(default=0.0, null=True)
     injection_status = models.BooleanField(default=False)
     injection_authorization = models.CharField(max_length=10,default='False')
+    comment = models.CharField(default=False, max_length=300)
     creation_date = models.DateTimeField(auto_now_add=True)
     created_by = models.CharField(max_length=50)
     update_date = models.DateTimeField(auto_now=True, null=True)
@@ -30,6 +28,7 @@ class Branch(models.Model):
     created_by = models.CharField(max_length=50)
 
 class Profile(models.Model):
+    id = models.BigAutoField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     branch_id = models.ForeignKey(Branch, on_delete=models.CASCADE)
     location = models.CharField(default=False, max_length=100)
@@ -99,6 +98,24 @@ class Targets_Collections_Disbursement(models.Model):
     updated_by = models.IntegerField(default=False, null=True)
 
 
+class Potential_Customers(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    first_name = models.CharField(default=False, max_length=100)
+    last_name = models.CharField(default=False, max_length=100)
+    other_name = models.CharField(default=False, max_length=100)
+    contact = models.CharField(default=False, max_length=100)
+    amount_desired = models.FloatField(default=False)
+    client_type = models.CharField(default=False, max_length=100)
+    loan_count = models.IntegerField(default=0)
+    branch_id = models.IntegerField(default=False)
+    desire_date = models.DateField(default=False)
+    turn_over = models.CharField(default='potential_cilent', max_length=100, null=True)
+    business_type = models.CharField(default=False, max_length=100)
+    business_location = models.CharField(default=False, max_length=100)
+    created_on = models.DateTimeField(auto_now_add=True)
+    created_by = models.IntegerField(default=False)
+    update_on = models.DateTimeField(auto_now=True, null=True)
+    updated_by = models.IntegerField(default=False, null=True)
 class Targets_Portfoilo(models.Model):
     id = models.BigAutoField(primary_key=True)
     rm_id = models.IntegerField(default=False)
@@ -115,11 +132,13 @@ class Targets_Portfoilo(models.Model):
 
 class RM_Collection_Sheets(models.Model):
     id = models.BigAutoField(primary_key=True)
-    first_name = models.CharField(default=False, max_length=50)
-    last_name = models.CharField(default=False, max_length=50)
+    customer = models.ForeignKey(Potential_Customers, on_delete=models.CASCADE, null=True)
+    first_name = models.CharField(default=False, max_length=50, null=True)
+    last_name = models.CharField(default=False, max_length=50, null=True)
     amount_collected = models.FloatField(default=0.0)
     receipt_number = models.IntegerField(default=False)
     collection_date = models.DateField(default=False)
+    collected_by = models.IntegerField(default=False)
     branch_id = models.IntegerField(default=0)
     authorization_status = models.CharField(default='PENDING', max_length=100, null=True)
     authorization_note = models.CharField(default='Not Authorized By Branch Manager', max_length=100, null=True)
@@ -148,22 +167,6 @@ class Daily_Report(models.Model):
     update_on = models.DateTimeField(auto_now=True, null=True)
     updated_by = models.IntegerField(default=False, null=True)    
 
-class Potential_Customers(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    first_name = models.CharField(default=False, max_length=100)
-    last_name = models.CharField(default=False, max_length=100)
-    contact = models.CharField(default=False, max_length=100)
-    amount_desired = models.FloatField(default=False)
-    client_type = models.CharField(default=False, max_length=100)
-    branch_id = models.IntegerField(default=False)
-    desire_date = models.DateField(default=False)
-    turn_over = models.CharField(default='potential_cilent', max_length=100, null=True)
-    business_type = models.CharField(default=False, max_length=100)
-    business_location = models.CharField(default=False, max_length=100)
-    created_on = models.DateTimeField(auto_now_add=True)
-    created_by = models.IntegerField(default=False)
-    update_on = models.DateTimeField(auto_now=True, null=True)
-    updated_by = models.IntegerField(default=False, null=True)
     
 class Disbursements(models.Model):
     id = models.BigAutoField(primary_key=True)

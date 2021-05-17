@@ -5,6 +5,7 @@ from app.models import Branch, Profile, RM_Daily_Activity, RM_Weekly_Customers, 
 from django.forms.widgets import DateInput
 from django.contrib.auth.models import User
 from datetime import date, timedelta
+from django.http import request
 
 
 
@@ -32,6 +33,21 @@ CUSTOMER_CATEGORIES = [
 current_date = datetime.date.today() 
 past_7_days = datetime.date.today() + timedelta(days=-7)
 
+class BranchForm(forms.ModelForm):
+    
+    branch_name =  forms.CharField( 
+            required=True,
+            label='Branch Name', 
+                widget=forms.TextInput(attrs={
+                        "placeholder": "Enter Branch Name",                
+                        "class": "form-control form-control-sm"
+                    
+                    })
+            )
+    class Meta:
+            model = Branch
+            fields = [ 'branch_name' ]
+        
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
@@ -123,7 +139,7 @@ class TreasuryForm(forms.ModelForm):
     new_customer_amount = forms.DecimalField(
         label='Disbursed Amount to New Customer(s)',         
         widget=forms.TextInput(attrs={
-                "placeholder": "Enter Disbursed Amount to New Customer(s)",                
+                "placeholder": "Enter Amount to be disbursed New Customer(s)",                
                 "class": "form-control",               
                 "oninput": "format(this)",
                 "id": "newCustomerAmount",
@@ -133,7 +149,7 @@ class TreasuryForm(forms.ModelForm):
     repeat_customer_amount = forms.DecimalField(
         label='Disbursed Amount to Repeat Customer(s)',         
         widget=forms.TextInput(attrs={
-                "placeholder": "Enter Disbursed Amount to Repeat Customer(s)",                
+                "placeholder": "Enter  Amount to be disbursed Repeat Customer(s)",                
                 "class": "form-control",
                 "oninput": "format(this)",
                 "id": "repeatCustomerAmount",
@@ -505,29 +521,29 @@ class RMWeeklyCustomersForm(forms.ModelForm):
 
 
 class Collection_Sheet_Form(forms.ModelForm):
-    collection_date = forms.DateField(
-        required=True,
-        initial=datetime.date.today,
-        widget=forms.SelectDateWidget(
-            attrs={"class":"form-control form-control-sm"}
-            )
-        )
-    first_name = forms.CharField( required=True,
-        label='First Name', 
-            widget=forms.TextInput(attrs={
-                    "placeholder": "Enter First Name",                
-                    "class": "form-control form-control-sm"
+    # collection_date = forms.DateField(
+    #     required=True,
+    #     initial=datetime.date.today,
+    #     widget=forms.SelectDateWidget(
+    #         attrs={"class":"form-control form-control-sm"}
+    #         )
+    #     )
+    # first_name = forms.CharField( required=True,
+    #     label='First Name', 
+    #         widget=forms.TextInput(attrs={
+    #                 "placeholder": "Enter First Name",                
+    #                 "class": "form-control form-control-sm"
                 
-                })
-        )
-    last_name = forms.CharField( required=True,
-        label='Last Name', 
-            widget=forms.TextInput(attrs={
-                    "placeholder": "Enter Last Name",                
-                    "class": "form-control form-control-sm"
+    #             })
+    #     )
+    # last_name = forms.CharField( required=True,
+    #     label='Last Name', 
+    #         widget=forms.TextInput(attrs={
+    #                 "placeholder": "Enter Last Name",                
+    #                 "class": "form-control form-control-sm"
                 
-                })
-        )
+    #             })
+    #     )
     amount_collected = forms.DecimalField(
         required=True,
         label='Amounted For By Customer',         
@@ -560,11 +576,9 @@ class Collection_Sheet_Form(forms.ModelForm):
     class Meta:
         model = RM_Collection_Sheets
         fields = (
-            'first_name',
-            'last_name', 
+            # 'first_name',
+            # 'last_name', 
             'amount_collected', 
-            # 'receipt_number',
-            'collection_date',
             'created_by'
             )
 
@@ -583,6 +597,14 @@ class Potential_Customers_Form(forms.ModelForm):
      label='Last Name', 
             widget=forms.TextInput(attrs={
                     "placeholder": "Enter Last Name",                
+                    "class": "form-control form-control-sm"
+                
+                })
+        )
+    other_name = forms.CharField( required=False,
+     label='Other Name', 
+            widget=forms.TextInput(attrs={
+                    "placeholder": "Enter Other Name",                
                     "class": "form-control form-control-sm"
                 
                 })
@@ -642,6 +664,7 @@ class Potential_Customers_Form(forms.ModelForm):
         fields = (
             'first_name',
             'last_name',
+            'other_name',
             'desired_amount',
             'contact',
             'business_type',
@@ -650,4 +673,23 @@ class Potential_Customers_Form(forms.ModelForm):
             'created_by'
         )
 
+class Repeat_Potential_Customer(forms.Form):
+    
+    customer_id = forms.MultipleChoiceField(widget=forms.SelectMultiple(attrs={"class": "select2 form-control form-control-sm",
+                                                                                    "multiple": "multiple", 
+                                                                                    "style": "{height: 36px; width: 100%;}" }),
+                                         choices=((u.id, u.first_name) for u in Potential_Customers.objects.filter())
+                                          )
+    desired_amount = forms.DecimalField(
+        required=True,
+        label='Amounted Desired',         
+        widget=forms.TextInput(attrs={
+                "placeholder": "Enter Amount Wanted By Customer",                
+                "class": "form-control form-control-sm",
+                "oninput": "digitsep(this)",
+                "id": "desired_amount",
+                "min" : "0"
+              
+            })
+        )
 # END OF RM FORMS

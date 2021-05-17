@@ -1,7 +1,7 @@
 {% if msg_status %} 
 <div class="alert alert-success alert-block">
 	<button type="button" class="close" data-dismiss="alert">×</button>	
-        <strong>{{ msg }}</strong>
+        <strong>{{ msg | safe }}</strong>
 </div>
 {% endif %}
 
@@ -9,7 +9,7 @@
 {% if msg_status == False %} 
 <div class="alert alert-danger alert-block">
 	<button type="button" class="close" data-dismiss="alert">×</button>	
-        <strong>{{ msg }}</strong>
+        <strong>{{ msg | safe }}</strong>
 </div>
 {% endif %}
 

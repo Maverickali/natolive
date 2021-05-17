@@ -13,26 +13,24 @@ from django.utils import timezone
 from django.views import generic 
 from django.db.models import Sum
 from django.contrib.auth.models import Group, User
-from app.forms import Collection_Sheet_Form, Potential_Customers_Form, RMWeeklyCustomersForm, RMWeeklyCustomersPortfolioForm, RmDailyActivityForm, SearchForm, SetTargetsForm, TargetsPortfoiloForm, TreasuryForm
-# from app.rm_forms import Collection_Sheet_Form from .forms import LoginForm, 
+from app.forms import BranchForm, Collection_Sheet_Form, Potential_Customers_Form, RMWeeklyCustomersForm, RMWeeklyCustomersPortfolioForm, Repeat_Potential_Customer, RmDailyActivityForm, SearchForm, SetTargetsForm, TargetsPortfoiloForm, TreasuryForm
 
-from .functions import branch_disable, get_date, getTotalClientsDisbursed, getTotalCollections, getTotalDisbursement
+from eod.models import Eod
+from .functions import get_Open_Txn_date, branch_disable, get_date, getTotalClientsDisbursed, getTotalCollections, getTotalDisbursement
 from app.models import Branch, Daily_Report, Disbursements, Injections, Potential_Customers, Profile, RM_Collection_Sheets, RM_Daily_Activity
 import datetime
 from datetime import date, timedelta
 import re
 from django.db import DatabaseError
-from django.contrib.auth.models import User
-# from app.manager_forms import RM_Search_Collections_Form
 from app.functions import get_branch_id, get_desire_date, get_user_group
 from app.manager_forms import Daily_Report_Form, Disbursement_Form, Disbursement_Search_Form, RM_Search_Collections_Form
 from authentication.forms import SignUpForm
+from django.core.exceptions import ObjectDoesNotExist
 
 
 
 @login_required(login_url="/login/")
-def index(request):    
-    
+def index(request): 
     cash_forward = Injections.objects.aggregate(Sum('cash_forward'))  
     injection_amount = Injections.objects.aggregate(Sum('injection_amount'))  
     repeat_cust =  Injections.objects.aggregate(Sum('repeat_customer_numbers'))
@@ -40,6 +38,7 @@ def index(request):
     potential_customers = Potential_Customers.objects.filter(turn_over='active_cilent').count()#.aggregate(sum('id'))
     active_customers = Potential_Customers.objects.filter(turn_over='potential_cilent').count()
     Injection_requests = Injections.objects.filter(injection_status=1).count()
+    txn_date = get_Open_Txn_date(request)
     context = {
         'active': 'home',
         'cash_forward': cash_forward['cash_forward__sum'],
@@ -49,10 +48,49 @@ def index(request):
         'Injection_requests': Injection_requests,
         'active_customers': active_customers,
         'potential_customers': potential_customers,
+        'txn_date': txn_date,
         "currentGroup": get_user_group(request)
         }
 
     return render(request, 'index.html', context)
+
+def create_branch(request):    
+    
+    msg = None
+    obj = None
+    success = False
+    form = BranchForm()
+    active = 'treasury'
+    activity_data = Branch.objects.all()
+    if request.method == 'POST' and request.POST:
+        form = BranchForm(request.POST)    
+        if form.is_valid(): 
+            createBranch = Branch.objects.get_or_create(branch_name=form.cleaned_data.get("branch_name"));
+            if createBranch:
+                last_id = Branch.objects.latest('id')
+                
+                # start eod
+                initialEod = eod.objects.get_or_create(
+                    branch_id=last_id,
+                    transaction_date=datetime.date.today() )
+                msg = initialEod
+            else:
+                msg = "Branch already exists"
+            
+        
+    context = {
+        'form': form, 
+        'activity_data':activity_data,
+        "msg": msg, 
+        "success": success, 
+        "obj" : obj,
+        "currentGroup": get_user_group(request), 
+        'active':active}
+
+    return render(request, 'co-admin/create_branch.html', context)
+
+def view_branch(request):
+    pass
 
 @login_required(login_url="/login/")
 def treasury_create(request):
@@ -85,7 +123,7 @@ def treasury_create(request):
         'form': form, 
         'branch':branch,
         "msg": msg, 
-        "success": success, 
+        "success": success,  'txn_date' : get_Open_Txn_date(request),
         "currentGroup": get_user_group(request), 
         'active':active}
 
@@ -109,8 +147,7 @@ def treasury_report(request):
             from_d_month = int(request.POST['from_date_month'])
             from_d_day = int(request.POST['from_date_day'])
             to_date = datetime.date(to_d_year, to_d_month, to_d_day)
-            from_date = datetime.date(from_d_year, from_d_month, from_d_day)
-            
+            from_date = datetime.date(from_d_year, from_d_month, from_d_day)            
             Total_expenses = ""
             Total_collections = getTotalCollections(request)
             Drawer_limit = ""
@@ -135,8 +172,7 @@ def treasury_report(request):
                 treasury_list = Injections.objects.filter(
                     injection_status=inj_status, 
                     date__range=(from_date, to_date), 
-                    branch_name=branch_id).order_by('-date')
-              
+                    branch_name=branch_id).order_by('-date')              
                 
             search_form = SearchForm().full_clean()
         else:
@@ -156,7 +192,7 @@ def treasury_report(request):
     active = 'treasury'
     context = { 
             'treasuryList': treasury_list, 'searchform': search_form,
-            'Branch': branch_name, 'updated': updated, 
+            'Branch': branch_name, 'updated': updated,  'txn_date' : 'null',
             'msg': msg, "currentGroup": get_user_group(request),
             'active':active}
 
@@ -194,33 +230,43 @@ def view_assessment(request,id,cash):
     return render(request, 'accountant/view_assessment.html', context)
     
     
-def approved_injection(request, id):
+def approved_injection(request):
     treasury_list = None
     treasury_list = Injections.objects.filter(injection_status=True,date=datetime.datetime.today()).order_by('-date') 
     updating = None
     msg = None
+    id = request.POST['id']
+    comment = request.POST['comment']
+    
     if request.user.has_perm('app.can_approve_reject_injection'):     
         # Injections.objects.all()   
         updated = Injections.objects.select_related().get(record_id=id)
         # treasury_list = updated
         updated.injection_authorization = 'APPROVED'
+        updated.comment = comment
         updated.injection_status = False
         updated.updated_by = request.user.id
-        updated.save()
-        updated = True  
-        msg = 'Injection Approved Successfully'
+        if comment == '':
+            updated = False  
+            msg = 'Please Add a Comment to complete this action successfully'
+        else:
+            updated.save()
+            updated = True  
+            msg = 'Injection Approved Successfully'        
     else:
         return render(request, 'includes/noauthorization.html')
     search_form = SearchForm()
     context = { 
         'treasuryList' : treasury_list, 
         'searchform': search_form,
-        'updated': updated, 
+        'updated': updated,  'txn_date' : 'null',# get_Open_Txn_date(request),
         'msg': msg, "currentGroup": get_user_group(request)}
     return render(request, 'treasury/view.html', context)
 
 def rejected_injection(request, id):
     treasury_list = None
+    id = request.POST['id']
+    comment = request.POST['comment']
     try:
         msg = None
         success = None
@@ -228,11 +274,16 @@ def rejected_injection(request, id):
             treasury_list = Injections.objects.filter(injection_status=True,date=datetime.datetime.today()).order_by('-date')
             updated = Injections.objects.select_related().get(record_id=id)
             updated.injection_authorization = 'REJECTED'
+            updated.comment = comment
             updated.injection_status = False
             updated.updated_by = request.user.id
-            updated.save()
-            updated = True  
-            msg = 'Injection Rejected Successfully'
+            if comment == '':
+                updated = False  
+                msg = 'Please Add a Comment to complete this action successfully'
+            else:
+                updated.save()
+                updated = True  
+                msg = 'Injection Rejected Successfully'
         else:
             return render(request, 'includes/noauthorization.html')
     except:
@@ -242,10 +293,17 @@ def rejected_injection(request, id):
     context = { 
         'treasuryList' : treasury_list, 
         'searchform': search_form,
-        'updated': updated, 
+        'updated': updated,  'txn_date' : 'null',#get_Open_Txn_date(request),
         'msg': msg  }
     return render(request, 'treasury/view.html', context)
 
+def approve_or_reject_injection(request):
+    if request.POST and request.method == 'POST':
+        if request.POST['approve'] == 'yes':
+            approved_injection(request)
+        else:
+            rejected_injection(request)
+    pass
 
 def rm_daily_create(request):
     msg     = None
@@ -408,42 +466,62 @@ def set_targets_view(request):
 # START RM Views 
 def rm_collection_sheet(request):
     
-    activity_data = RM_Collection_Sheets.objects.all()
+    
+    # Post 
+    
     msg = None
     msg_status = None
     success = None
     receipt_no = None
     active = None
-    # Post 
-    last_id = RM_Collection_Sheets.objects.latest('id')
-    receipt_no = str(request.user.id) + str(get_branch_id(request)) + str(last_id.id)
-           
+    customers = None
+    activity_data = None
+    try:
+        last_id = RM_Collection_Sheets.objects.latest('id')        
+    except ObjectDoesNotExist:
+        last_id = 0
+    try:
+        activity_data = RM_Collection_Sheets.objects.select_related('customer').filter(created_by=request.user.id)         
+    except ObjectDoesNotExist:
+        activity_data = None
+    try:
+        customers =  Potential_Customers.objects.filter(branch_id=get_branch_id(request) , turn_over='active_cilent', created_by=request.user.id).order_by('-created_on')        
+    except ObjectDoesNotExist:
+        customers = None
     
     if request.method == 'POST' and request.POST:
+        if last_id == 0:
+            receipt_no =  str(request.user.id) + str(get_branch_id(request)) + '0'
+        else :
+            receipt_no = str(request.user.id) + str(get_branch_id(request)) + str(last_id.id)
         form = Collection_Sheet_Form(request.POST)        
         if form.is_valid():
-            collection_date = get_date(request)
+            collection_date = get_Open_Txn_date(request)
+            customer_id = request.POST.get('customer_id',False)
+            customer_instance = Potential_Customers.objects.get(id=customer_id)
             # receipt_no = request.POST['receipt_number']
             creator = request.user.id
             checker = None
             try:
                 # Go to db
                 checker = RM_Collection_Sheets.objects.filter(receipt_number=receipt_no)
-                if not checker :
-                    
+                if not checker :                    
                     obj = form.save(commit=False)
                     obj.receipt_number = receipt_no
+                    # put rm reponsible for collection 
                     obj.created_by = creator
+                    obj.customer = customer_instance
                     obj.branch_id = get_branch_id(request)
                     obj.before_authorization = "PENDING"
+                    obj.collection_date = collection_date
+                    obj.collected_by = request.user.id
                     obj.save()
                     msg_status = True
-                    msg = 'SUCCESSFULLY SAVED'
+                    msg = 'COLLECTION WAS SUCCESSFULLY SAVED WITH RECEIPT NUMBER:- ' + str(receipt_no)
                     form = Collection_Sheet_Form().full_clean()
                     form = Collection_Sheet_Form()
-                    last_id = RM_Collection_Sheets.objects.latest('id')
-                    receipt_no = str(request.user.id) + str(get_branch_id(request)) + str(last_id.id)
-      
+                    # last_id = RM_Collection_Sheets.objects.latest('id')
+                    # receipt_no = str(request.user.id) + str(get_branch_id(request)) + str(last_id.id)     
                     
                 else:
                     msg = "You have Already Used this Receipt number CAN'T SAVE THIS COLLECTION"
@@ -464,7 +542,9 @@ def rm_collection_sheet(request):
         'msg_status': msg_status,
         'activity_data': activity_data,
         'receipt_no' : receipt_no,
-        'msg': msg,
+        'msg': msg, 
+        'customerddl': customers,
+        'txn_date' : get_Open_Txn_date(request),
         'active': active,
         "currentGroup": get_user_group(request)
     }
@@ -490,6 +570,7 @@ def potential_customer(request):
             obj.desire_date = desire_date
             obj.created_by = creator
             obj.branch_id = user_branch_id
+            obj.amount_desired = request.POST.get('desired_amount',False)
             obj.save()
             msg_status = True
             msg = 'CUSTOMER SUCCESSFULLY SAVED'
@@ -504,12 +585,83 @@ def potential_customer(request):
         'form': form,
         'msg_status': msg_status,
         'activity_data': activity_data,
-        'msg': msg,
+        'msg': msg, 'txn_date' : get_Open_Txn_date(request),
         'msg-status': msg_status, 'active' : active,
         "currentGroup": get_user_group(request)
     }
 
     return render(request, 'rm/potential_customer.html', context)
+
+def repeatPotentialCustomer(request):
+    activity_data = None
+    active = None
+    msg = None
+    form = None 
+    msg_status = None
+    count = None
+    txn_date = get_Open_Txn_date(request)
+    creator = request.user.id
+    form = Repeat_Potential_Customer()
+    customers = Potential_Customers.objects.filter(branch_id=get_branch_id(request) , turn_over='active_cilent', created_by=request.user.id)
+    activity_data = Potential_Customers.objects.filter(created_by=creator)    
+    if request.method == 'POST' and request.POST:
+        customer_id = request.POST.get('customer_id', False)
+        desired_amount = request.POST.get('desired_amount', False)
+        get_customer = Potential_Customers.objects.get(id=customer_id)
+        get_customer.amount_desired = desired_amount
+        if get_customer.loan_count == 0:
+            count = 2
+        else:
+            count = get_customer.loan_count + 1
+        get_customer.loan_count = count
+        get_customer.turn_over = 'potential_cilent'
+        get_customer.updated_by = request.user.id
+        get_customer.desire_date = txn_date
+        get_customer.save()
+        msg='NEW POTENTIAL SUCCESSFULLY UPDATED'
+        msg_status=True
+       
+    active = 'potential_customer'
+    context = {
+        'form': form,
+        'msg_status': msg_status,
+        'activity_data': activity_data,
+        'msg': msg, 
+        'customerddl': customers,
+        'txn_date' : txn_date,
+        'msg-status': msg_status, 'active' : active,
+        "currentGroup": get_user_group(request)
+    }
+
+    return render(request, 'rm/repeat_potential_customer.html', context)
+
+def pendingCollections(request):
+    activity_data = RM_Collection_Sheets.objects.select_related('customer').filter(collection_date = get_Open_Txn_date(request), created_by=request.user.id) 
+    id = []
+    for ad in activity_data:
+        id.append(ad.customer.id)        
+    potential_customer = Potential_Customers.objects.filter(created_by=request.user.id).exclude(id__in=id)
+    msg = None
+    msg_status = None
+    success = None
+    receipt_no = None
+    active = None
+    form = None
+    active = 'collections_sheet'
+    context = {
+        'form': form,
+        'msg_status': msg_status,
+        'activity_data': activity_data,
+        'potential_customer':potential_customer,
+        'receipt_no' : receipt_no,
+        'msg': msg, 
+        'txn_date' : get_Open_Txn_date(request),
+        'active': active,
+        "currentGroup": get_user_group(request)
+    }
+
+    return render(request, 'rm/pending_collections.html', context)
+    
 # END RM Views
 # 
 # 
@@ -521,6 +673,8 @@ def get_branch_rms(request):
         return Profile.objects.select_related('user').filter(branch_id=get_branch_id(request), user__groups__in=[5,4])
     except:
         return None 
+    
+
 
 
 def rm_collections(request):    
@@ -531,6 +685,7 @@ def rm_collections(request):
     total_collections_amount = None    
     msg_status = None
     rms = get_branch_rms(request) 
+    txn_date = get_Open_Txn_date(request)
     # select rm
     form = RM_Search_Collections_Form()
     if request.method == 'POST':
@@ -545,7 +700,7 @@ def rm_collections(request):
             msg = 'SUCCESSFULLY APPROVED'  
             msg_status = True
         else:
-            collection_date = get_date(request)
+            collection_date = get_Open_Txn_date(request)
             rm_id = request.POST.get('rm', False)
             activity_data = RM_Collection_Sheets.objects.filter(created_by=rm_id, collection_date=collection_date)      
             if not activity_data :
@@ -565,6 +720,7 @@ def rm_collections(request):
     active = 'collections'
     context = {
         'form': form,
+        'txn_date' : get_Open_Txn_date(request),
         'activity_data': activity_data,
         'msg': msg, 'msg_status': msg_status, 
         'total_collections': total_collections,
@@ -649,7 +805,7 @@ def post_authorization(request):
     if request.method == 'POST' and request.POST:       
         id_list = request.POST.getlist('id[]')
         msg = id_list
-        collection_date = get_date(request)
+        collection_date = get_Open_Txn_date(request)
         # update to default first
         c_sheet = RM_Collection_Sheets.objects.update(authorization_status="PENDING", authorization_note="Not Authorized By Branch Manager" , updated_by=request.user.id)
         c_sheet = RM_Collection_Sheets.objects.filter(id__in=id_list).update(authorization_status="APPROVED", authorization_note="Collection Accepted" , updated_by=request.user.id)
@@ -672,17 +828,18 @@ def add_daily_report(request):
     msg_status = None
     form = Daily_Report_Form()
     collections = getTotalCollections(request)
-    disbursements = getTotalDisbursement(request)
-    clients_Disbursed = getTotalClientsDisbursed(request)
-    if request.POST:
+    # disbursements = getTotalDisbursement(request)
+    # clients_Disbursed = getTotalClientsDisbursed(request)
+    if request.POST:       
         form = Daily_Report_Form(request.POST)
         if form.is_valid():
             obj = form.save(commit=False)
             obj.branch_id = get_branch_id(request)
             obj.created_by = request.user.id
             obj.total_collections = collections
-            obj.total_disbursed = disbursements
-            obj.total_clients_disbursed = clients_Disbursed
+            obj.activity_date = get_Open_Txn_date(request)
+            # obj.total_disbursed = disbursements
+            # obj.total_clients_disbursed = clients_Disbursed
             obj.save()
             msg = "Daily Report Successfully Saved"
             msg_status = True
@@ -694,13 +851,12 @@ def add_daily_report(request):
     context = {
         'form': form, 
         'activity_data': activity_data,
+        'txn_date' : get_Open_Txn_date(request),
         'msg': msg, 
         'msg_status': msg_status,
         "active":active,
         "currentGroup": get_user_group(request),
-        "collections" : collections,
-        "disbursement": disbursements,
-        "cilentsDis": clients_Disbursed
+        "collections" : collections
         }
     return render(request, 'manager/add_daily_report.html', context)
 
@@ -752,6 +908,7 @@ def manage_rm(request):
         'msg': msg, 
         'msg_status': msg_status,
         "active":active,
+        'txn_date' : get_Open_Txn_date(request),
         "currentGroup": get_user_group(request)
         }
     return render(request, 'manager/manage_rm.html', context)

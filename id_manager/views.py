@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from app.manager_forms import Add_ID_Form
 from app.models import Disbursements, Potential_Customers, Profile
-from app.functions import get_branch_id, get_user_group
+from app.functions import get_Open_Txn_date, get_branch_account_number, get_branch_id, get_user_group
 from id_manager.models import Ids
 from _datetime import date
+import datetime
 
 # Create your views here.
 
@@ -14,6 +15,7 @@ def add_id(request):
     msg_status = None
     customers = None
     creator = None
+    account_number = None
     active = 'add_id'
     # Get Potential But Find a way of changing status after save so they
     # dont app
@@ -24,8 +26,8 @@ def add_id(request):
     # Withdrawn - when id leaves crown house to branch-manager
     # Received_By_Branch_Manager - when branch-manager recevices the id from the crown house
     # Return_To_Customer - when branch-manager gives id back to the customer
-
-    customers = Potential_Customers.objects.filter(branch_id=get_branch_id(request) , turn_over='potential_cilent')
+    account_number = get_branch_account_number(request)
+    customers = Potential_Customers.objects.filter(branch_id=get_branch_id(request) , turn_over='potential_cilent').order_by('-created_on')
     activity_data = Ids.objects.select_related('customer_id').filter(branch_id=get_branch_id(request)).order_by('id')
     if request.method == 'POST': 
         form = Add_ID_Form(request.POST)
@@ -37,6 +39,7 @@ def add_id(request):
                 user_branch_id = get_branch_id(request)
                 customer_id = request.POST.get('customer_id', False)            
                 obj = form.save(commit=False)
+                obj.account_number = get_branch_account_number(request)
                 obj.created_by = creator
                 obj.id_loan_count = 1
                 obj.branch_id_id = user_branch_id
@@ -57,18 +60,19 @@ def add_id(request):
     context = {
         'form': form, 
         'activity_data': activity_data,
-        'msg': msg,   
+        'msg': msg,    
+        #'txn_date' : get_Open_Txn_date(request),
         'msg_status': msg_status,
         'active': active,
         'customerddl': customers,  
+        'account_number':account_number,
         "currentGroup": get_user_group(request) 
         }
     
     return render(request, 'manager/add_ID_details.html', context)
 
 
-def id_checker(request):
-    
+def id_checker(request):    
     id_ = Ids.objects.select_related('customer_id').filter(
         id_number=request.POST.get('id_number', False) , 
         id_status__in=['submitted', 'Received_By_Id_Manager', 'Requested', 'Withdrawn', 'Received_By_Branch_Manager'],
@@ -83,16 +87,21 @@ def view_ids(request):
     customers = None
     creator = None
     active = 'add_id'
-    activity_data = Ids.objects.select_related('customer_id').filter(branch_id=get_branch_id(request)).order_by('-created_on')
+    group = get_user_group(request)
+    if 'ID-Manager' in group:
+        activity_data = Ids.objects.select_related('customer_id').order_by('-created_on')
+    else:
+        activity_data = Ids.objects.select_related('customer_id').filter(branch_id=get_branch_id(request)).order_by('-created_on')
    
     context = {
         'form': form, 
         'activity_data': activity_data,
-        'msg': msg,   
+        'msg': msg,    
+        # 'txn_date': get_Open_Txn_date(request),
         'msg_status': msg_status,
         'active': active,
         'customerddl': customers,  
-        "currentGroup": get_user_group(request) 
+        "currentGroup":  group
         }
     
     return render(request, 'manager/view_IDs.html', context)
@@ -114,7 +123,8 @@ def id_request(request, id):
     context = {
         'form': form, 
         'activity_data': activity_data,
-        'msg': msg,   
+        'msg': msg,    
+        #'txn_date' : get_Open_Txn_date(request),
         'msg_status': msg_status,
         'active': active,
         'customerddl': customers,  
@@ -143,7 +153,8 @@ def id_receviced(request, id):
         'msg': msg,   
         'msg_status': msg_status,
         'active': active,
-        'customerddl': customers,  
+        'customerddl': customers,   
+        #'txn_date' : get_Open_Txn_date(request),
         "currentGroup": get_user_group(request) 
         }
     
@@ -170,6 +181,61 @@ def over_ride_reason(request):
         'form': form, 
         'activity_data': activity_data,
         'msg': msg,   
+        'msg_status': msg_status,
+        'active': active,
+        'customerddl': customers,   
+        #'txn_date' : get_Open_Txn_date(request),
+        "currentGroup": get_user_group(request) 
+        }
+    
+    return render(request, 'manager/view_IDs.html', context)
+
+def withdrawn(request, id):
+    form = None
+    activity_data = None
+    msg = None
+    msg_status = None
+    customers = None
+    creator = None
+    active = 'add_id'
+    activity_data = Ids.objects.select_related('customer_id').filter().order_by('-created_on')
+    # add checker for who can do this
+    Ids.objects.filter(id=id).update(id_status='Withdrawn', taken_date = datetime.datetime.now() )
+    msg='ID status has been successfully updated'
+    msg_status=True   
+        
+    context = {
+        'form': form, 
+        'activity_data': activity_data,
+        'msg': msg,   
+        'msg_status': msg_status,
+        'active': active,  
+        #'txn_date' : get_Open_Txn_date(request),
+        'customerddl': customers,  
+        "currentGroup": get_user_group(request) 
+        }
+    
+    return render(request, 'manager/view_IDs.html', context)
+
+def receviced_id_manager(request, id):
+    form = None
+    activity_data = None
+    msg = None
+    msg_status = None
+    customers = None
+    creator = None
+    active = 'add_id'
+    activity_data = Ids.objects.select_related('customer_id').filter().order_by('-created_on')
+    # add checker for who can do this
+    Ids.objects.filter(id=id).update(id_status='Received_By_Id_Manager', received_date=datetime.datetime.now())
+    msg='ID status has been successfully updated'
+    msg_status=True   
+        
+    context = {
+        'form': form, 
+        'activity_data': activity_data,
+        'msg': msg,  
+        #'txn_date' : get_Open_Txn_date(request),
         'msg_status': msg_status,
         'active': active,
         'customerddl': customers,  

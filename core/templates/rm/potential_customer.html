@@ -50,8 +50,9 @@
 						{% csrf_token %}  
 				
 						<div class="card-body">
+						
 							<div class="row">								
-									<div class="col-md-6 col-lg-4">
+								<div class="col-md-6 col-lg-4">
 									<div class="form-group">
 											<label>{{ form.desired_date.label }}</label>
 											<div class="input-group">
@@ -63,10 +64,10 @@
 											<label>{{form.first_name.label }}</label>
 											{{ form.first_name }}  
 										</div><span class="text-danger">{{ form.first_name.errors }}</span>
-                                         <div class="form-group">
-											<label>{{form.last_name.label }}</label>
-											{{ form.last_name }}  
-										</div><span class="text-danger">{{ form.last_name.errors }}</span>  
+										<div class="form-group">
+											<label>{{form.business_type.label}}   </label>  
+											{{form.business_type}}                                   
+										</div><span class="text-danger">{{ form.business_type.errors }}</span> 
 																			
 									</div>
 									<!-- column 2 -->
@@ -75,13 +76,15 @@
 											<label>{{form.contact.label}}   </label>  
 											{{form.contact}}                                   
 										</div><span class="text-danger">{{ form.contact.errors }}</span> 
-                                    <div class="form-group">
-											<label>{{form.business_type.label}}   </label>  
-											{{form.business_type}}                                   
-										</div><span class="text-danger">{{ form.business_type.errors }}</span> 
-                                   						
-										                               									
-										
+                                     <div class="form-group">
+											<label>{{form.last_name.label }}</label>
+											{{ form.last_name }}  
+										</div><span class="text-danger">{{ form.last_name.errors }}</span>  
+                                   		
+										 <div class="form-group">
+											<label>{{form.business_location.label}}   </label>  
+											{{form.business_location}}                                   
+										</div><span class="text-danger">{{ form.business_location.errors }}</span> 
 									</div>
 									<!-- End of Column 2 -->
 									<!-- Column 3 -->
@@ -90,12 +93,10 @@
 											<label>{{form.desired_amount.label }}</label>
 											{{ form.desired_amount}}                                     
 										</div><span class="text-danger">{{ form.desired_amount.errors }}</span> 
-										 <div class="form-group">
-											<label>{{form.business_location.label}}   </label>  
-											{{form.business_location}}                                   
-										</div><span class="text-danger">{{ form.business_location.errors }}</span> 			
-											                              									
-										
+										<div class="form-group">
+											<label>Other Name</label>
+											{{ form.other_name }}  
+										</div><span class="text-danger">{{ form.other_name.errors }}</span> 
 									</div>
 									<!-- End of Column 3 -->
 							</div>
@@ -105,27 +106,28 @@
 							<button class="btn btn-danger" >Cancel</button>
 						</div>
 						</form>
+				                                                                                                                
 						<div class="card-action">
 
 						  <table id="example1" class="table table-bordered table-striped">
-                            <thead>
-                            <tr>
-                              <th>Date</th>      
-                              <th>Customer Names</th>
-                              <th>Contact</th>
-                              <th>Business Type</th>                            
-                              <th>Business Location</th>                                                         
-                            </tr>
-                            </thead>
+							<thead>
+								<tr>
+								<th>Date</th>      
+								<th>Customer Names</th>
+								<th>Contact</th>
+								<th>Business Type</th>                            
+								<th>Business Location</th>                                                         
+								</tr>
+							</thead>
                             <tbody>
                             
                             {% for T in activity_data %}
                                 <tr>
                                   <td>{{ T.desire_date}} </td>
-                                  <td>{{ T.first_name }} {{ T.last_name }} </td>                                  
+                                  <td>{{ T.first_name }} {{ T.last_name }} {{ T.other_name  }} </td>                                  
                                   <td>{{ T.contact}}</td>								                        
-                                  <td>{{  T.business_type  }}</td>                                  								                        
-                                  <td>{{  T.business_location  }}</td>
+                                  <td>{{ T.business_type }}</td>                                  								                        
+                                  <td>{{ T.business_location }}</td>
                                 </tr>
                             {% endfor %} 
                           
