@@ -1,0 +1,123 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} View Assessment {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<link rel="stylesheet" href="/static/assets/css/atlantis2.css">
+
+{% endblock stylesheets %}
+
+{% block content %}
+	{% if  'Accountant' in currentGroup %}
+		<div class="content">
+		<div class="page-inner">
+			<div class="page-header" >
+				<h4 class="page-title">Treasury  </h4>
+				<ul class="breadcrumbs">
+					<li class="nav-home">
+						<a href="index.html">
+							<i class="flaticon-home"></i>
+						</a>
+					</li>
+					<li class="separator">
+						<i class="flaticon-right-arrow"></i>
+					</li>
+					<li class="nav-item">
+						<a href="/treasury/create.html">View Assessment</a>
+					</li>											
+				
+				</ul>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="card">
+						<div class="card-header">							
+						<div class="card-title">	 
+						    {% if msg %}
+                               <div class="card-title">Assessment </div> </br> 
+							   <span class="{% if success %}{{ "text-success" }}{% else %}{{"text-danger"}}{%endif%}">{{ msg | safe }}</span>
+                            {% else %}
+                            <span>
+                               <div class="card-title">Assessment </div>
+                            </span>
+                            {% endif %} </div>
+						</div>					
+				
+						<div class="card-body">
+							<div class="row">								
+									<div class="col-md-6 col-lg-4">
+										{% comment %} <div class="form-group">
+											<label>{{form.branch_name.label}}   </label>  
+											{{form.branch_name}}                                   
+										</div><span class="text-danger">{{ form.branch_name.errors }}</span>     
+										 {% endcomment %}
+										<div class="form-group">
+											<label for="repeat_customer_numbers">Total Collections</label>											
+											{{ collections}}
+										</div><span class="text-danger"></span>                                 									
+										<div class="form-group">
+											<label>Total Expenses</label>
+											{{ expenses }}                                     
+										</div><span class="text-danger"></span> 									
+									</div>
+									<!-- column 2 -->
+									<div class="col-md-6 col-lg-4">				
+										<div class="form-group">
+											<label>Disbursement</label>
+											{{ disbursement }}  
+										</div><span class="text-danger"></span>                                 									
+										<div class="form-group">
+											<label>Action</label>
+											{{ action }}  
+											</div>
+                                        <span class="text-danger"></span> 
+										
+									</div>
+									<!-- End of Column 2 -->
+									<!-- Column 3 -->
+									<div class="col-md-6 col-lg-4">				
+										<div class="form-group">
+											<label>Drawer Limit</label>
+											{{ drawer }}  
+										</div><span class="text-danger"></span>  
+                                        <div class="form-group">
+											<label>Cash Forward</label>
+											{{ id }}  
+										</div><span class="text-danger"></span>                                									
+									
+										
+									</div>
+									<!-- End of Column 3 -->
+							</div>
+						</div>
+						<div class="card-action">
+							<a href="/treasury/view/approved/{{ record_id }}">
+                                    <span class="btn btn-outline-success btn-sm">Approve </span>
+                                    </a> 
+                            <a href="/treasury/view/rejected/{{ record_id }}">
+                                <span class="btn btn-outline-danger btn-sm">Reject </span>
+                            </a>
+						</div> 
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{% else %}
+			{% include 'includes/noauthorization.html' %}
+	{% endif %} 
+
+
+	
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+	<!-- Atlantis DEMO methods, don't include it in your project! -->
+	<script src="/static/assets/js/setting-demo2.js"></script>
+
+{% endblock javascripts %}	

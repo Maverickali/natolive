@@ -41,10 +41,23 @@
                           <div class="row">
                               <div class="col-md-2 col-lg-2">
                                 <div class="form-group">
-                                    <label>{{searchform.branch_name.label}} </label> 
+                                 <label>Select Branch</label>
+                                    {% comment %} <label>{{searchform.branch_name.label}} </label>  {% endcomment %}
                                   </div>
                                   <div class="input-group"> 
-                                      {{searchform.branch_name}}   
+                                   <select name="branch_name" id="branch_name" class="form-control form-control-sm">
+                                      {% if 'Supervisor'  in currentGroup %}
+                                        {% for b in branches %}                                   
+                                          <option value={{ b.branch_id.id }}> {{ b.branch_id.branch_name  }} </option>                                   
+                                        {% endfor %}
+                                      {% endif %}
+                                       {% if 'Branch-Managers'  in currentGroup %}
+                                        {% for b in branches %}                                   
+                                          <option value={{ b.id }}> {{ b.branch_name  }} </option>                                   
+                                        {% endfor %}
+                                      {% endif %}
+                                    </select>  
+                                      {% comment %} {{searchform.branch_name}}    {% endcomment %}
                                   </div> 
                                   
                                </div>
@@ -107,7 +120,6 @@
                               <th>Authorized Injections</th>                              
                               <th>#Repeat Customers</th>
                               <th>#New Customers</th> 
-                               <th>Created By</th>
                               <th>Actions</th>
                             </tr>
                             </thead>
@@ -121,19 +133,82 @@
                                   <td>{{ T.repeat_customer_amount }}</td>
                                   <td>{{ T.new_customer_amount }}</td>
                                   <td>{{ T.cash_reserve_need }}</td>                              
-                                  <td>{{ T.injection_status }}</td>
+                                  <td>
+                                  {%if T.injection_status == True %}
+                                    <span class="badge badge-info">Pending Request</span>
+                                  {%else%}
+                                    <span class="badge badge-secondary">No Request</span>
+                                  {%endif%}                                    
+                                  </td>
                                   <td>{{ T.injection_amount }}</td>    
-                                  <td>{{ T.injection_authorization }}</td>                           
+                                  <td>
+                                  {% if T.injection_authorization == 'APPROVED' %}
+                                    <span data-toggle="tooltip" data-placement="top" title="Tooltip on top" class="badge badge-success">Injection AUTHORIZED</span>
+                                  {% elif  T.injection_authorization == 'REJECTED' %}
+                                    <span class="badge badge-danger">Injection REJECTED</span>
+                                  {% else %}
+                                    <span class="badge badge-warning">PENDING</span>
+                                  {% endif %}
+                                  </td>                           
                                   <td>{{ T.repeat_customer_numbers }}</td>
                                   <td>{{ T.new_customer_numbers }}</td>   
-                                  <td>{{ T.created_by }}</td>
+                                
+                                        <div id="approve-Injection" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-body">
+                                                        <form class="pl-3 pr-3" method="POST" action="{% url 'approve_or_reject_injection' %}">
+                                                            {% csrf_token %} 
+                                                            <input hidden name="id" value="{{ T.record_id }}" />
+                                                            <input hidden name="approve" value="yes" />
+                                                            <div class="form-group">
+                                                                <label for="username">Reason To Approve</label>
+                                                                <textarea name="comment" class="form-control" required 
+                                                                aria-label="With textarea" rows="5"></textarea>
+                                                            </div>
+                                                            <div class="form-group text-center">
+                                                                <button class="btn btn-primary" type="submit">
+                                                                Save Reason
+                                                                </button>
+                                                            </div>                                           
+                                                        </form>
+                                                    </div>
+                                                </div><!-- /.modal-content -->
+                                            </div><!-- /.modal-dialog -->
+                                        </div><!-- /.modal --> 
+                                        <div id="reject" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-body">
+                                                        <form class="pl-3 pr-3" method="POST" action="{% url 'approve_or_reject_injection' %}">
+                                                            {% csrf_token %} 
+                                                            <input hidden name="id" value="{{ T.record_id }}" />
+                                                            <input hidden name="reject" value="yes" />
+                                                            <div class="form-group">
+                                                                <label for="username">Reason To Reject</label>
+                                                                <textarea name="comment" class="form-control" required 
+                                                                aria-label="With textarea" rows="5"></textarea>
+                                                            </div>
+                                                            <div class="form-group text-center">
+                                                                <button class="btn btn-primary" type="submit">
+                                                                Save Reason
+                                                                </button>
+                                                            </div>                                           
+                                                        </form>
+                                                    </div>
+                                                </div><!-- /.modal-content -->
+                                            </div><!-- /.modal-dialog -->
+                                        </div><!-- /.modal -->
                                   <td> 	
-                                  <a href="/treasury/view/approved/{{ T.record_id }}">
-                                    <span class="btn btn-outline-success btn-sm">Approve </span>
-                                    </a> 
-                                    <a href="/treasury/view/rejected/{{ T.record_id }}">
-                                      <span class="btn btn-outline-danger btn-sm">Reject </span>
-                                    </a> 
+                                   <a href="/treasury/view/view_assessment/{{ T.branch_name }}/{{ T.record_id }}">
+                                    <span class="btn btn-outline-primary btn-sm">View </span>
+                                    </a>                                 
+                                    <a data-toggle="modal" data-target="#approve-Injection" >
+                                            <span class="btn btn-outline-success btn-sm">Approve </span>
+                                        </a>
+                                      <a data-toggle="modal" data-target="#reject" >
+                                        <span class="btn btn-outline-danger btn-sm">Reject </span>
+                                    </a>
                                   </td>                                                      
                               
                                 </tr>
@@ -163,7 +238,8 @@
         </button>
       </div>
       <div class="modal-body">
-               ARE YOU SURE YOU WANT TO APPROVE THIS INJECTION ?
+               View Assessment
+
       </div>
       <div class="modal-footer">
       <form method="POST" >

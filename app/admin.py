@@ -4,9 +4,11 @@ Copyright (c) 2019 - present AppSeed.us
 """
 
 from django.contrib import admin
-from app.models import Branch
+from app.models import Branch, Profile
 from django.contrib.auth.models import Permission
+
 
 admin.site.register(Permission)
 admin.site.register(Branch)
-# Register your models here.
+admin.site.register(Profile)
+

@@ -1,0 +1,49 @@
+<li class="nav-item {%if active == 'home'%}active {%else%} '' {%endif%}">
+    <a href="{% url 'home' %}">
+        <i class="fas fa-layer-group"></i>
+        <p>Dashboard</p>									
+    </a>
+</li>
+<li class="nav-item {%if active == 'settings'%}active {%else%} '' {%endif%}">
+    <a data-toggle="collapse" href="#rm">
+        <i class="fas fa-layer-group"></i>
+        <p>Settings</p>
+        <span class="caret"></span>
+    </a>
+    <div class="collapse" id="rm">
+        <ul class="nav nav-collapse">        
+            <li>
+               <a href="{% url 'create_branch' %}">
+					<span class="sub-item">Create Branch</span>
+				</a>
+            </li>
+             <li>
+               <a href="{% url 'view_branch' %}">
+					<span class="sub-item">View Branches</span>
+				</a>
+            </li>
+        </ul>
+    </div>
+</li>	
+<li class="nav-item {%if active == 'cluster'%}active {%else%} '' {%endif%}">
+    <a data-toggle="collapse" href="#cluster">
+        <i class="fas fa-layer-group"></i>
+        <p>Clusters</p>
+        <span class="caret"></span>
+    </a>
+    <div class="collapse" id="cluster">
+        <ul class="nav nav-collapse">        
+            <li>
+               <a href="{% url 'manage_cluster' %}">
+					<span class="sub-item">Create Cluster</span>
+				</a>
+            </li>
+             <li>
+               <a href="{% url 'view_cluster' %}">
+					<span class="sub-item">View Cluster</span>
+				</a>
+            </li>
+        </ul>
+    </div>
+</li>						
+						

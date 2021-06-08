@@ -1,0 +1,226 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} COLLECTION SHEET {% endblock %} 
+
+<!-- Spe cific Page CSS goes HERE  -->
+{% block stylesheets %}
+
+  <link rel="stylesheet"  href="/static/assets/css/select2.min.css">
+  <link rel="stylesheet" type="text/css" href="/static/assets/js/plugin/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" type="text/css" href="/static/assets/js/plugin/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" type="text/css" href="/static/assets/js/plugin/datatables-buttons/css/buttons.bootstrap4.min.css">
+  
+{% endblock stylesheets %}
+
+{% block content %}
+{% if 'Branch-Managers' or 'RM' in currentGroup %}
+		<div class="content">
+		<div class="page-inner">
+			<div class="page-header" >
+				<h4 class="page-title">RM COLLECTION SHEET
+                  
+                </h4>
+				<ul class="breadcrumbs">
+					<li class="nav-home">
+						<a href="index.html">
+							<i class="flaticon-home"></i>
+						</a>
+					</li>
+					<li class="separator">
+						<i class="flaticon-right-arrow"></i>
+					</li>
+					<li class="nav-item">
+						<a href="/rm/c_collection_sheet.html">RM Collection Sheet</a>
+					</li>										
+				
+				</ul>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+				 {% include 'includes/flash_message.html' %}
+					<div class="card">
+						<div class="card-header">							
+						<div class="card-title">	 
+						    {% if msg %}
+                               <div class="card-title">RM Collection Sheet </div> </br> 
+							   {% comment %} <span class="{% if success %}{{ "text-success" }}{% else %}{{"text-danger"}}{%endif%}">{{ msg | safe }}</span> {% endcomment %}
+                            {% else %}
+                            <span>
+                               <div class="card-title">RM Collection Sheet </div>
+                            </span>
+                            {% endif %} </div>
+							
+						</div>
+						<form id="frmRMDaily" method="POST"   >
+
+						{% csrf_token %}  
+				
+						<div class="card-body">
+							<div class="row">								
+									<div class="col-md-6 col-lg-4">									
+										<div class="form-group">
+											<label>Select Active Customer </label>                 
+											<select name="customer_id" id="customer_id"
+											class="select2 form-control form-control-sm"
+											style="{height: 36px; width: 100%;}" >
+												{% for u in customerddl %}                                   
+													<option value={{ u.id }}> {{ u.first_name }} {{ u.last_name }} </option>                                   
+												{% endfor %}
+											</select> 
+										</div>
+								    	<span class="text-danger">{{ form.customer_id.errors }}</span>																		
+									</div>
+									<!-- column 2 -->
+									<div class="col-md-6 col-lg-4">	
+										<div class="form-group">
+												<label>{{form.amount_collected.label}}   </label>  
+												{{form.amount_collected}}                                   
+										</div>
+										<span class="text-danger">{{ form.amount_collected.errors }}</span> 	
+									
+									</div>
+									<!-- End of Column 2 -->
+									<!-- Column 3 -->
+									<div class="col-md-6 col-lg-4">
+
+					
+                                       
+									</div>
+									<!-- End of Column 3 -->
+							</div>
+						</div>
+						<div class="card-action">
+							<button class="btn btn-success" type="submit">Submit</button>
+							<button class="btn btn-danger" >Cancel</button>
+						</div>
+						</form>
+						<div class="card-action">
+ 						  <div class="table-responsive">
+						  <table id="example1" class="table table-bordered table-striped">
+                            <thead>
+                            <tr>
+							  <th>Posting Date: </th>
+							  <th>Receipt Number:</th>
+                              <th>First Name: </th>
+							  <th>Last Name: </th>
+                              <th>Amount Collected: </th>
+                              <th>Manager Authorization: </th>                                   
+                            </tr>
+                            </thead>
+                            <tbody>
+                            
+                            {% for T in activity_data %}
+                                <tr>								  
+                                  <td>{{ T.created_on }}</td>								  								                        
+                                  <td>{{ T.receipt_number  }}</td>  
+                                  <td>{{ T.customer.first_name}} </td>
+								  <td>{{ T.customer.last_name}} </td>
+                                  <td>{{ T.amount_collected}}</td>                                								                        
+                                  <td>{{ T.authorization_status  }}</td>
+                                </tr>
+                            {% endfor %} 
+                          
+                            </tbody>
+                            
+                          </table>
+						  </div>
+						</div>
+				
+
+					</div>
+				</div>
+				<div class="col-md-12">
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{% else %}
+			{% include 'includes/noauthorization.html' %}
+	{% endif %} 
+
+{% endblock content %}
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+	<!-- Atlantis DEMO methods, don't include it in your project! -->
+	<script src="/static/assets/js/setting-demo2.js"></script>
+	<script>
+		
+		$('#frmRMDaily').on('submit', function() {
+		var amount_collected = $('#amount_collected');
+		amount_collected.val(parseFloat(amount_collected.val().replace(/,/g, '')));
+			
+		}); 
+
+	</script>
+	<script src="/static/assets/js/plugin/datatables/jquery.dataTables.min.js" type="text/javascript"></script>
+<!-- Bootstrap 4 -->
+<script src="/static/assets/js/plugin/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Atlantis DEMO methods, don't include it in your project! -->
+<script src="/static/assets/js/setting-demo2.js"></script>
+<script src="/static/assets/js/plugin/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/static/assets/js/plugin/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/static/assets/js/plugin/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="/static/assets/js/plugin/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/static/assets/js/plugin/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="/static/assets/js/plugin/jszip/jszip.min.js"></script>
+<script src="/static/assets/js/plugin/pdfmake/pdfmake.min.js"></script>
+<script src="/static/assets/js/plugin/pdfmake/vfs_fonts.js"></script>
+<script src="/static/assets/js/plugin/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="/static/assets/js/plugin/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="/static/assets/js/plugin/datatables-buttons/js/buttons.colVis.min.js"></script>
+{% comment %} on click js effect {% endcomment %}
+
+<script>
+    $(function () {
+    $("#example1").DataTable({
+        "responsive": true, "lengthChange": false, "autoWidth": false,
+        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+    $('#example').DataTable({
+        "paging": true,
+        "lengthChange": false,
+        "searching": false,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+    });
+    });
+
+
+</script>
+
+<script>
+    $(document).ready(function (){   
+ 
+   // Handle click on "Select all" control
+   $('#example1-select-all').on('click', function(){
+      // Check/uncheck all checkboxes in the table
+      var rows = $("#example1").DataTable().rows({ 'search': 'applied' }).nodes();
+      $('input[type="checkbox"]', rows).prop('checked', this.checked);
+   });
+
+   // Handle click on checkbox to set state of "Select all" control
+   $('#example1 tbody').on('change', 'input[type="checkbox"]', function(){
+      // If checkbox is not checked
+      if(!this.checked){
+         var el = $('#example1-select-all').get(0);
+         // If "Select all" control is checked and has 'indeterminate' property
+         if(el && el.checked && ('indeterminate' in el)){
+            // Set visual state of "Select all" control 
+            // as 'indeterminate'
+            el.indeterminate = true;
+         }
+      }
+   });
+    
+  
+});
+</script>
+<script src="/static/assets/js/select2.full.min.js"></script>
+<script src="/static/assets/js/select2.min.js"></script>
+<script src="/static/assets/js/select2.init.js"></script>
+{% endblock javascripts %}	

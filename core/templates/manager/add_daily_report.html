@@ -1,0 +1,213 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} DAILY REPORT {% endblock %} 
+
+<!-- Spe cific Page CSS goes HERE  -->
+{% block stylesheets %}
+
+{% endblock stylesheets %}
+
+{% block content %}
+{% if 'Branch-Managers' or 'RM' in currentGroup %}
+		<div class="content">
+		<div class="page-inner">
+			<div class="page-header" >
+				<h4 class="page-title">DAILY REPORT <br/>
+                 
+                </h4>
+				<ul class="breadcrumbs">
+					<li class="nav-home">
+						<a href="index.html">
+							<i class="flaticon-home"></i>
+						</a>
+					</li>
+					<li class="separator">
+						<i class="flaticon-right-arrow"></i>
+					</li>
+					<li class="nav-item">
+						<a href="{% url 'addDailyReport' %}"> Daily Report </a>
+					</li>										
+				
+				</ul>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+				 {% include 'includes/flash_message.html' %}
+					<div class="card">
+						<div class="card-header">							
+						<div class="card-title">	 
+						    {% if msg %}
+                               <div class="card-title">Add Daily Report </div> </br> 
+							   {% comment %} <span class="{% if success %}{{ "text-success" }}{% else %}{{"text-danger"}}{%endif%}">{{ msg | safe }}</span> {% endcomment %}
+                            {% else %}
+                            <span>
+                               <div class="card-title">Add Daily Report </div>
+                            </span>
+                            {% endif %} </div>
+						</div>
+						<form id="frmDailyReport" method="POST"   >
+
+						{% csrf_token %} 
+
+						<div class="card-body">
+							<div class="row">								
+								<div class="col-md-6 col-lg-4">
+									
+									<span class="text-danger">{{ form.branch_id.errors }}</span>
+                     				<div class="form-group">
+											<label>{{form.opening_bal.label }}</label>
+											{{ form.opening_bal }}  
+									</div>
+									<span class="text-danger">{{ form.opening_bal.errors }}</span>
+									<div class="form-group">
+											<label>{{form.closing_bal.label }}</label>
+											{{ form.closing_bal }}  
+									</div>
+									<span class="text-danger">{{ form.closing_bal.errors }}</span>
+									<div class="form-group">
+										<label>Total Collections</label>
+										<h3>{{ collections }}</h3> 
+									</div>
+									
+								
+
+									</div>
+									<!-- column 2 -->
+									<div class="col-md-6 col-lg-4">	
+										<div class="form-group">
+												<label>{{form.total_processing_fees.label}}   </label>  
+												{{form.total_processing_fees}}                                   
+										</div>
+										<span class="text-danger">{{ form.total_processing_fees.errors }}</span> 
+										<div class="form-group">
+											<label>{{form.injection_in.label}}   </label>  
+											{{form.injection_in}}                                   
+										</div>
+										<span class="text-danger">{{ form.injection_in.errors }}</span> 
+										<div class="form-group">
+											<label>{{form.injection_out.label}}   </label>  
+											{{form.injection_out}}                                   
+										</div>
+										<span class="text-danger">{{ form.injection_out.errors }}</span> 
+										<div class="form-group">
+										<label>Total Disbursements</label>
+										<h3>{{ form.total_disbursed }} </h3>
+									</div>
+									
+                    
+									</div> 
+									<!-- End of Column 2 --> 
+									<!-- Column 3 -->
+									<div class="col-md-6 col-lg-4">
+                    					<div class="form-group">
+											<label>{{form.total_banked.label }}</label>
+											{{ form.total_banked}}                                     
+										</div>
+										<span class="text-danger">{{ form.total_banked.errors }}</span> 
+										<div class="form-group">
+											<label>{{form.total_expenses_daily.label }}</label>
+											{{ form.total_expenses_daily}}                                     
+										</div>
+										<span class="text-danger">{{ form.total_expenses_daily.errors }}</span> 
+										<div class="form-group">
+											<label>{{form.previous_closing_portfolio.label }}</label>
+											{{ form.previous_closing_portfolio}}                                     
+										</div>
+										<span class="text-danger">{{ form.previous_closing_portfolio.errors }}</span> 
+										 <div class="form-group">
+										<label>Cilents Disbursed</label>
+											<h3>{{ form.total_clients_disbursed }}</h3> 
+										</div>
+									</div> 
+									<!-- End of Column 3 -->
+							</div>
+						</div>
+						<div class="card-action">
+							<button class="btn btn-success" type="submit">Submit</button>
+							<button class="btn btn-danger" >Cancel</button>
+						</div>
+						</form>
+						<div class="card-action">
+
+						  <table id="example1" class="table table-bordered table-striped">
+                            <thead>
+                            <tr>
+                              <th>Disbured Date</th>      
+                              <th>Customer Names</th>
+                              <th>Amount</th>
+                              <th>NIM Number</th>                                                              
+                            </tr>
+                            </thead>
+                            <tbody>
+                            
+                            {% for T in activity_data %}
+                                <tr>
+                                  <td>{{ T.disbursed_date}} </td>
+                                  <td>{{ T.first_name }} {{ T.last_name }} </td>                                  
+                                  <td>{{ T.amount_disbursed}}</td>								                        
+                                  <td>{{  T.id_number  }}</td>        
+                                </tr>
+                            {% endfor %} 
+                          
+                            </tbody>
+                            
+                          </table>
+						</div>
+				
+
+					</div>
+				</div>
+				<div class="col-md-12">
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{% else %}
+			{% include 'includes/noauthorization.html' %}
+	{% endif %} 
+
+{% endblock content %}
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script src="/static/assets/js/plugin/datatables/jquery.dataTables.min.js" type="text/javascript"></script>
+<!-- Bootstrap 4 -->
+<script src="/static/assets/js/plugin/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Atlantis DEMO methods, don't include it in your project! -->
+<script src="/static/assets/js/setting-demo2.js"></script>
+<script src="/static/assets/js/plugin/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/static/assets/js/plugin/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/static/assets/js/plugin/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="/static/assets/js/plugin/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/static/assets/js/plugin/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="/static/assets/js/plugin/jszip/jszip.min.js"></script>
+<script src="/static/assets/js/plugin/pdfmake/pdfmake.min.js"></script>
+<script src="/static/assets/js/plugin/pdfmake/vfs_fonts.js"></script>
+<script src="/static/assets/js/plugin/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="/static/assets/js/plugin/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="/static/assets/js/plugin/datatables-buttons/js/buttons.colVis.min.js"></script>
+	<!-- Atlantis DEMO methods, don't include it in your project! -->
+<script src="/static/assets/js/setting-demo2.js"></script>
+
+    
+<script>
+    $(function () {
+		$("#example1").DataTable({
+			"responsive": true, "lengthChange": false, "autoWidth": false,
+			"buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+		}).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+		$('#example').DataTable({
+			"paging": true,
+			"lengthChange": false,
+			"searching": false,
+			"ordering": true,
+			"info": true,
+			"autoWidth": false,
+			"responsive": true,
+		});
+    });
+</script>
+{% endblock javascripts %}	

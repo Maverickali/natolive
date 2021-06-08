@@ -31,31 +31,40 @@ class SignUpForm(UserCreationForm):
         widget=forms.TextInput(
             attrs={
                 "placeholder" : "Username",                
-                "class": "form-control"
+                "class": "form-control form-control-sm"
             }
         ))
     email = forms.EmailField(
         widget=forms.EmailInput(
             attrs={
                 "placeholder" : "Email",                
-                "class": "form-control"
+                "class": "form-control form-control-sm"
             }
         ))
     password1 = forms.CharField(
         widget=forms.PasswordInput(
             attrs={
                 "placeholder" : "Password",                
-                "class": "form-control"
+                "class": "form-control form-control-sm"
             }
         ))
     password2 = forms.CharField(
         widget=forms.PasswordInput(
             attrs={
                 "placeholder" : "Password check",                
-                "class": "form-control"
+                "class": "form-control form-control-sm"
             }
         ))
 
     class Meta:
         model = User
         fields = ('username', 'email', 'password1', 'password2')
+
+# class ProfileForm(forms.ModelForm):
+
+#     class Meta:
+#         model = Profile
+#         fields = ['branch_id', 'location']
+#         widgets = {
+#             'creationdate': DateInput(attrs={'type': 'date'}),
+#         }

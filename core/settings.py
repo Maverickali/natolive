@@ -1,7 +1,4 @@
 # -*- encoding: utf-8 -*-
-"""
-Copyright (c) 2019 - present AppSeed.us
-"""
 
 import os
 from decouple import config
@@ -19,7 +16,7 @@ SECRET_KEY = config('SECRET_KEY', default='S#perS3crEt_1122')
 DEBUG = config('DEBUG', default=False)
 
 # load production server from .env
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', config('SERVER', default='127.0.0.1')]
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '102.83.76.169', config('SERVER', default='127.0.0.1')]
 
 # Application definition
 
@@ -30,7 +27,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'app'  # Enable the inner app 
+    'app',  # Enable the inner app ,
+    'id_manager',
+    'reporting',
+    'eod',
+    'clusters'
 ]
 
 MIDDLEWARE = [
@@ -48,6 +49,15 @@ ROOT_URLCONF = 'core.urls'
 LOGIN_REDIRECT_URL = "home"   # Route defined in app/urls.py
 LOGOUT_REDIRECT_URL = "home"  # Route defined in app/urls.py
 TEMPLATE_DIR = os.path.join(BASE_DIR, "core/templates")  # ROOT dir for templates
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'mail.crazyparrot.app'#'indexglobalnetwork.com'
+EMAIL_HOST_USER = 'smtp@crazyparrot.app'#'smtp@indexglobalnetwork.com'
+EMAIL_HOST_PASSWORD = 'Fx~dc827'#'*Ks)nvAhNGte'
+EMAIL_PORT = 465
+EMAIL_USE_SSL  = True
+
+
 
 DATE_INPUT_FORMATS = [
     '%Y-%m-%d %H:%M:%S',     # '2006-10-25 14:30:59'
@@ -120,7 +130,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Nairobi'
 
 USE_I18N = True
 

@@ -1,0 +1,54 @@
+	<li class="nav-section">			
+		<h1 class="text-section text-white text-center font-weight-italic">Transaction Date </h1>
+		<h4 class="text-section text-info text-center font-weight-bold">{{ txn_date }}</h4>
+	</li>
+	<li class="nav-item {%if active == 'home'%} active {%else%} '' {%endif%}">
+			<a href="{% url 'home' %}">
+				<i class="mdi mdi-collage"></i>
+				<p>Dashboard</p>									
+			</a>
+		</li>	
+
+<li class="nav-item {%if active == 'collections_sheet'%}active {%else%} '' {%endif%}">
+    <a data-toggle="collapse" href="#collections">
+        <i class="mdi mdi-collage"></i>
+        <p>Collections</p>
+        <span class="caret"></span>
+    </a>
+    <div class="collapse" id="collections">
+        <ul class="nav nav-collapse">        
+            <li>
+               <a href="{% url 'rm_collection_sheet' %}">
+					<span class="sub-item">Collection Sheet</span>
+			 	</a>
+            </li>
+			<li>
+               <a href="{% url 'pendingCollections' %}">
+					<span class="sub-item">Customers Pending Collection</span>
+				</a>
+            </li>
+        </ul>
+    </div>
+</li>
+<li class="nav-item {%if active == 'potential_customer'%}active {%else%} '' {%endif%}">
+    <a data-toggle="collapse" href="#rm">
+        <i class="mdi mdi-collage"></i>
+        <p>Potential Customer</p>
+        <span class="caret"></span>
+    </a>
+    <div class="collapse" id="rm">
+        <ul class="nav nav-collapse">        
+            <li>
+               <a href="{% url 'potentialCustomer' %}">
+					<span class="sub-item">Potential Customer</span>
+				</a>
+            </li>
+			 <li>
+               <a href="{% url 'repeatPotentialCustomer' %}">
+					<span class="sub-item">Repeat Potential Customer</span>
+				</a>
+            </li>
+        </ul>
+    </div>
+</li>													
+						

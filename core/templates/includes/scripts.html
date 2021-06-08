@@ -25,7 +25,9 @@
 	<script src="/static/assets/js/setting-demo2.js"></script>
 	<script>
 		
-		 
+		 $(function () {
+			$('[data-toggle="tooltip"]').tooltip()
+		});
 
 		$('#datetime').datetimepicker({
 			format: 'MM/DD/YYYY H:mm',
@@ -37,7 +39,20 @@
 			format: 'h:mm A', 
 		});
 
-		
+		function digitsep(input)
+		{
+			var nStr = input.value + '';
+			nStr = nStr.replace( /\,/g, "");
+			var x = nStr.split( '.' );
+			var x1 = x[0];
+			var x2 = x.length > 1 ? '.' + x[1] : '';
+			var rgx = /(\d+)(\d{3})/;
+			while ( rgx.test(x1) ) {
+				x1 = x1.replace( rgx, '$1' + ',' + '$2' );
+			}
+			input.value = x1 + x2;				
+		}
+
 		function format(input)
 		{
 			var subTotalDisbursed = document.getElementById("subTotalDisbursed");
@@ -68,6 +83,11 @@
 			subTotal.innerHTML = parseInt(newCustomer.val()) + parseInt(repeatCustomer.val());
 			
 		}
+
+		function empty()
+		{
+			document.getElementById("amount_collected").value = ''
+		}
 		
 		function enableInjectionAmount()
 		{
@@ -95,6 +115,32 @@
 			newCustomerAmount.val(newCustomerAmount.val().replace(/,/g, ''));
 			repeatCustomerAmount.val(repeatCustomerAmount.val().replace(/,/g, ''));
 			injectionAmount.val(injectionAmount.val().replace(/,/g, ''));
+			
+		}); 
+		$('#frmDailyReport').on('submit', function() {
+
+			var openBal = $('#openBal');			
+			var closeBal = $('#closeBal');			
+			
+			closeBal.val(parseFloat(closeBal.val().replace(/,/g, ''))); 
+			openBal.val(parseFloat(openBal.val().replace(/,/g, '')));
+			var banked = $('#banked');
+			banked.val(parseFloat(banked.val().replace(/,/g, ''))); 
+			var expenses = $('#expenses');
+			expenses.val(parseFloat(expenses.val().replace(/,/g, ''))); 
+			var closePortfolio = $('#closePortfolio');
+			closePortfolio.val(parseFloat(closePortfolio.val().replace(/,/g, ''))); 
+        	var injectionIn = $('#injectionIn');
+			injectionIn.val(parseFloat(injectionIn.val().replace(/,/g, '')));
+			var injectionOut = $('#injectionOut');
+			injectionOut.val(parseFloat(injectionOut.val().replace(/,/g, ''))); 
+			var disbursed = $('#disbursed'); 
+			disbursed.val(parseFloat(disbursed.val().replace(/,/g, ''))); 
+			var processingFees = $('#processFees'); 
+			processingFees.val(parseFloat(processingFees.val().replace(/,/g, ''))); 
+			
+				
+			
 			
 		}); 
 		

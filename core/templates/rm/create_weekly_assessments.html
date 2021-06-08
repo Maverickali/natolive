@@ -1,0 +1,266 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} CREATE RM WEEKLY ASSESSMENTS {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<style>
+
+a {
+    color: #1572e8 !important;
+}
+.flex-column {
+    -ms-flex-direction: column!important;
+    flex-direction: column!important;
+}
+
+.nav-tabs.flex-column .nav-item.show .nav-link, .nav-tabs.flex-column .nav-link.active {
+    border-color: #dee2e6 transparent #dee2e6 #dee2e6 !Important;
+	margin-right: -1px !important;
+}
+.nav-tabs.flex-column {
+    border-bottom: 0;
+    border-right: 1px solid #dee2e6 !important;
+	
+}
+.nav-tabs .flex-column .nav-link {
+    border-bottom-left-radius: .25rem !important;
+    border-top-right-radius: 0 !important;
+    margin-right: -1px !important;
+}
+
+
+.nav-tabs.flex-column .nav-item.show .nav-link, .nav-tabs.flex-column .nav-link.active {
+    border-color: #dee2e6 transparent #dee2e6 #dee2e6 !important;
+}
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+{% if 'Branch-Managers' or 'RM' in currentGroup %}
+		<div class="content">
+		<div class="page-inner">
+			<div class="page-header" >
+				<h4 class="page-title">RM WEEKLY ASSESSMENTS</h4>
+				<ul class="breadcrumbs">
+					<li class="nav-home">
+						<a href="index.html">
+							<i class="flaticon-home"></i>
+						</a>
+					</li>
+					<li class="separator">
+						<i class="flaticon-right-arrow"></i>
+					</li>
+					<li class="nav-item">
+						<a href="/rm/create_daily_activity.html">Create RM WEEKLY ASSESSMENTS</a>
+					</li>											
+				
+				</ul>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="card">
+						<div class="card-header p-0 pt-1">	
+						{% if msg %}
+                               <div class="card-title"></div> </br> 
+							   <span class="{% if success %}{{ "text-success" }}{% else %}{{"text-danger"}}{%endif%}">{{ msg | safe }}</span>
+                            {% else %}
+                            <span>
+                               <div class="card-title"></div>
+                            </span>
+                            {% endif %} 						
+						<div class="card-title">	 
+						    
+						
+						 
+                <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
+                  <li class="nav-item">
+                    <a class="nav-link active" id="custom-tabs-one-home-tab" data-toggle="pill" href="#custom-tabs-one-home" role="tab" aria-controls="custom-tabs-one-home" aria-selected="true">Actual Customers</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" id="custom-tabs-one-profile-tab" data-toggle="pill" href="#custom-tabs-one-profile" role="tab" aria-controls="custom-tabs-one-profile" aria-selected="false">Actual Portfolio</a>
+                  </li>
+                 
+                </ul>
+				</div>
+						<div class="card-body">
+							
+							   <div class="tab-content" id="custom-tabs-one-tabContent">
+									<div class="tab-pane fade show active" id="custom-tabs-one-home" role="tabpanel" aria-labelledby="custom-tabs-one-home-tab">
+										<form id="frmCustomers" method="post">
+											{% csrf_token %} 
+											 <input hidden name="actualCustomers" id="actualCustomers" value="actualCustomers" type="text">
+										<div class="row">                               								
+												<div class="col-md-6 col-lg-4">
+												<div class="form-group">
+														<label>{{form.from_date.label}}</label>
+														<div class="input-group">
+														{{ form.from_date }}												
+															<div class="input-group-append">
+																<span class="input-group-text">
+																	<i class="fa fa-calendar-check"></i>
+																</span>
+															</div>
+														</div>
+													</div>
+													<span class="text-danger">{{ form.from_date.errors }}</span>
+													<div class="form-group">
+														<label>Number of Customers</label>
+														{{ frm.number_customers }}  
+													</div>
+													<span class="text-danger">{{ frm.number_customers.errors }}</span>                                 									
+													
+												</div>
+												<!-- column 2 -->
+												<div class="col-md-6 col-lg-4">
+												<div class="form-group">
+														<label>{{form.to_date.label}}</label>
+														<div class="input-group">
+														{{ form.to_date }}												
+															<div class="input-group-append">
+																<span class="input-group-text">
+																	<i class="fa fa-calendar-check"></i>
+																</span>
+															</div>
+														</div>
+													</div>
+													<span class="text-danger">{{ form.to_date.errors }}</span>				
+													 
+													
+												</div>
+												<!-- End of Column 2 -->
+												<!-- Column 3 -->
+												<div class="col-md-6 col-lg-4"> 
+													<div class="form-group">
+														<label>{{frm.customer_category.label}}</label>
+														<div class="input-group">
+															{{ frm.customer_category }}
+														</div>
+													</div>
+													<span class="text-danger">{{ frm.customer_category.errors }}</span>									
+												
+												</div>
+												<!-- End of Column 3 -->
+											</div>
+										<div class="card-action">
+											<button class="btn btn-success" type="submit">Submit</button>
+											<button class="btn btn-danger" >Cancel</button>
+										</div>
+										</form>
+									</div>
+									<div class="tab-pane fade" id="custom-tabs-one-profile" role="tabpanel" aria-labelledby="custom-tabs-one-profile-tab">
+										<form id="frmPorfolio" method="post">
+											{% csrf_token %}
+											<input hidden name="actualPortfolio" id="actualPortfolio" value="actualPortfolio" type="text">									 
+
+											<div class="row">                               								
+												<div class="col-md-6 col-lg-4">
+												<div class="form-group">
+														<label>{{form.from_date.label}}</label>
+														<div class="input-group">
+														{{ form.from_date }}												
+															<div class="input-group-append">
+																<span class="input-group-text">
+																	<i class="fa fa-calendar-check"></i>
+																</span>
+															</div>
+														</div>
+													</div>
+													<span class="text-danger">{{ form.from_date.errors }}</span>
+													<div class="form-group">
+														<label>{{form.portfolio_clients.label }}</label>
+														{{ form.portfolio_clients }}  
+													</div>
+													<span class="text-danger">{{ form.portfolio_clients.errors }}</span>                                 									
+													
+												</div>
+												<!-- column 2 -->
+												<div class="col-md-6 col-lg-4">
+												<div class="form-group">
+														<label>{{form.to_date.label}}</label>
+														<div class="input-group">
+														{{ form.to_date }}												
+															<div class="input-group-append">
+																<span class="input-group-text">
+																	<i class="fa fa-calendar-check"></i>
+																</span>
+															</div>
+														</div>
+													</div>
+													<span class="text-danger">{{ form.to_date.errors }}</span>				
+													<div class="form-group">
+														<label>{{form.portfolio_amount.label }}</label>
+														{{ form.portfolio_amount}}                                     
+													</div>
+													<span class="text-danger">{{ form.portfolio_amount.errors }}</span> 
+													
+												</div>
+												<!-- End of Column 2 -->
+												<!-- Column 3 -->
+												<div class="col-md-6 col-lg-4"> 
+													<div class="form-group">
+														<label>{{form.day_category.label}}</label>
+														<div class="input-group">
+															{{ form.day_category }}
+														</div>
+													</div>
+													<span class="text-danger">{{ form.day_category.errors }}</span>									
+																							
+													
+												</div>
+												<!-- End of Column 3 -->
+											</div>
+											<div class="card-action">
+												<button class="btn btn-success" type="submit">Submit</button>
+												<button class="btn btn-danger" >Cancel</button>
+											</div>
+											</form>
+
+									</div>
+									
+								</div>
+
+
+
+						
+						</div>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{% else %}
+			{% include 'includes/noauthorization.html' %}
+	{% endif %} 
+
+{% endblock content %}
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+	<!-- Atlantis DEMO methods, don't include it in your project! -->
+	<script src="/static/assets/js/setting-demo2.js"></script>
+	<script>
+		function digitsep(input)
+		{
+			var nStr = input.value + '';
+			nStr = nStr.replace( /\,/g, "");
+			var x = nStr.split( '.' );
+			var x1 = x[0];
+			var x2 = x.length > 1 ? '.' + x[1] : '';
+			var rgx = /(\d+)(\d{3})/;
+			while ( rgx.test(x1) ) {
+				x1 = x1.replace( rgx, '$1' + ',' + '$2' );
+			}
+			input.value = x1 + x2;	
+			
+		}
+
+		$('#frmPorfolio').on('submit', function() {
+		var portfolio_amount = $('#portfolio_amount');
+		portfolio_amount.val(portfolio_amount.val().replace(/,/g, ''));
+			
+		}); 
+
+	</script>
+{% endblock javascripts %}	

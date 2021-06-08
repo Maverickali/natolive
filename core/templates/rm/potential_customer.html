@@ -1,0 +1,205 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} POTENTIAL CUSTOMER {% endblock %} 
+
+<!-- Spe cific Page CSS goes HERE  -->
+{% block stylesheets %}
+
+{% endblock stylesheets %}
+
+{% block content %}
+{% if 'Branch-Managers' or 'RM' in currentGroup %}
+		<div class="content">
+		<div class="page-inner">
+			<div class="page-header" >
+				<h4 class="page-title">POTENTIAL CUSTOMER
+                  
+                </h4>
+				<ul class="breadcrumbs">
+					<li class="nav-home">
+						<a href="index.html">
+							<i class="flaticon-home"></i>
+						</a>
+					</li>
+					<li class="separator">
+						<i class="flaticon-right-arrow"></i>
+					</li>
+					<li class="nav-item">
+						<a href="{% url 'potentialCustomer' %}">Potential Customer</a>
+					</li>										
+				
+				</ul>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+				 {% include 'includes/flash_message.html' %}
+					<div class="card">
+						<div class="card-header">							
+						<div class="card-title">	 
+						    {% if msg %}
+                               <div class="card-title">Save Potential Customer </div> </br> 
+							   {% comment %} <span class="{% if success %}{{ "text-success" }}{% else %}{{"text-danger"}}{%endif%}">{{ msg | safe }}</span> {% endcomment %}
+                            {% else %}
+                            <span>
+                               <div class="card-title">Save Potential Customer </div>
+                            </span>
+                            {% endif %} </div>
+						</div>
+						<form id="frmRMDaily" method="POST"   >
+
+						{% csrf_token %}  
+				
+						<div class="card-body">
+						
+							<div class="row">								
+								<div class="col-md-6 col-lg-4">
+									<div class="form-group">
+											<label>{{ form.desired_date.label }}</label>
+											<div class="input-group">
+                                            	{{ form.desired_date }}
+											</div>
+										</div>
+										<span class="text-danger">{{ form.desired_date.errors }}</span>	
+										 <div class="form-group">
+											<label>{{form.first_name.label }}</label>
+											{{ form.first_name }}  
+										</div><span class="text-danger">{{ form.first_name.errors }}</span>
+										<div class="form-group">
+											<label>{{form.business_type.label}}   </label>  
+											{{form.business_type}}                                   
+										</div><span class="text-danger">{{ form.business_type.errors }}</span> 
+																			
+									</div>
+									<!-- column 2 -->
+									<div class="col-md-6 col-lg-4">	
+									<div class="form-group">
+											<label>{{form.contact.label}}   </label>  
+											{{form.contact}}                                   
+										</div><span class="text-danger">{{ form.contact.errors }}</span> 
+                                     <div class="form-group">
+											<label>{{form.last_name.label }}</label>
+											{{ form.last_name }}  
+										</div><span class="text-danger">{{ form.last_name.errors }}</span>  
+                                   		
+										 <div class="form-group">
+											<label>{{form.business_location.label}}   </label>  
+											{{form.business_location}}                                   
+										</div><span class="text-danger">{{ form.business_location.errors }}</span> 
+									</div>
+									<!-- End of Column 2 -->
+									<!-- Column 3 -->
+									<div class="col-md-6 col-lg-4">
+                                        <div class="form-group">
+											<label>{{form.desired_amount.label }}</label>
+											{{ form.desired_amount}}                                     
+										</div><span class="text-danger">{{ form.desired_amount.errors }}</span> 
+										<div class="form-group">
+											<label>Other Name</label>
+											{{ form.other_name }}  
+										</div><span class="text-danger">{{ form.other_name.errors }}</span> 
+									</div>
+									<!-- End of Column 3 -->
+							</div>
+						</div>
+						<div class="card-action">
+							<button class="btn btn-success" type="submit">Submit</button>
+							<button class="btn btn-danger" >Cancel</button>
+						</div>
+						</form>
+				                                                                                                                
+						<div class="card-action">
+
+						  <table id="example1" class="table table-bordered table-striped">
+							<thead>
+								<tr>
+								<th>Date</th>      
+								<th>Customer Names</th>
+								<th>Contact</th>
+								<th>Business Type</th>                            
+								<th>Business Location</th>                                                         
+								</tr>
+							</thead>
+                            <tbody>
+                            
+                            {% for T in activity_data %}
+                                <tr>
+                                  <td>{{ T.desire_date}} </td>
+                                  <td>{{ T.first_name }} {{ T.last_name }} {{ T.other_name  }} </td>                                  
+                                  <td>{{ T.contact}}</td>								                        
+                                  <td>{{ T.business_type }}</td>                                  								                        
+                                  <td>{{ T.business_location }}</td>
+                                </tr>
+                            {% endfor %} 
+                          
+                            </tbody>
+                            
+                          </table>
+						</div>
+				
+
+					</div>
+				</div>
+				<div class="col-md-12">
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{% else %}
+			{% include 'includes/noauthorization.html' %}
+	{% endif %} 
+
+{% endblock content %}
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script src="/static/assets/js/plugin/datatables/jquery.dataTables.min.js" type="text/javascript"></script>
+<!-- Bootstrap 4 -->
+<script src="/static/assets/js/plugin/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Atlantis DEMO methods, don't include it in your project! -->
+<script src="/static/assets/js/setting-demo2.js"></script>
+<script src="/static/assets/js/plugin/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/static/assets/js/plugin/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/static/assets/js/plugin/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="/static/assets/js/plugin/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/static/assets/js/plugin/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="/static/assets/js/plugin/jszip/jszip.min.js"></script>
+<script src="/static/assets/js/plugin/pdfmake/pdfmake.min.js"></script>
+<script src="/static/assets/js/plugin/pdfmake/vfs_fonts.js"></script>
+<script src="/static/assets/js/plugin/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="/static/assets/js/plugin/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="/static/assets/js/plugin/datatables-buttons/js/buttons.colVis.min.js"></script>
+	<!-- Atlantis DEMO methods, don't include it in your project! -->
+	<script src="/static/assets/js/setting-demo2.js"></script>
+	<script>
+		
+		$('#frmRMDaily').on('submit', function() {
+		var desired_amount = $('#desired_amount');
+		desired_amount.val(parseFloat(desired_amount.val().replace(/,/g, '')));
+			
+		}); 
+
+	</script>
+    
+<script>
+    $(function () {
+    $("#example1").DataTable({
+        "responsive": true, "lengthChange": false, "autoWidth": false,
+        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+    $('#example').DataTable({
+        "paging": true,
+        "lengthChange": false,
+        "searching": false,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+    });
+    });
+
+
+</script>
+{% endblock javascripts %}	
