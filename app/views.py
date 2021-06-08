@@ -141,9 +141,11 @@ def treasury_report(request):
     updated = None
     inj_status = None
     user_group = get_user_group(request)
-    if 'Supervisor'  in user_group :
+    if 'Supervisor'  in user_group:
         cluster_id = Assignments.objects.get(user_id=request.user)        
         branches = Cluster_branches.objects.filter(cluster_id_id=cluster_id.cluster_id_id)
+    elif 'Branch-Managers'  in user_group:
+        branches =  Branch.objects.filter(id=get_branch_id(request))
     else:
         branches =  Branch.objects.all()
     if request.method == 'POST' and request.POST:
@@ -199,12 +201,13 @@ def treasury_report(request):
     # msg = inj_status#Injections.objects.aggregate(Sum('cash_forward'))
     branch_name = Branch.objects.all()
     user_name = request.user.username    
-    search_form = branch_disable(user_name,'search')
+    search_form = SearchForm()# branch_disable(user_name,'search')
     
     active = 'treasury'
     context = { 
             'treasuryList': treasury_list, 'searchform': search_form,
-            'Branch': branch_name, 'updated': updated,  'txn_date' : 'null',
+            # 'Branch': branch_name,
+            'updated': updated,  'txn_date' : '',
             'msg': msg, "currentGroup": get_user_group(request),
             'branches':branches,
             'active':active}
@@ -228,7 +231,7 @@ def view_assessment(request,id,cash):
     if (int(disbursement['amount_disbursed__sum']) + int(Total_expenses['total_expenses_daily__sum'])) > (int(collections['amount_collected__sum']) + int(cash_forward.cash_forward)):
        Assessment = "injection In" 
     elif (int(disbursement['amount_disbursed__sum']) + int(Total_expenses['total_expenses_daily__sum'])) < (int(collections['amount_collected__sum']) + int(cash_forward.cash_forward)):
-        Assessment = "injection Out" 
+       Assessment = "injection Out" 
     else:
         Assessment = "Bank"
     context = { 
@@ -498,7 +501,7 @@ def rm_collection_sheet(request):
     except ObjectDoesNotExist:
         activity_data = None
     try:
-        customers =  Potential_Customers.objects.filter(reassigned_to=request.user.id, branch_id=get_branch_id(request) , turn_over='active_cilent' ).order_by('-created_on')  | Potential_Customers.objects.filter( branch_id=get_branch_id(request) , turn_over='active_cilent', created_by=request.user.id ).order_by('-created_on')      
+        customers =  Potential_Customers.objects.filter(reassigned_to=request.user.id, branch_id=get_branch_id(request) , turn_over='active_cilent' ).order_by('-created_on')  | Potential_Customers.objects.filter( branch_id=get_branch_id(request) , turn_over='active_cilent', created_by=request.user.id ).order_by('-created_on')    | Potential_Customers.objects.filter( branch_id=get_branch_id(request) , turn_over='active_cilent' ).order_by('-created_on')   
     except ObjectDoesNotExist:
         customers = None
     

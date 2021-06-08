@@ -45,10 +45,17 @@
                                     {% comment %} <label>{{searchform.branch_name.label}} </label>  {% endcomment %}
                                   </div>
                                   <div class="input-group"> 
-                                   <select name="branch" id="branch" class="form-control form-control-sm">
-                                      {% for b in branches %}                                   
-                                        <option value={{ b.branch_id.id }}> {{ b.branch_id.branch_name }} </option>                                   
-                                      {% endfor %}
+                                   <select name="branch_name" id="branch_name" class="form-control form-control-sm">
+                                      {% if 'Supervisor'  in currentGroup %}
+                                        {% for b in branches %}                                   
+                                          <option value={{ b.branch_id.id }}> {{ b.branch_id.branch_name  }} </option>                                   
+                                        {% endfor %}
+                                      {% endif %}
+                                       {% if 'Branch-Managers'  in currentGroup %}
+                                        {% for b in branches %}                                   
+                                          <option value={{ b.id }}> {{ b.branch_name  }} </option>                                   
+                                        {% endfor %}
+                                      {% endif %}
                                     </select>  
                                       {% comment %} {{searchform.branch_name}}    {% endcomment %}
                                   </div> 

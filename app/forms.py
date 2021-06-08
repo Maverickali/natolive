@@ -108,11 +108,11 @@ class SearchForm(forms.Form):
 # (b.branch_name) for b in Branch.objects.select_related().get(record_id = id)
 class TreasuryForm(forms.ModelForm):
     
-    branch_name = forms.CharField(        
-        label='Select Branch', 
-        max_length=50,
-        widget=forms.Select(attrs={"class": "form-control"}, choices=[(b.id, b.branch_name) for b in Branch.objects.all()]),
-    )    
+    # branch_name = forms.CharField(        
+    #     label='Select Branch', 
+    #     max_length=50,
+    #     widget=forms.Select(attrs={"class": "form-control"}, choices=[(b.id, b.branch_name) for b in Branch.objects.all()]),
+    # )    
     new_customer_numbers = forms.IntegerField(
         label='# New Customer(s)',         
         widget=forms.NumberInput(attrs={
