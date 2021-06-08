@@ -23,6 +23,7 @@ def eod(request):
         if not pending_collections:
             updated = Eod.objects.update(is_closed=True,closed_on=txn_date,days_collections=getTotalCollections(request),update_on=datetime.datetime.now(),closed_by=request.user.id)
             # create new EOD
+            # If Manager hasnt closed for days system should automatically Close use Python Celery to make queue task for version 2 nato 
             new_day = datetime.datetime.now() + datetime.timedelta(days=1)
             branch_id = get_branch_id(request)
             branch = Branch.objects.get(id=branch_id)

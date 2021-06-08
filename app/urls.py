@@ -17,11 +17,11 @@ urlpatterns = [
     path('rm/potential_customer.html', views.potential_customer, name='potentialCustomer'),  
     path('rm/repeat_potential_customer.html', views.repeatPotentialCustomer, name='repeatPotentialCustomer'), 
     path('rm/pending_collections.html', views.pendingCollections, name='pendingCollections'),
-     
-      
+    path('manager/rm_reassignment.html', views.rm_reassignment, name='rm_reassignment'),
     
     path('manager/rm_collections.html', views.rm_collections, name='rm_collections'),  
     path('manager/rm_collections.html', views.post_authorization, name='post_authorization'),
+    path('manager/rm_reassignment.html', views.rm_reassignment, name='rm_reassignment'),    
       
     path('manager/add_disbursement.html', views.add_disbursement, name='add_disbursement'),    
     path('manager/view_disbursement.html', views.view_disbursement, name='view_disbursement'),   

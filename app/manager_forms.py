@@ -79,15 +79,15 @@ class Add_ID_Form(forms.ModelForm):
     
         
 class Disbursement_Search_Form(forms.ModelForm):
-    branch_id = forms.CharField(        
-        label='Select Branch', 
-        required=False,
-        max_length=50,
-        widget=forms.Select(
-            attrs={"class": "form-control form-control-sm", "id": "branchSelector"}, 
-            choices=[(b.id, b.branch_name) for b in Branch.objects.all()]
-            ),
-    )
+    # branch_id = forms.CharField(        
+    #     label='Select Branch', 
+    #     required=False,
+    #     max_length=50,
+    #     widget=forms.Select(
+    #         attrs={"class": "form-control form-control-sm", "id": "branchSelector"}, 
+    #         choices=[(b.id, b.branch_name) for b in Branch.objects.all()]
+    #         ),
+    # )
     
     class Meta:
         model = Disbursements  

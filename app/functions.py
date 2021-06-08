@@ -12,9 +12,18 @@ from id_manager.models import Ids
 import random
 import string
 from django.core.exceptions import ObjectDoesNotExist
+from django.conf import settings
+from django.core.mail import send_mail
 
 
 
+def mail(request, subject, message, recipient_list):
+    # subject = 'welcome to GFG world'
+    # message = f'Hi Collins, thank you for registering in geeksforgeeks.'
+    email_from = settings.EMAIL_HOST_USER
+    # recipient_list = ["collinsmaverick11@gmail.com"]
+    return send_mail(subject, message, email_from, recipient_list )
+    
 
 def group_required(request, *group_names):
     """Requires user membership in at least one of the groups passed in."""
@@ -56,8 +65,12 @@ def get_desire_date(request):
     return datetime.date(year,month,day)
     
 def get_branch_id(request):
-    profile = Profile.objects.get(user_id=request.user.id)
-    return profile.branch_id_id 
+    try:
+        profile = Profile.objects.get(user_id=request.user.id)
+        return profile.branch_id_id 
+    except ObjectDoesNotExist:
+        return 
+        
 
 def get_user_group(request):
     return request.user.groups.values_list("name", flat=True)
@@ -98,7 +111,10 @@ def get_branch_account_number(request):
 
 def get_Open_Txn_date(request): 
     branch_id = get_branch_id(request)
-    branch = Branch.objects.get(id=branch_id)
+    try:
+        branch = Branch.objects.get(id=branch_id)
+    except ObjectDoesNotExist:
+        return     
     try:
         txn = Eod.objects.get(branch_id=branch, is_closed=0)
         txn_date = txn.transaction_date        

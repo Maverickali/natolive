@@ -11,7 +11,7 @@ from django import template
 from django.urls import reverse
 from django.utils import timezone
 from django.views import generic 
-from django.db.models import Sum
+from django.db.models import Count, Q, Sum
 from django.contrib.auth.models import Group, User
 from app.forms import BranchForm, Collection_Sheet_Form, Potential_Customers_Form, RMWeeklyCustomersForm, RMWeeklyCustomersPortfolioForm, Repeat_Potential_Customer, RmDailyActivityForm, SearchForm, SetTargetsForm, TargetsPortfoiloForm, TreasuryForm
 
@@ -22,7 +22,7 @@ import datetime
 from datetime import date, timedelta
 import re
 from django.db import DatabaseError
-from app.functions import get_branch_id, get_desire_date, get_user_group
+from app.functions import mail, get_branch_id, get_desire_date, get_user_group
 from app.manager_forms import Daily_Report_Form, Disbursement_Form, Disbursement_Search_Form, RM_Search_Collections_Form
 from authentication.forms import SignUpForm
 from django.core.exceptions import ObjectDoesNotExist
@@ -38,7 +38,12 @@ def index(request):
     potential_customers = Potential_Customers.objects.filter(turn_over='active_cilent').count()#.aggregate(sum('id'))
     active_customers = Potential_Customers.objects.filter(turn_over='potential_cilent').count()
     Injection_requests = Injections.objects.filter(injection_status=1).count()
-    txn_date = get_Open_Txn_date(request)
+    txn_date = get_Open_Txn_date(request) 
+    # m = mail(request,"TEST MAIL", "This is a test mail", ["collinsmaverick11@gmail.com"])
+    # if m == 1:
+    #     print('sent')
+    # else:
+    #     print('not sent')
     context = {
         'active': 'home',
         'cash_forward': cash_forward['cash_forward__sum'],
@@ -485,7 +490,7 @@ def rm_collection_sheet(request):
     except ObjectDoesNotExist:
         activity_data = None
     try:
-        customers =  Potential_Customers.objects.filter(branch_id=get_branch_id(request) , turn_over='active_cilent', created_by=request.user.id).order_by('-created_on')        
+        customers =  Potential_Customers.objects.filter(reassigned_to=request.user.id, branch_id=get_branch_id(request) , turn_over='active_cilent' ).order_by('-created_on')  | Potential_Customers.objects.filter( branch_id=get_branch_id(request) , turn_over='active_cilent', created_by=request.user.id ).order_by('-created_on')      
     except ObjectDoesNotExist:
         customers = None
     
@@ -912,5 +917,45 @@ def manage_rm(request):
         "currentGroup": get_user_group(request)
         }
     return render(request, 'manager/manage_rm.html', context)
+
+def rm_reassignment(request):
+    form = None
+    activity_data = None
+    msg = None
+    msg_status = None
+    rm_ddl = None
+    active = None  
+    cust  = None
+    active = 'manage_rm'
+    mylist = []
+    rm_ddl = get_branch_rms(request)
+    #activity_data = Potential_Customers.objects.filter(branch_id=get_branch_id(request));
+    activity_data = Potential_Customers.objects.values('created_by', 'reassigned_to').annotate(
+        dcount=Count('created_by'), rcount=Count('reassigned_to')).order_by()
+    
+     
+    if request.method == 'POST' and request.POST:        
+        rm_from = request.POST.get('rm_from',False)
+        rm_to = request.POST.get('rm_to',False)
+        from_rms_customer = Potential_Customers.objects.filter(turn_over='active_cilent', created_by=rm_from)
+        for cust in from_rms_customer:
+            mylist.append(cust.id)
+        
+        assign_customers = Potential_Customers.objects.filter(id__in=mylist).update(reassigned_to=rm_to, reassigned_by=request.user.id , updated_by=request.user.id) 
+        #to_rms_customer = Potential_Customers.objects.filter(turn_over='active_cilent', created_by=rm_to)
+        
+        msg = assign_customers + " Customers have been reassigned"#str(rm_from) + " " + str(rm_to)
+        msg_status = True
+    context = {
+        'form': form, 
+        'activity_data': activity_data,
+        'msg': msg, 
+        'msg_status': msg_status,
+        "active":active,
+        "rmddl":rm_ddl,       
+        'txn_date' : get_Open_Txn_date(request),
+        "currentGroup": get_user_group(request)
+        }
+    return render(request, 'manager/rm_reassignment.html', context)
 # END Manager Views table
 

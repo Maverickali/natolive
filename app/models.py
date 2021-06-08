@@ -106,12 +106,14 @@ class Potential_Customers(models.Model):
     contact = models.CharField(default=False, max_length=100)
     amount_desired = models.FloatField(default=False)
     client_type = models.CharField(default=False, max_length=100)
-    loan_count = models.IntegerField(default=0)
+    loan_count = models.IntegerField(default=0)      
     branch_id = models.IntegerField(default=False)
     desire_date = models.DateField(default=False)
     turn_over = models.CharField(default='potential_cilent', max_length=100, null=True)
     business_type = models.CharField(default=False, max_length=100)
     business_location = models.CharField(default=False, max_length=100)
+    reassigned_by = models.IntegerField(default=False, null=True)
+    reassigned_to = models.IntegerField(default=0, null=True)  
     created_on = models.DateTimeField(auto_now_add=True)
     created_by = models.IntegerField(default=False)
     update_on = models.DateTimeField(auto_now=True, null=True)
@@ -165,7 +167,8 @@ class Daily_Report(models.Model):
     created_on = models.DateTimeField(auto_now_add=True)
     created_by = models.IntegerField(default=False)
     update_on = models.DateTimeField(auto_now=True, null=True)
-    updated_by = models.IntegerField(default=False, null=True)    
+    updated_by = models.IntegerField(default=False, null=True)
+        
 
     
 class Disbursements(models.Model):
@@ -179,4 +182,5 @@ class Disbursements(models.Model):
     created_by = models.IntegerField(default=False)
     update_on = models.DateTimeField(auto_now=True, null=True)
     updated_by = models.IntegerField(default=False, null=True)
+   
     

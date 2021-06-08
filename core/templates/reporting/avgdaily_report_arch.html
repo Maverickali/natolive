@@ -96,41 +96,33 @@
                           <table id="example1" class="table table-bordered table-striped">
                             <thead>
                             <tr>
-                              <th>Branch</th>
-                              <th>Activity Date</th>
-                              <th>Opening Balance</th>
-                              <th>Total Collections</th>
-                              <th>Total Processing Fees</th>
-                              <th>Total Disbursed </th>
-                              <th>Injections In</th>                              
-                              <th>Injections Out</th>
-                              <th>Total Banked</th> 
-                              <th>Total Expenses</th>
-                              <th>Closing Balance</th>                              
-                              <th>Previous Day Closing Portfolio</th>
-                              <th>Total Clients Disbursed</th>                              
+                              <th>Average Opening Balance</th>
+                              <th>Average Collections</th>
+                              <th>Average Processing Fees</th>
+                              <th>Average Disbursed </th>
+                              <th>Average Injections In</th>                              
+                              <th>Average Injections Out</th>
+                              <th>Average Banked</th> 
+                              <th>Average Expenses</th>
+                              <th>Average Closing Balance</th>                              
+                              <th>Average Previous Day Closing Portfolio</th>
+                              <th>Average Clients Disbursed</th>                              
                             </tr>
                             </thead>
                             <tbody>
-                            
-                            {% for T in activity_data %}
-                                <tr>
-                                  <td>Nato {{ T.branch_id }}</td>
-                                  <td>{{ T.activity_date}} </td>
-                                  <td>{{ T.opening_bal}}</td>                           
-                                  <td>{{ T.total_collections }}  </td>
-                                  <td>{{ T.total_processing_fees }}</td>
-                                  <td>{{ T.total_disbursed }}</td>  
-                                  <td>{{ T.injection_in}}</td>                           
-                                  <td>{{ T.injection_out }}</td>
-                                  <td>{{ T.total_banked }}</td>
-                                  <td>{{ T.total_expenses_daily }}</td>    
-                                   <td>{{ T.closing_bal }}</td>    
-                                   <td>{{ T.previous_closing_portfolio }}</td>     
-                                   <td>{{ T.total_clients_disbursed }}</td>     
-                                
-                                </tr>
-                            {% endfor %} 
+                            <tr>
+                              <td>{{ activity_data_test.opening_bal|floatformat:2  }}</td>
+                              <td>{{ activity_data_test.total_collections|floatformat:2 }}</td>
+                              <td>{{ activity_data_test.total_processing_fees|floatformat:2 }}</td>
+                              <td>{{ activity_data_test.total_disbursed|floatformat:2 }}</td>
+                              <td>{{ activity_data_test.injection_in|floatformat:2 }}</td>
+                              <td>{{ activity_data_test.injection_out|floatformat:2 }}</td>
+                              <td>{{ activity_data_test.total_banked|floatformat:2 }}</td>
+                              <td>{{ activity_data_test.total_expenses_daily|floatformat:2 }}</td>
+                              <td>{{ activity_data_test.closing_bal|floatformat:2 }}</td>
+                              <td>{{ activity_data_test.previous_closing_portfolio|floatformat:2 }}</td>
+                              <td>{{ activity_data_test.total_clients_disbursed|floatformat:2 }}</td>
+                            </tr>
                           
                             </tbody>
                             

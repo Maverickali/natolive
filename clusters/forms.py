@@ -17,8 +17,8 @@ class ClusterAddForm(forms.Form):
             }
         ))
    
-BRANCHES = ((b.id, b.branch_name) for b in Branch.objects.all())
-SUPAS = [(u.id, u.username) for u in User.objects.filter(groups__in=[2,4])]#get_branch_supervisors()
+BRANCHES = '' #((b.id, b.branch_name) for b in Branch.objects.all())
+SUPAS = ''#[(u.id, u.username) for u in User.objects.filter(groups__in=[2,4])]#get_branch_supervisors()
 
 class AddBranchesToCluster(forms.Form):    
     

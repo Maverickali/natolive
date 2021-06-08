@@ -108,11 +108,11 @@ class SearchForm(forms.Form):
 # (b.branch_name) for b in Branch.objects.select_related().get(record_id = id)
 class TreasuryForm(forms.ModelForm):
     
-    # branch_name = forms.CharField(        
-    #     label='Select Branch', 
-    #     max_length=50,
-    #     widget=forms.Select(attrs={"class": "form-control"}, choices=[(b.id, b.branch_name) for b in Branch.objects.all()]),
-    # )    
+    branch_name = forms.CharField(        
+        label='Select Branch', 
+        max_length=50,
+        widget=forms.Select(attrs={"class": "form-control"}, choices=[(b.id, b.branch_name) for b in Branch.objects.all()]),
+    )    
     new_customer_numbers = forms.IntegerField(
         label='# New Customer(s)',         
         widget=forms.NumberInput(attrs={
@@ -675,11 +675,11 @@ class Potential_Customers_Form(forms.ModelForm):
 
 class Repeat_Potential_Customer(forms.Form):
     
-    customer_id = forms.MultipleChoiceField(widget=forms.SelectMultiple(attrs={"class": "select2 form-control form-control-sm",
-                                                                                    "multiple": "multiple", 
-                                                                                    "style": "{height: 36px; width: 100%;}" }),
-                                         choices=((u.id, u.first_name) for u in Potential_Customers.objects.filter())
-                                          )
+    # customer_id = forms.MultipleChoiceField(widget=forms.SelectMultiple(attrs={"class": "select2 form-control form-control-sm",
+    #                                                                                 "multiple": "multiple", 
+    #                                                                                 "style": "{height: 36px; width: 100%;}" }),
+    #                                      choices=((u.id, u.first_name) for u in Potential_Customers.objects.filter())
+    #                                       )
     desired_amount = forms.DecimalField(
         required=True,
         label='Amounted Desired',         
