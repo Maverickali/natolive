@@ -41,10 +41,16 @@
                           <div class="row">
                               <div class="col-md-2 col-lg-2">
                                 <div class="form-group">
-                                    <label>{{searchform.branch_name.label}} </label> 
+                                 <label>Select Branch</label>
+                                    {% comment %} <label>{{searchform.branch_name.label}} </label>  {% endcomment %}
                                   </div>
                                   <div class="input-group"> 
-                                      {{searchform.branch_name}}   
+                                   <select name="branch" id="branch" class="form-control form-control-sm">
+                                      {% for b in branches %}                                   
+                                        <option value={{ b.branch_id.id }}> {{ b.branch_id.branch_name }} </option>                                   
+                                      {% endfor %}
+                                    </select>  
+                                      {% comment %} {{searchform.branch_name}}    {% endcomment %}
                                   </div> 
                                   
                                </div>

@@ -69,7 +69,7 @@ def get_branch_id(request):
         profile = Profile.objects.get(user_id=request.user.id)
         return profile.branch_id_id 
     except ObjectDoesNotExist:
-        return 
+        return 0
         
 
 def get_user_group(request):

@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from reporting.form import Daily_report_search
-from app.models import Daily_Report
+from app.models import Branch, Daily_Report
 from app.functions import get_user_group
 from django.db.models import Sum
 import datetime
+from clusters.models import Assignments, Cluster_branches, Clusters
 
 # Create your views here.
 
@@ -18,6 +19,13 @@ def daily_report(request):
     form = Daily_report_search()
     #activity_data = Daily_Report.objects.select_related('customer_id').filter().order_by('-created_on')
     # add checker for who can do this
+    user_group = get_user_group(request)
+    if 'Supervisor'  in user_group :
+        cluster_id = Assignments.objects.get(user_id=request.user)        
+        branches = Cluster_branches.objects.filter(cluster_id_id=cluster_id.cluster_id_id)
+    else:
+        branches =  Branch.objects.all()
+        
     if request.method == 'POST' and request.POST:
         branch_id = request.POST.get('branch', False)
         to_date = request.POST.get('to_date', False)
@@ -36,7 +44,8 @@ def daily_report(request):
         'msg': msg,   
         'msg_status': msg_status,
         'active': active,
-        'customerddl': customers,  
+        'customerddl': customers,
+        'branches': branches,  
         "currentGroup": get_user_group(request) 
         }
     

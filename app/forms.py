@@ -95,15 +95,15 @@ class SearchForm(forms.Form):
                }
         )
     )
-    branch_name = forms.CharField(        
-        label='Select Branch', 
-        required=False,
-        max_length=50,
-        widget=forms.Select(
-            attrs={"class": "form-control form-control-sm", "id": "branchSelector"}, 
-            choices=[(b.id, b.branch_name) for b in Branch.objects.all()]
-            ),
-    )
+    # branch_name = forms.CharField(        
+    #     label='Select Branch', 
+    #     required=False,
+    #     max_length=50,
+    #     widget=forms.Select(
+    #         attrs={"class": "form-control form-control-sm", "id": "branchSelector"}, 
+    #         choices=[(b.id, b.branch_name) for b in Branch.objects.all()]
+    #         ),
+    # )
     
 # (b.branch_name) for b in Branch.objects.select_related().get(record_id = id)
 class TreasuryForm(forms.ModelForm):

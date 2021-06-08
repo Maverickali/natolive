@@ -3,6 +3,7 @@ from app.models import Branch, RM_Collection_Sheets
 from .models import Eod
 from app.functions import get_branch_id, get_user_group, get_Open_Txn_date, getTotalCollections
 import datetime
+from django.db.models import ObjectDoesNotExist
 
 # Create your views here.
 def eod(request):
@@ -10,7 +11,18 @@ def eod(request):
     msg_status = None
     success = False
     active = 'eod'
-    branch = Branch.objects.get(id=get_branch_id(request))
+    try:
+        branch = Branch.objects.get(id=get_branch_id(request))
+    except ObjectDoesNotExist:
+        context = {
+        'activity_data':"",
+        'txn_date': "",
+        "msg": "ERROR OCCURED PLEASE CONTACT THE ADMINISTRATOR", 
+        'msg_status': False ,
+        "success": success,
+        "currentGroup": get_user_group(request), 
+        'active':active}
+        return render(request, 'manager/eod.html', context)
     activity_data = Eod.objects.filter(branch_id=get_branch_id(request))
     txn_date = get_Open_Txn_date(request)
     if request.method == 'POST' and request.POST:

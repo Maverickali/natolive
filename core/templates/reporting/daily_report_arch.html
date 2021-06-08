@@ -16,7 +16,9 @@
 	<div class="content">
 		<div class="page-inner">
 			<div class="page-header">
-				<h4 class="page-title">View Daily Report </h4>
+				<h4 class="page-title">View Daily Report 
+        
+         </h4>
 				<ul class="breadcrumbs">
 					<li class="nav-home">
 						<a href="#">
@@ -42,10 +44,14 @@
                           <div class="row">
                               <div class="col-md-2 col-lg-2">
                                 <div class="form-group">
-                                    <label>{{form.branch.label}} </label> 
+                                    <label>Select Branch</label> 
                                   </div>
-                                  <div class="input-group"> 
-                                      {{form.branch}}   
+                                  <div class="input-group">                                     
+                                    <select name="branch" id="branch" class="form-control form-control-sm">
+                                      {% for b in branches %}                                   
+                                        <option value={{ b.branch_id.id }}> {{ b.branch_id.branch_name }} </option>                                   
+                                      {% endfor %}
+                                    </select>   
                                   </div> 
                                   
                                </div>

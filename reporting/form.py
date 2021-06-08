@@ -22,12 +22,12 @@ class Daily_report_search(forms.Form):
             )
         )
     
-    branch = forms.CharField(        
-        label='Select Branch', 
-        required=False,
-        max_length=50,
-        widget=forms.Select(
-            attrs={"class": "form-control form-control-sm", "id": "branchSelector"}, 
-            choices=[(b.id, b.branch_name) for b in Branch.objects.all()]
-            ),
-    )
+    # branch = forms.CharField(        
+    #     label='Select Branch', 
+    #     required=False,
+    #     max_length=50,
+    #     widget=forms.Select(
+    #         attrs={"class": "form-control form-control-sm", "id": "branchSelector"}, 
+    #         choices=[(b.id, b.branch_name) for b in Branch.objects.all()]
+    #         ),
+    # )

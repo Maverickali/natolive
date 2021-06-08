@@ -26,6 +26,7 @@ from app.functions import mail, get_branch_id, get_desire_date, get_user_group
 from app.manager_forms import Daily_Report_Form, Disbursement_Form, Disbursement_Search_Form, RM_Search_Collections_Form
 from authentication.forms import SignUpForm
 from django.core.exceptions import ObjectDoesNotExist
+from clusters.models import Assignments, Cluster_branches
 
 
 
@@ -139,6 +140,12 @@ def treasury_report(request):
     msg = ''
     updated = None
     inj_status = None
+    user_group = get_user_group(request)
+    if 'Supervisor'  in user_group :
+        cluster_id = Assignments.objects.get(user_id=request.user)        
+        branches = Cluster_branches.objects.filter(cluster_id_id=cluster_id.cluster_id_id)
+    else:
+        branches =  Branch.objects.all()
     if request.method == 'POST' and request.POST:
         search_form = SearchForm(request.POST)       
         if search_form.is_valid():            
@@ -199,6 +206,7 @@ def treasury_report(request):
             'treasuryList': treasury_list, 'searchform': search_form,
             'Branch': branch_name, 'updated': updated,  'txn_date' : 'null',
             'msg': msg, "currentGroup": get_user_group(request),
+            'branches':branches,
             'active':active}
 
     return render(request, 'treasury/view.html', context)

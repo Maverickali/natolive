@@ -16,21 +16,24 @@ def manage_cluster(request):
     frmCluster = ClusterAddForm()
     frmBranch = AddBranchesToCluster()
     frmSupervisor = AddSupervisorToCluster()
-    #branch = Branch.objects.get(id=get_branch_id(request))
-    activity_data = Clusters.objects.all()#select_related().filter() # Clusters.objects.all()#filter(branch_id=get_branch_id(request))    
+    # branch = Branch.objects.get(id=get_branch_id(request))
+    activity_data = Clusters.objects.all()
+    # select_related().filter() 
+    # Clusters.objects.all()#filter(branch_id=get_branch_id(request))    
     # txn_date = get_Open_Txn_date(request)
    
     if request.method == 'POST' and request.POST:
         frmCluster = ClusterAddForm(request.POST)
         if frmCluster.is_valid():
             cluster_name = frmCluster.cleaned_data.get('cluster_name')
-            cluster = Clusters.objects.get_or_create(cluster_name=cluster_name,created_by=request.user.id)
-            if cluster:
-                msg = "Cluster Successfully Created"
-                msg_status = True
-            else:
-                msg = "Cluster Already Exists"
-                msg_status = False 
+            if cluster_name != '':
+                cluster = Clusters.objects.get_or_create(cluster_name=cluster_name,created_by=request.user.id)
+                if cluster:
+                    msg = "Cluster Successfully Created"
+                    msg_status = True
+                else:
+                    msg = "Cluster Already Exists"
+                    msg_status = False 
         #  Assigning Branches to Cluster               
         frmBranch = AddBranchesToCluster(request.POST)
         if frmBranch.is_valid():
@@ -50,7 +53,10 @@ def manage_cluster(request):
             cluster = Clusters.objects.get(id=cluster_id)
             for supa in supervisors:
                 user_instance = User.objects.get(id=supa)
-                assignment = Assignments.objects.update_or_create(cluster_id=cluster, user_id=user_instance, created_by=request.user.id)
+                assignment = Assignments.objects.update_or_create(
+                    cluster_id=cluster, 
+                    user_id=user_instance, 
+                    created_by=request.user.id)
             msg= 'The Supervisor Assigned has been assigned cluster'
             msg_status=True
                            

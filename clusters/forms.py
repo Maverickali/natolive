@@ -17,20 +17,23 @@ class ClusterAddForm(forms.Form):
             }
         ))
    
-BRANCHES = '' #((b.id, b.branch_name) for b in Branch.objects.all())
-SUPAS = ''#[(u.id, u.username) for u in User.objects.filter(groups__in=[2,4])]#get_branch_supervisors()
+BRANCHES = ((b.id, b.branch_name) for b in Branch.objects.all())
+SUPAS = [(u.id, u.username) for u in User.objects.filter(groups__in=[2,4])]#get_branch_supervisors()
 
 class AddBranchesToCluster(forms.Form):    
     
-    branches = forms.MultipleChoiceField(widget=forms.SelectMultiple(attrs={"class": "select2 form-control form-control-sm",
-                                                                                    "multiple": "multiple", 
-                                                                                    "style": "{height: 36px; width: 100%;}" }),
-                                         choices=BRANCHES
-                                          )
+    branches = forms.MultipleChoiceField(
+    required=False,
+    widget=forms.SelectMultiple(attrs={
+    "class": "select2 form-control form-control-sm",
+    "multiple": "multiple", 
+    "style": "{height: 36px; width: 100%;}" 
+    }),choices=BRANCHES)
    
     
 class AddSupervisorToCluster(forms.Form):
-    supervisor = forms.CharField(        
+    supervisor = forms.CharField(  
+                                 required=False,      
         label='Select Supervisor',        
         max_length=50,
         widget=forms.Select(
