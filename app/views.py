@@ -716,9 +716,11 @@ def rm_collections(request):
             msg = 'SUCCESSFULLY APPROVED'  
             msg_status = True
         else:
-            collection_date = get_Open_Txn_date(request)
+            collection_date = get_date(request)# get_Open_Txn_date(request)
+            #print(collection_date)
             rm_id = request.POST.get('rm', False)
             activity_data = RM_Collection_Sheets.objects.filter(created_by=rm_id, collection_date=collection_date)      
+            print(activity_data)
             if not activity_data :
                 msg = 'No Collections Captured by selected RM Yet'
                 msg_status = False
@@ -726,7 +728,7 @@ def rm_collections(request):
                 total_collections = activity_data.count() 
                 total_collections_amount = activity_data.aggregate(Sum('amount_collected'))          
                 rms = get_branch_rms(request)
-                msg = 'Rm Collection\'s ' + 'Total Collections = ' + str(total_collections)+' AND ' + 'Total Amount Collected = ' + str(total_collections_amount)
+                msg = 'Rm Collection\'s ' + 'Total Collections = ' + str(total_collections)+' AND ' + 'Total Amount Collected = ' + str(total_collections_amount) 
                 msg_status = True
     else:
         msg = '' 

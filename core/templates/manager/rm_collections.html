@@ -29,7 +29,7 @@
        {% include 'includes/flash_message.html' %}
           <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Rm Collections </h3> {{ total_collections }} </br> {{ total_collections_amount.amount_collected__sum  }}               
+                <h3 class="card-title">Rm Collections </h3>             
                 {% comment %} <span class="{% if updated %}{{ "text-success" }}{% else %}{{"text-danger"}}{%endif%}">{{ msg | safe }}</span> {% endcomment %}
               </div>
               <!-- /.card-header -->
@@ -100,8 +100,8 @@
                       <tr role="row">
                         <td><input type="checkbox" {% if T.authorization_status ==  "APPROVED" %} checked {% endif %} name="id[]" value="{{ T.id }}" /></td>
                         <td>{{ T.collection_date }}</td>
-                        <td>{{ T.first_name}} </td>
-                        <td>{{ T.last_name}} </td>
+                        <td>{{ T.customer.first_name}} </td>
+                        <td>{{ T.customer.last_name}} </td>
                         <td>{{ T.amount_collected}}</td>								                        
                         <td>{{ T.receipt_number  }}</td>                                  								                        
                         <td>{{ T.authorization_status  }}</td>
