@@ -656,7 +656,7 @@ def pendingCollections(request):
     id = []
     for ad in activity_data:
         id.append(ad.customer.id)        
-    potential_customer = Potential_Customers.objects.filter(created_by=request.user.id).exclude(id__in=id)
+    potential_customer = Potential_Customers.objects.filter(created_by=request.user.id, turn_over='active_cilent').exclude(id__in=id)
     msg = None
     msg_status = None
     success = None
