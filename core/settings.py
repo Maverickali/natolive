@@ -21,6 +21,7 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', '102.83.76.169', config('SERVER', def
 # Application definition
 
 INSTALLED_APPS = [
+       
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

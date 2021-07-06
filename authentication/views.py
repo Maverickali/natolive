@@ -9,23 +9,33 @@ from django.contrib.auth.models import User
 from django.forms.utils import ErrorList
 from django.http import HttpResponse
 from .forms import LoginForm, SignUpForm
+from app.functions import mail
+from app.models import Profile
 
 def login_view(request):
     form = LoginForm(request.POST or None)
-
+   
     msg = None
 
     if request.method == "POST":
-
+        # m = mail(request,"CRAZYPARROT TEST MAIL", "This is a test mail", ["collinsmaverick11@gmail.com"])
+        # if m == 1:
+        #     print('sent')
+        # else:
+        #     print('not sent')
         if form.is_valid():
             username = form.cleaned_data.get("username")
             password = form.cleaned_data.get("password")
-            user = authenticate(username=username, password=password)
-            
+            user = authenticate(username=username, password=password)            
             if user is not None:
                 login(request, user)
                 current_user_groups = request.user.groups.values_list("name", flat=True) 
                 active = "home"
+                if 'RM' in current_user_groups:
+                    status = Profile.objects.filter(user_id=request.user.id).values('is_active')[0].get("is_active")
+                    if status == False:
+                        msg = 'Your Account hasn\'t been approved by the supervisor'
+                        return render(request, "accounts/login.html", {"form": form, "msg" : msg})
                 return render(request, "index.html", {
                         "currentGroup": current_user_groups, 
                         "active": active

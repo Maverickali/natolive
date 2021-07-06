@@ -42,21 +42,22 @@ def manage_cluster(request):
             cluster = Clusters.objects.get(id=cluster_id)
             for branch in branches:
                 branch_instance = Branch.objects.get(id=branch)
-                B = Cluster_branches.objects.update_or_create(cluster_id=cluster, branch_id=branch_instance)               
+                B = Cluster_branches.objects.update_or_create(cluster_id=cluster, branch_id=branch_instance)              
                 
             msg = 'The Selected Branches have been assign to cluster'
             msg_status = True
         frmSupervisor = AddSupervisorToCluster(request.POST)
         if frmSupervisor.is_valid():
             supervisors = frmSupervisor.cleaned_data.get('supervisor')
+            #print(supervisors)
             cluster_id = request.POST.get('id',False)
             cluster = Clusters.objects.get(id=cluster_id)
-            for supa in supervisors:
-                user_instance = User.objects.get(id=supa)
-                assignment = Assignments.objects.update_or_create(
-                    cluster_id=cluster, 
-                    user_id=user_instance, 
-                    created_by=request.user.id)
+            # for supa in supervisors:
+            user_instance = User.objects.get(id=supervisors)
+            assignment = Assignments.objects.update_or_create(
+                cluster_id=cluster, 
+                user_id=user_instance, 
+                created_by=request.user.id)
             msg= 'The Supervisor Assigned has been assigned cluster'
             msg_status=True
                            
@@ -81,7 +82,7 @@ def manage_cluster(request):
 def view_cluster(request):
     pass
 
-def add_branch_cluster(request):
+def add_branch_cluster(request):    
     msg = None
     msg_status = None
     success = False
@@ -114,3 +115,64 @@ def add_branch_cluster(request):
         'active':active}
 
     return render(request, 'cluster/create_cluster.html', context)
+
+
+# def assign_cluster_branch(request):
+#     pass
+
+def assign_supa_cluster(request):
+    active = None
+    msg = None
+    msg_status = None
+    active = 'supa_report'
+    
+    if request.method == 'POST' and request.POST:        
+        supa_id = request.POST.get('supa',False)
+        cluster_id = request.POST.get('cluster',False)
+        cluster_instance = Clusters.objects.get(id=cluster_id)
+        user_instance = User.objects.get(id=supa_id)
+        cluster_branches_instance = Cluster_branches.objects.filter(cluster_id=cluster_id).first()
+        assignment = Assignments.objects.update_or_create(
+            cluster_id=cluster_instance, 
+            user_id=user_instance,
+            cluster_branch_id=cluster_branches_instance,         
+            created_by=request.user.id)
+        msg= 'The Supervisor Assigned has been assigned cluster'
+        msg_status=True
+    
+    context = {       
+        'supas' : User.objects.filter(groups__in=[2,4]), 
+        'clusters' : Clusters.objects.all(),    
+        "msg": msg, 
+        'msg_status': msg_status,
+        "currentGroup": get_user_group(request), 
+        'active':active}
+
+    return render(request, 'cluster/assign_supa_cluster.html', context)
+
+def assign_branches_cluster(request):
+    active = None
+    msg = None
+    msg_status = None
+    active = 'supa_report'
+    
+    if request.method == 'POST' and request.POST:
+        branches = request.POST.getlist('branches[]')
+        cluster_id = request.POST.get('cluster',False)
+        cluster = Clusters.objects.get(id=cluster_id)
+        for branch in branches:
+            branch_instance = Branch.objects.get(id=branch)
+            B = Cluster_branches.objects.update_or_create(cluster_id=cluster, branch_id=branch_instance)              
+            
+        msg = 'The Selected Branches have been assign to cluster'
+        msg_status = True
+    
+    context = {       
+        'branchs' : Branch.objects.all(), 
+        'clusters' : Clusters.objects.all(),    
+        "msg": msg, 
+        'msg_status': msg_status,
+        "currentGroup": get_user_group(request), 
+        'active':active}
+
+    return render(request, 'cluster/assign_branches_cluster.html', context)

@@ -27,15 +27,16 @@ class Branch(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True)
     created_by = models.CharField(max_length=50)
 
-class Profile(models.Model):
+class Profile(models.Model): 
     id = models.BigAutoField(primary_key=True)
+    is_active = models.BooleanField(default=False, null=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     branch_id = models.ForeignKey(Branch, on_delete=models.CASCADE)
     location = models.CharField(default=False, max_length=100)
-    created_on =  models.DateField(default=False)
+    created_on = models.DateField(default=False)
     created_by = models.IntegerField(default=False)
     update_on = models.DateTimeField(auto_now=True, null=True)
-    updated_by = models.IntegerField(default=False, null=True)
+    updated_by = models.IntegerField(default=False, null=True) 
 
 class RM_Daily_Activity(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -153,6 +154,7 @@ class Daily_Report(models.Model):
     id = models.BigAutoField(primary_key=True)
     opening_bal = models.FloatField(default=0.0)  
     total_collections = models.FloatField(default=0.0, null=True)
+    supervisor_expense = models.FloatField(default=0.0, null=True)
     total_processing_fees = models.FloatField(default=0.0)
     total_disbursed = models.FloatField(default=0.0)
     injection_in = models.FloatField(default=0.0)  

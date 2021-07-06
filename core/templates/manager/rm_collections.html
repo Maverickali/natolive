@@ -68,55 +68,130 @@
               </div>
               <!-- /.card-body -->
             </div>
-            <div class="card">
-              <div class="card-body">
-              {% comment %} {% url 'post_authorization' %} {% endcomment %}
-                <form Method="POST" action="{% url 'post_authorization' %} "> 
-                {% csrf_token %}
-                <input type="text" hidden id="table_form" name="table_form"  value="table" />
-                <div class="row">
-                  <div class="col-md-3 col-lg-3">
-                      <div class="form-group">
-                            <button class="btn btn-primary"  type="submit">Submit Collection Sheet</button>                                  
-                      </div>                                                                 
-                  </div>   
-                                         
-              <div class="col-lg-12">
-                <table id="example1" class="table table-bordered table-striped">
-                  <thead>
-                  <tr>
-                    <th><input name="select_all" value="1" id="example1-select-all" type="checkbox" /></th>
-                    <th>Transaction Date</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Amount Collected</th>                            
-                    <th>Receipt Number</th>
-                    <th>Manager Authorization</th>  
-                  </tr>
-                  </thead>
-                  <tbody>
-                  
-                    {% for T in activity_data %}
-                      <tr role="row">
-                        <td><input type="checkbox" {% if T.authorization_status ==  "APPROVED" %} checked {% endif %} name="id[]" value="{{ T.id }}" /></td>
-                        <td>{{ T.collection_date }}</td>
-                        <td>{{ T.customer.first_name}} </td>
-                        <td>{{ T.customer.last_name}} </td>
-                        <td>{{ T.amount_collected}}</td>								                        
-                        <td>{{ T.receipt_number  }}</td>                                  								                        
-                        <td>{{ T.authorization_status  }}</td>
-                      </tr>
-                  {% endfor %} 
-                
-                  </tbody>
-                  
-                </table>
-                </div>
-                </form>
-                 </div>
-              </div>
-            </div>
 
+            
+                                
+
+
+
+            <div class="card">
+              <div class="card-body">   
+                      <ul class="nav nav-tabs mb-3">
+                                    <li class="nav-item">
+                                        <a href="#home" data-toggle="tab" aria-expanded="false" class="nav-link {{ approve }}">
+                                            <i class="mdi mdi-home-variant d-lg-none d-block mr-1"></i>
+                                            <span class="d-none d-lg-block">Approve Collections</span>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#profile" data-toggle="tab" aria-expanded="true"
+                                            class="nav-link {{ reject  }}">
+                                            <i class="mdi mdi-account-circle d-lg-none d-block mr-1"></i>
+                                            <span class="d-none d-lg-block">Reject Collections</span>
+                                        </a>
+                                    </li>
+                                 
+                                </ul>
+
+                                <div class="tab-content">
+                                    <div class="tab-pane {{ approve }}" id="home">
+                                         <form Method="POST" action="{% url 'post_authorization' %} "> 
+                                            {% csrf_token %}
+                                            <input type="text" hidden id="table_form" name="table_form"  value="table" />
+                                            <div class="row">
+                                              <div class="col-md-3 col-lg-3">
+                                                  <div class="form-group">
+                                                        <button class="btn btn-primary"  type="submit">Submit Approved Collections</button>                                  
+                                                  </div>                                                                 
+                                              </div>   
+                                                                    
+                                              <div class="col-lg-12">
+                                                  <table id="example1" class="table table-bordered table-striped">
+                                                    <thead>
+                                                    <tr>
+                                                      <th><input name="select_all" value="1" id="example1-select-all" type="checkbox" /></th>
+                                                      <th>Transaction Date</th>
+                                                      <th>First Name</th>
+                                                      <th>Last Name</th>
+                                                      <th>Amount Collected</th>                            
+                                                      <th>Receipt Number</th>
+                                                      <th>Manager Authorization</th>  
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    
+                                                      {% for T in activity_data %}
+                                                        <tr role="row">
+                                                          <td><input type="checkbox" {% if T.authorization_status ==  "APPROVED" %} checked {% endif %} name="id[]" value="{{ T.id }}" /></td>
+                                                          <td>{{ T.collection_date }}</td>
+                                                          <td>{{ T.customer.first_name}} </td>
+                                                          <td>{{ T.customer.last_name}} </td>
+                                                          <td>{{ T.amount_collected}}</td>								                        
+                                                          <td>{{ T.receipt_number  }}</td>                                  								                        
+                                                          <td>{{ T.authorization_status  }}</td>
+                                                        </tr>
+                                                    {% endfor %} 
+                                                  
+                                                    </tbody>
+                                                    
+                                                  </table>                    
+                                              </div>
+                                          </form>
+                                        </div>
+                                       
+                                    </div>
+                                    <div class="tab-pane  {{ reject }}" id="profile">
+                                        <form Method="POST" action="{% url 'post_rejected_collections' %} "> 
+                                            {% csrf_token %}
+                                            <input type="text" hidden id="table_reject_form" name="table_reject_form"  value="table" />
+                                            <div class="row">
+                                              <div class="col-md-3 col-lg-3">
+                                                  <div class="form-group">
+                                                        <button class="btn btn-primary"  type="submit">Submit Rejected Collections</button>                                  
+                                                  </div>                                                                 
+                                              </div>   
+                                                                    
+                                              <div class="col-lg-12">
+                                                  <table id="example1" class="table table-bordered table-striped">
+                                                    <thead>
+                                                    <tr>
+                                                      <th><input name="select_all" value="1" id="example1-select-all" type="checkbox" /></th>
+                                                      <th>Transaction Date</th>
+                                                      <th>First Name</th>
+                                                      <th>Last Name</th>
+                                                      <th>Amount Collected</th>                            
+                                                      <th>Receipt Number</th>
+                                                      <th>Manager Authorization</th>  
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    
+                                                      {% for T in activity_data %}
+                                                        <tr role="row">
+                                                          <td><input type="checkbox"  name="ids[]" value="{{ T.id }}" /></td>
+                                                          <td>{{ T.collection_date }}</td>
+                                                          <td>{{ T.customer.first_name}} </td>
+                                                          <td>{{ T.customer.last_name}} </td>
+                                                          <td>{{ T.amount_collected}}</td>								                        
+                                                          <td>{{ T.receipt_number  }}</td>                                  								                        
+                                                          <td>{{ T.authorization_status  }}</td>
+                                                        </tr>
+                                                    {% endfor %} 
+                                                  
+                                                    </tbody>
+                                                    
+                                                  </table>                    
+                                              </div>
+                                          </form>
+                                        </div>
+                                       
+                                    </div>
+                                    
+                                </div>                     
+                    </div>
+                  </div>
+
+                </div>
 				</div>
     </div>
 </div>

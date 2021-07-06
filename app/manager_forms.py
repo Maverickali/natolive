@@ -231,7 +231,20 @@ class Daily_Report_Form(forms.ModelForm):
                 "min" : "0"
               
             })
-        )  
+        )
+    
+    supervisor_expense = forms.DecimalField(
+        required=True,
+        label='Supervisor Expense',         
+        widget=forms.TextInput(attrs={
+                "placeholder": "Enter Supervisor Expense",                
+                "class": "form-control form-control-sm",
+                "oninput": "digitsep(this)",
+                "id": "supervisor_expense",
+                "min" : "0"
+              
+            })
+        )
     total_clients_disbursed =  forms.IntegerField(
         label='Clients Disbursed',    
         widget=forms.NumberInput(attrs={
@@ -253,6 +266,7 @@ class Daily_Report_Form(forms.ModelForm):
             ,'total_expenses_daily'
             ,'closing_bal'
             ,'previous_closing_portfolio'
+            ,'supervisor_expense'
         )
       
     

@@ -20,7 +20,8 @@ urlpatterns = [
     path('manager/rm_reassignment.html', views.rm_reassignment, name='rm_reassignment'),
     
     path('manager/rm_collections.html', views.rm_collections, name='rm_collections'),  
-    path('manager/rm_collections.html', views.post_authorization, name='post_authorization'),
+    path('manager/rm_collections.html', views.post_authorization, name='post_authorization'),    
+    path('manager/rm_collections.html', views.post_rejected_collections, name='post_rejected_collections'),
     path('manager/rm_reassignment.html', views.rm_reassignment, name='rm_reassignment'),    
       
     path('manager/add_disbursement.html', views.add_disbursement, name='add_disbursement'),    

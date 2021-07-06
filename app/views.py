@@ -704,16 +704,25 @@ def rm_collections(request):
     txn_date = get_Open_Txn_date(request)
     # select rm
     form = RM_Search_Collections_Form()
+    approve = 'show active'
     if request.method == 'POST':
         table = request.POST.get('table_form', False) 
+        table_reject_form = request.POST.get('table_reject_form', False)
         if table:
+            approve = 'show active'
             id_list = request.POST.getlist('id[]')
             # msg = id_list
             # update to default first
-            c_sheet = RM_Collection_Sheets.objects.filter(id__in=id_list).update(authorization_status="PENDING", authorization_note="Not Authorized By Branch Manager" , updated_by=request.user.id)
+            # c_sheet = RM_Collection_Sheets.objects.filter(id__in=id_list).update(authorization_status="PENDING", authorization_note="Not Authorized By Branch Manager" , updated_by=request.user.id)
             c_sheet = RM_Collection_Sheets.objects.filter(id__in=id_list).update(authorization_status="APPROVED", authorization_note="Collection Accepted" , updated_by=request.user.id)
             # activity_data = RM_Collection_Sheets.objects.filter(created_by=rm_id, collection_date=collection_date) 
             msg = 'SUCCESSFULLY APPROVED'  
+            msg_status = True
+        elif table_reject_form:
+            id_list = request.POST.getlist('ids[]')
+            reject = 'show active'
+            c_sheet = RM_Collection_Sheets.objects.filter(id__in=id_list).update(authorization_status="REJECTED", authorization_note="Collection Rejected By Branch Manager" , updated_by=request.user.id)            
+            msg = 'SUCCESSFULLY REJECTED'  
             msg_status = True
         else:
             collection_date = get_date(request)# get_Open_Txn_date(request)
@@ -738,6 +747,8 @@ def rm_collections(request):
     active = 'collections'
     context = {
         'form': form,
+        'approve': approve,
+        'reject': reject,
         'txn_date' : get_Open_Txn_date(request),
         'activity_data': activity_data,
         'msg': msg, 'msg_status': msg_status, 
@@ -815,17 +826,18 @@ def view_disbursement(request):
 
 
 def post_authorization(request):
-
+# show active
     rms = Profile.objects.select_related('user').filter(branch_id=get_branch_id(request), user__groups__in=[5])
     msg = None 
     form = None
     id_list = None
+    approve = 'show active'
     if request.method == 'POST' and request.POST:       
         id_list = request.POST.getlist('id[]')
         msg = id_list
         collection_date = get_Open_Txn_date(request)
         # update to default first
-        c_sheet = RM_Collection_Sheets.objects.update(authorization_status="PENDING", authorization_note="Not Authorized By Branch Manager" , updated_by=request.user.id)
+        # c_sheet = RM_Collection_Sheets.objects.update(authorization_status="PENDING", authorization_note="Not Authorized By Branch Manager" , updated_by=request.user.id)
         c_sheet = RM_Collection_Sheets.objects.filter(id__in=id_list).update(authorization_status="APPROVED", authorization_note="Collection Accepted" , updated_by=request.user.id)
         msg = 'SUCCESSFULLY APPROVED'     
        
@@ -834,10 +846,39 @@ def post_authorization(request):
        
     context = {
         'form': form, 
+        'approve': approve,
         'rmddl': rms,
         'msg': msg,
         'idlist': id_list,  "currentGroup": get_user_group(request)}
     return  render(request, 'manager/rm_collections.html', context)
+
+
+def post_rejected_collections(request):
+    rms = Profile.objects.select_related('user').filter(branch_id=get_branch_id(request), user__groups__in=[5])
+    msg = None 
+    form = None
+    id_list = None
+    reject = 'show active'
+    if request.method == 'POST' and request.POST:       
+        id_list = request.POST.getlist('id[]')
+        msg = id_list
+        collection_date = get_Open_Txn_date(request)
+        # update to default first
+        c_sheet = RM_Collection_Sheets.objects.filter(id__in=id_list).update(authorization_status="REJECTED", authorization_note="Collection Rejected By Branch Manager" , updated_by=request.user.id)
+        # c_sheet = RM_Collection_Sheets.objects.filter(id__in=id_list).update(authorization_status="APPROVED", authorization_note="Collection Accepted" , updated_by=request.user.id)
+        msg = 'SUCCESSFULLY REJECTED'     
+       
+    else:
+        msg = "no post"
+       
+    context = {
+        'form': form, 
+        'rmddl': rms,
+        'reject': reject,
+        'msg': msg,
+        'idlist': id_list,  "currentGroup": get_user_group(request)}
+    return  render(request, 'manager/rm_collections.html', context)
+    
 
 def add_daily_report(request):
     form = None
