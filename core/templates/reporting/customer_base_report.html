@@ -1,0 +1,230 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} VIEW COLLECTIONS  {% endblock %} 
+
+{% block stylesheets %}
+  <!-- DataTables -->
+  <link rel="stylesheet" type="text/css" href="/static/assets/js/plugin/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" type="text/css" href="/static/assets/js/plugin/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" type="text/css" href="/static/assets/js/plugin/datatables-buttons/css/buttons.bootstrap4.min.css">
+   <link rel="stylesheet" href="/static/assets/css/select2.min.css">  
+{% endblock stylesheets %}
+
+
+{% block content %}
+{% if 'Supervisor'  in currentGroup %}
+	
+
+<div class="content">
+		<div class="page-inner">
+			<div class="page-header" >
+				<h4 class="page-title">Cluster Customer Base 
+                  
+                </h4>
+				<ul class="breadcrumbs">
+					<li class="nav-home">
+						<a href="index.html">
+							<i class="flaticon-home"></i>
+						</a>
+					</li>
+					<li class="separator">
+						<i class="flaticon-right-arrow"></i>
+					</li>
+					<li class="nav-item"><a href="{% url 'customer_base_report' %}"> View Cluster Customer Base </a>
+					</li>										
+				
+				</ul>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+				 {% include 'includes/flash_message.html' %}
+					<div class="card">
+						<div class="card-header">							
+						<div class="card-title">	 
+						    {% if msg %}
+                               <div class="card-title">Customer Base </div> </br> 
+							   {% comment %} <span class="{% if success %}{{ "text-success" }}{% else %}{{"text-danger"}}{%endif%}">{{ msg | safe }}</span> {% endcomment %}
+                            {% else %}
+                            <span>
+                               <div class="card-title">Search Active / Potential Customer  </div>
+                            </span>
+                            {% endif %} </div>
+							
+						</div>
+						<form method="POST" action="{% url 'customer_base_report' %}"  >
+
+						{% csrf_token %}  
+				
+						<div class="card-body">
+							<div class="row">								
+									<div class="col-md-6 col-lg-4">									
+										<div class="form-group">
+										<label for="branch"> Select Branches</label>
+                                        <select required name="branches[]" 
+                                            class="select2 form-control" style="height: 16px;width: 100%;" multiple="multiple">                                            
+                                            {% for b in branches %}
+                                                <option value="{{ b.branch_id.id }}"  >{{  b.branch_id.branch_name }} </option>
+                                            {% endfor %}                                            
+                                        </select> 
+										</div>
+								    	<span class="text-danger"></span>																		
+									</div>
+                                    <div class="col-md-6 col-lg-4">									
+										<div class="form-group">
+										<label for="branch"> Select Customer Type</label>
+                                        <select required name="customer_type" 
+                                            class="form-control" style="height: 16px;width: 100%;">                                            
+                                          
+                                            <option value="all">All</option>
+                                            <option value="active_cilent">Active Customers</option>
+                                            <option value="potential_cilent">Potential Customer</option>                                            
+
+                                        </select> 
+										</div>
+								    	<span class="text-danger"></span>																		
+									</div>
+									<!-- column 2 -->
+									<div class="col-md-6 col-lg-4">	
+										<div class="form-group">
+										    <label for="branch"> Select From Date</label>
+                                            <input name="from_date" type="date" class="form-control" id="from_date"/>                                  
+										</div>
+										<span class="text-danger"></span> 	
+									
+									</div>
+									<!-- End of Column 2 -->
+									<!-- Column 3 -->
+									<div class="col-md-6 col-lg-4">
+                                    <div class="form-group">
+					                    <label for="branch"> Select To Date</label>
+                                        <input name="to_date" type="date" class="form-control" id="to_date"/>
+                                        </div>
+                                        <span class="text-danger"></span> 	
+									</div>
+									<!-- End of Column 3 -->
+							</div>
+						</div>
+						<div class="card-action">
+							<button class="btn btn-success" type="submit">Search</button>
+							
+						</div>
+						</form>
+						<div class="card-action">
+ 						  <div class="table-responsive">
+						  <table id="example1" class="table table-bordered table-striped">
+                            <thead>
+                            <tr>
+                              <th>Branch </th>							 
+                              <th>First Name: </th>
+							  <th>Last Name: </th>  
+                              <th>Other Name: </th>                                                          
+                              <th>Contact:</th>
+							  <th>Desired Amount:</th>
+                              <th>Business Type: </th>
+                              <th>Business Location: </th>                               
+                              <th>Customer Type: </th>   
+                               <th>Posting Date: </th>                                 
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for T in activity_data %}
+                                <tr>	
+                                  <td>Nato {{ T.branch_id }}</td>								  
+                                  <td>{{ T.first_name }}</td>								  								                        
+                                  <td>{{ T.last_name  }}</td>                                  								  								                        
+                                  <td>{{ T.other_name  }}</td>  
+                                  <td>{{ T.contact }} </td>
+								  <td>{{ T.amount_desired}} </td>
+                                  <td>{{ T.business_type}}</td>                                								                        
+                                  <td>{{ T.business_location  }}</td>                                                            								                        
+                                  <td>                                  
+                                   {% if T.turn_over == 'active_cilent' %}
+                                    <span class="badge badge-success"> Active Customer </span>                                  
+                                  {% else %}
+                                    <span class="badge badge-warning">Potential Customer</span>
+                                  {% endif %}
+                                  
+                                  </td>                                  
+                                  <td>{{ T.created_on }}</td>
+                                </tr>
+                            {% endfor %}   
+                          
+                            </tbody>
+                            
+                          </table>
+						  </div>
+						</div>
+				
+
+					</div>
+				</div>
+				<div class="col-md-12">
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{% else %}
+			{% include 'includes/noauthorization.html' %}
+	{% endif %} 
+{% endblock content %}
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+<script src="/static/assets/js/plugin/datatables/jquery.dataTables.min.js" type="text/javascript"></script>
+<!-- Bootstrap 4 -->
+<script src="/static/assets/js/plugin/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<!-- Atlantis DEMO methods, don't include it in your project! -->
+<script src="/static/assets/js/setting-demo2.js"></script>
+<script src="/static/assets/js/plugin/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/static/assets/js/plugin/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/static/assets/js/plugin/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="/static/assets/js/plugin/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/static/assets/js/plugin/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="/static/assets/js/plugin/jszip/jszip.min.js"></script>
+<script src="/static/assets/js/plugin/pdfmake/pdfmake.min.js"></script>
+<script src="/static/assets/js/plugin/pdfmake/vfs_fonts.js"></script>
+<script src="/static/assets/js/plugin/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="/static/assets/js/plugin/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="/static/assets/js/plugin/datatables-buttons/js/buttons.colVis.min.js"></script>
+	<!-- Atlantis DEMO methods, don't include it in your project! -->
+	<script>
+		
+		$('#frmRMDaily').on('submit', function() {
+	
+		 var value = document.getElementById('id_number').value;
+			if (value.length != 14) {
+				alert('Invalid NIM Number Entered');
+				return false;
+			}
+		});
+		
+
+	</script>
+
+<script>
+    
+    $(function () {
+    $("#example1").DataTable({
+        "responsive": true, "lengthChange": false, "autoWidth": false,
+        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+    $('#example').DataTable({
+        "paging": true,
+        "lengthChange": false,
+        "searching": false,
+        "ordering": true,
+        "info": true,
+        "autoWidth": false,
+        "responsive": true,
+    });
+    });
+
+
+</script>
+<script src="/static/assets/js/select2.full.min.js"></script>
+<script src="/static/assets/js/select2.min.js"></script>
+<script src="/static/assets/js/select2.init.js"></script>
+{% endblock javascripts %}	

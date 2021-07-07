@@ -14,6 +14,7 @@ import string
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 from django.core.mail import send_mail
+from clusters.models import Assignments, Cluster_branches, Clusters
 
 
 
@@ -130,3 +131,12 @@ def get_branch_supervisors():
         return User.objects.select_related('user').filter( user__groups__in=[2,4])
     except:
         return None 
+    
+def getSupaClustorBranches(request):
+    cluster = Assignments.objects.select_related('user_id', 'cluster_branch_id', 'cluster_id').filter(user_id=request.user.id).values('cluster_branch_id_id__cluster_id' )
+    for b in cluster:
+        cluster_id = b
+    cluster_instance = Clusters.objects.get(id=cluster_id['cluster_branch_id_id__cluster_id'])
+    # Supervisor's cluster class
+    branches = Cluster_branches.objects.filter(cluster_id=cluster_instance)
+    return branches

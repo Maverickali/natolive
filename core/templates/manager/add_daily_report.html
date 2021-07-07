@@ -65,9 +65,14 @@
 									</div>
 									<span class="text-danger">{{ form.closing_bal.errors }}</span>
 									<div class="form-group">
+											<label>{{form.supervisor_expense.label }}</label>
+											{{ form.supervisor_expense}}                                     
+									</div>
+									<span class="text-danger">{{ form.supervisor_expense.errors }}</span> 
+									<div class="form-group">
 										<label>Total Collections</label>
 										<h3>{{ collections }}</h3> 
-									</div>
+									</div>									
 									
 								
 
@@ -114,6 +119,7 @@
 											{{ form.previous_closing_portfolio}}                                     
 										</div>
 										<span class="text-danger">{{ form.previous_closing_portfolio.errors }}</span> 
+										
 										 <div class="form-group">
 										<label>Cilents Disbursed</label>
 											<h3>{{ form.total_clients_disbursed }}</h3> 

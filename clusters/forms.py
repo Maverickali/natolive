@@ -27,7 +27,8 @@ class AddBranchesToCluster(forms.Form):
     widget=forms.SelectMultiple(attrs={
     "class": "select2 form-control form-control-sm",
     "multiple": "multiple", 
-    "style": "{height: 36px; width: 100%;}" 
+    "style": "{height: 36px; width: 100%;}" ,
+    "name": "branches[]"
     }),choices=BRANCHES)
    
     
