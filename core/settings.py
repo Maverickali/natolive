@@ -16,7 +16,7 @@ DEBUG = config('DEBUG', default=True)
 
 # load production server from .env
 
-ALLOWED_HOSTS = ['www.natolive.nwf-ug.com', '45.56.127.148']
+ALLOWED_HOSTS = ['www.nato-live.nwf-ug.com', '45.56.127.148']
 
 
 # Application definition
