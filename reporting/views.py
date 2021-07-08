@@ -34,11 +34,11 @@ def daily_report(request):
         from_date = request.POST.get('from_date', False)        
         activity_data = Daily_Report.objects.filter(branch_id=branch_id, activity_date__range=(from_date, to_date)).order_by('-created_on')
         if not activity_data:
-            msg="Report Found"
-            msg_status=True
-        else:
             msg="No Report Found"
             msg_status=False
+        else:
+            msg="Report Found"
+            msg_status=True
         
     context = {
         'form': form, 
@@ -162,30 +162,30 @@ def customer_base_report(request):
     branches_values = branches.values('branch_id')
     activity_data = Potential_Customers.objects.filter(branch_id__in=branches_values)
     if request.method == 'POST' and request.POST:
-        branches = request.POST.getlist('branches[]')
+        branches_list = request.POST.getlist('branches[]')
         customer_type = request.POST.get('customer_type', False)
         to_date = request.POST.get('to_date', False)
         from_date = request.POST.get('from_date', False)
+        
         if customer_type == 'all':
-            activity_data = Potential_Customers.objects.filter(branch_id__in=branches , created_on__range=(from_date, to_date))
+            activity_data = Potential_Customers.objects.filter(branch_id__in=branches_list , desire_date__range=( from_date, to_date))
         else:
-            activity_data = Potential_Customers.objects.filter(branch_id__in=branches, turn_over=customer_type, created_on__range=(from_date, to_date))
-            
+            activity_data = Potential_Customers.objects.filter(branch_id__in=branches_list, turn_over=customer_type, desire_date__range=(from_date, to_date))
+        print(activity_data) 
         if activity_data:
-            msg="Customer Base Report From:- "+str(from_date)+" To:- "+str(to_date) +" For the Selected Branch(es) :- Nato ( "+str(branches)+" )"
+            msg="Customer Base Report From:- "+str(from_date)+" To:- "+str(to_date) +" For the Selected Branch(es) :- Nato ( "+str(branches_list)+" )"
             msg_status=True
         else:
             msg="No Report Found"
             msg_status=False
-    active = 'supa_reports'   
-    
-        
+            
+    active = 'supa_reports'          
     context = {        
         'activity_data': activity_data,
         'msg': msg,   
         'msg_status': msg_status,
         'active': active,
-        'branches': branches,
+        'branches': getSupaClustorBranches(request),
         "currentGroup": get_user_group(request) 
         }
     
