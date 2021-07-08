@@ -12,11 +12,14 @@ PROJECT_DIR = Path(__file__).parent
 SECRET_KEY = config('SECRET_KEY', default='S#perS3crEt_1122')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=True)
+DEBUG = config('DEBUG', default=False)
 
 # load production server from .env
 
-ALLOWED_HOSTS = ['www.nato-live.nwf-ug.com', '45.56.127.148']
+ALLOWED_HOSTS = [
+    'www.nato-live.nwf-ug.com', 
+    '45.56.127.148']
+    
 
 
 # Application definition
@@ -99,7 +102,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {    
       'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'nwfugcom_natolive',
+        'NAME': 'nwfugcom_natodb',
         'USER': 'nwfugcom_dbadmin',
         'PASSWORD': 'eWH*c*#%rI9d',
         'HOST': 'localhost',
