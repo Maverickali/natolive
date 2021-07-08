@@ -202,7 +202,8 @@ def ids_report(request):
     active = 'supa_reports' 
     branches = getSupaClustorBranches(request)
     branches_values = branches.values('branch_id')
-    activity_data = Ids.objects.select_related('customer_id').filter(branch_id__in=branches).order_by('-created_on')
+    
+    activity_data = Ids.objects.select_related('customer_id').filter(branch_id__in=branches_values).order_by('-created_on')
    
     context = {
         'form': form, 
