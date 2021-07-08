@@ -700,11 +700,14 @@ def rm_collections(request):
     total_collections = None
     total_collections_amount = None    
     msg_status = None
+    reject = None
+    approve = None
     rms = get_branch_rms(request) 
     txn_date = get_Open_Txn_date(request)
     # select rm
     form = RM_Search_Collections_Form()
     approve = 'show active'
+    
     if request.method == 'POST':
         table = request.POST.get('table_form', False) 
         table_reject_form = request.POST.get('table_reject_form', False)
@@ -831,6 +834,8 @@ def post_authorization(request):
     msg = None 
     form = None
     id_list = None
+    reject = None
+    approve = None
     approve = 'show active'
     if request.method == 'POST' and request.POST:       
         id_list = request.POST.getlist('id[]')
@@ -857,6 +862,8 @@ def post_rejected_collections(request):
     rms = Profile.objects.select_related('user').filter(branch_id=get_branch_id(request), user__groups__in=[5])
     msg = None 
     form = None
+    reject = None
+    approve = None
     id_list = None
     reject = 'show active'
     if request.method == 'POST' and request.POST:       
