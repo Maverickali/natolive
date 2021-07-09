@@ -54,12 +54,12 @@ LOGIN_REDIRECT_URL = "home"   # Route defined in app/urls.py
 LOGOUT_REDIRECT_URL = "home"  # Route defined in app/urls.py
 TEMPLATE_DIR = os.path.join(BASE_DIR, "core/templates")  # ROOT dir for templates
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'mail.crazyparrot.app'#'indexglobalnetwork.com'
-EMAIL_HOST_USER = 'smtp@crazyparrot.app'#'smtp@indexglobalnetwork.com'
-EMAIL_HOST_PASSWORD = 'Fx~dc827'#'*Ks)nvAhNGte'
-EMAIL_PORT = 465
-EMAIL_USE_SSL  = True
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'mail.crazyparrot.app'#'indexglobalnetwork.com'
+# EMAIL_HOST_USER = 'smtp@crazyparrot.app'#'smtp@indexglobalnetwork.com'
+# EMAIL_HOST_PASSWORD = 'Fx~dc827'#'*Ks)nvAhNGte'
+# EMAIL_PORT = 465
+# EMAIL_USE_SSL  = True
 
 
 
